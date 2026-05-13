@@ -1,0 +1,13 @@
+/* Custom CSS variables */
+:root {
+  --primary-color: #3b82f6;
+  --secondary-color: #10b981;
+  --accent-color: #f59e0b;
+  --background-color: #ffffff;
+  --foreground-color: #1f2937;
+}
+
+[data-theme='dark'] {
+  --background-color: #111827;
+  --foreground-color: #f9fafb;
+}
