@@ -35,6 +35,14 @@ export const personalDetailsSchema = Yup.object().shape({
   country: Yup.string().required('Country is required'),
   state: Yup.string().required('State is required'),
   city: Yup.string().required('City is required'),
+  bankAccounts: Yup.array().of(
+    Yup.object().shape({
+      accountNumber: Yup.string().required('Account Number is required'),
+      ifscCode: Yup.string().required('IFSC Code is required'),
+      bankName: Yup.string().required('Bank Name is required'),
+      accountType: Yup.string().required('Account Type is required'),
+    })
+  ).min(1, 'At least one bank account is required'),
 });
 
 // Step 2: Income Sources

@@ -93,16 +93,16 @@ const TaxOptionsHeading = () => {
   return (
     <div className="w-full  font-poppins pt-12">
       {/* Heading */}
-      <div className="w-[1440px] h-[211px] pt-10 pb-20 gap-[10px]">
+      <div className="w-full h-[211px] pt-10 pb-20 gap-[10px]">
         <h2 className="font-poppins font-bold text-[42px] leading-[50.4px] tracking-normal text-center capitalize bg-gradient-to-r from-[#1498EB] to-[#962DE3] bg-clip-text text-transparent ">
           Two Tailored Ways To File Your Taxes
         </h2>
       </div>
 
       {/* Main Content Section */}
-      <section className="bg-light-purple w-[1440px] h-[536px] rotate-0 opacity-100 pt-10 pr-[140px] pb-10 pl-[140px] gap-10 ">
+      <section className="bg-light-purple w-full  h-[536px] rotate-0 opacity-100 pt-10 pr-[140px] pb-10 pl-[140px] gap-10 ">
 
-        <div className="max-w-[1440px] mx-auto grid lg:grid-cols-2 gap-[40px] items-center relative z-10 w-full">
+        <div className="w-full mx-auto grid lg:grid-cols-2 gap-[40px] items-center relative z-10 w-full">
           <div className="w-[600px] h-[456px] grid grid-cols-2 flex-wrap flex-col rotate-0 opacity-100 gap-10 ">
             {cards.map((card, index) => (
               <div key={index} className="w-[280px] h-[208px] rotate-0 opacity-100 border-b-4 pt-[32px] pr-4 pb-[32px] pl-4 gap-10 rounded-t-[24px] bg-white flex flex-col [border-image:linear-gradient(90deg,#1498EB_0%,#962DE3_100%)_1] border-transparent">
@@ -140,9 +140,9 @@ const TaxOptionsHeading = () => {
       </section>
 
       {/* section 2  */}
-      <section className="bg-[#F0F4FF] w-[1440px] h-[536px] rotate-0 opacity-100 pt-10 pr-[140px] pb-10 pl-[140px] gap-10 ">
+      <section className="bg-[#F0F4FF] w-full h-[536px] rotate-0 opacity-100 pt-10 pr-[140px] pb-10 pl-[140px] gap-10 ">
 
-        <div className="max-w-[1440px] mx-auto grid lg:grid-cols-2 gap-[40px] items-center relative z-10 w-full">
+        <div className="w-full mx-auto grid lg:grid-cols-2 gap-[40px] items-center relative z-10 w-full">
 
 
           {/* Right Column: Text and CTA */}

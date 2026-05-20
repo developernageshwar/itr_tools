@@ -7,6 +7,7 @@ import {
 } from 'react-icons/md';
 import Stepper1 from '@/components/ui/steper1';
 import SupportCard from '@/components/cards/supportCard';
+import { useChatStore } from '@/store/chatStore';
 import Button from '@/components/ui/Button';
 import Footer2 from '@/components/layout/Footer2';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
@@ -24,6 +25,7 @@ import { taxSavingSchema } from '@/validation/itrSchema';
 import { toast } from 'react-toastify';
 
 export default function TaxSavingPage() {
+  const { openChat } = useChatStore();
   const router = useRouter();
   const { 
     taxSavingsDeductions, taxesPaid, foreignAssets, otherDisclosures,
@@ -141,12 +143,12 @@ export default function TaxSavingPage() {
           </div>
 
           {/* Sidebar Area: Support and Navigation */}
-          <div className="w-full lg:w-[320px] flex flex-col gap-6 sticky top-10">
+          <div className="w-full lg:w-[320px] flex flex-col gap-6 fixed right-18 top-45">
             <SupportCard
               title="Contact Support"
               description="AI and expert assistance."
               buttonText="Chat Now"
-              buttonLink="#"
+              onClick={openChat}
             />
 
             <Button

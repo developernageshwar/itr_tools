@@ -15,7 +15,7 @@ const StartFillingModal = ({ isOpen, onClose }) => {
     'AOP/BOI', 'Company Public',
     'Company Private', 'Firm',
     'Cooperative Society', 'LLP'
-  ];
+  ]; 
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} className="w-[800px]    rounded-[16px] border border-[#C7C7CC] opacity-100">

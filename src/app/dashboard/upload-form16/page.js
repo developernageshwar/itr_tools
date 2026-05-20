@@ -28,7 +28,54 @@ export default function UploadForm16Page() {
     <ProtectedRoute>
       <div className="w-full max-w-[1440px] mx-auto p-10 flex flex-col  font-poppins  h-[768px] rotate-0 opacity-100 gap-[42px] relative">
 
-        <div className="flex flex-col lg:flex-row gap-10 items-start">
+        <div className="flex flex-col lg:flex-row gap-10 items-start"> 
+
+          {/* Sidebar */}
+          <div className="w-full lg:w-[320px] flex flex-col gap-6">
+            {/* FAQ Header */}
+            <div className="w-full h-[52px] bg-gradient-brand rounded-xl flex items-center justify-center shadow-sm">
+              <span className="text-white font-semibold text-[18px] font-poppins">FAQs</span>
+            </div>
+
+            {/* FAQ Card with Gradient Border */}
+            <div className="w-full bg-gradient-to-b from-[#1498EB] to-[#962DE3] p-[0.9px] rounded-xl shadow-sm">
+              <div className="w-full bg-white rounded-xl flex flex-col py-2">
+                {faqs.map((faq, index) => {
+                  const isOpen = openFaq === index;
+                  return (
+                    <div key={index} className="flex flex-col border-b border-[#F0F0F0] last:border-none">
+                      <div
+                        onClick={() => setOpenFaq(isOpen ? null : index)}
+                        className="flex items-center justify-between p-4 cursor-pointer hover:bg-[#F8FAFF] transition-all group"
+                      >
+                        <span className={`font-poppins  font-normal text-[14px] leading-[17px] tracking-normal ${isOpen ? 'text-[#3867D6]' : 'text-black'}`}>
+                          {faq.question}
+                        </span>
+                        <MdKeyboardArrowDown
+                          className={` text-2xl flex-shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180 text-[#3867D6] ' : 'rotate-0 text-black  '}`}
+                        />
+                      </div>
+
+                      {/* Collapsible Answer */}
+                      <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
+                        <div className="px-4 pb-4 text-[13px] text-[#8E8E93] font-poppins leading-relaxed">
+                          Placeholder answer for {faq.question.toLowerCase()} goes here. This section expands smoothly when clicked.
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Save Button */}
+            <Button
+              className="w-full h-[58px] bg-gradient-to-r from-[#C8D7FF] to-[#E9D1FE] text-[#3867D6] rounded-xl font-semibold text-[18px] shadow-sm hover:opacity-90 transition-all font-poppins mt-2"
+              onClick={() => router.push('/dashboard/income-sources')}
+            >
+              Save & Continue
+            </Button>
+          </div>
 
           <div className="flex-1 flex flex-col gap-5">
             <h1 className="font-Poppins font-semibold text-[black] text-[28px] leading-[38.4px] tracking-normal">
@@ -56,15 +103,7 @@ export default function UploadForm16Page() {
                 </div>
               </div>
 
-              {/* Upload Area */}
-
-
-
-
-
-
-
-
+              {/* Upload Area */} 
               <div className="relative max-w-[973px]  h-[423px] rounded-[8px] bg-[#F0F4FF] overflow-hidden group cursor-pointer">
                 {/* Dashed Gradient Border via SVG */}
                 <div className="absolute inset-0 pointer-events-none">
@@ -119,53 +158,6 @@ export default function UploadForm16Page() {
                 </span>
               </Link>
             </div>
-          </div>
-
-          {/* Sidebar */}
-          <div className="w-full lg:w-[320px] flex flex-col gap-6 fixed absolute right-30 top-46 ">
-            {/* FAQ Header */}
-            <div className="w-full h-[52px] bg-gradient-brand rounded-xl flex items-center justify-center shadow-sm">
-              <span className="text-white font-semibold text-[18px] font-poppins">FAQs</span>
-            </div>
-
-            {/* FAQ Card with Gradient Border */}
-            <div className="w-full bg-gradient-to-b from-[#1498EB] to-[#962DE3] p-[0.9px] rounded-xl shadow-sm">
-              <div className="w-full bg-white rounded-xl flex flex-col py-2">
-                {faqs.map((faq, index) => {
-                  const isOpen = openFaq === index;
-                  return (
-                    <div key={index} className="flex flex-col border-b border-[#F0F0F0] last:border-none">
-                      <div
-                        onClick={() => setOpenFaq(isOpen ? null : index)}
-                        className="flex items-center justify-between p-4 cursor-pointer hover:bg-[#F8FAFF] transition-all group"
-                      >
-                        <span className={`font-poppins  font-normal text-[14px] leading-[17px] tracking-normal ${isOpen ? 'text-[#3867D6]' : 'text-black'}`}>
-                          {faq.question}
-                        </span>
-                        <MdKeyboardArrowDown
-                          className={` text-2xl flex-shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180 text-[#3867D6] ' : 'rotate-0 text-black  '}`}
-                        />
-                      </div>
-
-                      {/* Collapsible Answer */}
-                      <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
-                        <div className="px-4 pb-4 text-[13px] text-[#8E8E93] font-poppins leading-relaxed">
-                          Placeholder answer for {faq.question.toLowerCase()} goes here. This section expands smoothly when clicked.
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Save Button */}
-            <Button
-              className="w-full h-[58px] bg-gradient-to-r from-[#C8D7FF] to-[#E9D1FE] text-[#3867D6] rounded-xl font-semibold text-[18px] shadow-sm hover:opacity-90 transition-all font-poppins mt-2"
-              onClick={() => router.push('/dashboard/income-sources')}
-            >
-              Save & Continue
-            </Button>
           </div>
         </div>
 

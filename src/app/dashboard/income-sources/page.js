@@ -12,6 +12,7 @@ import {
 } from 'react-icons/md';
 import Stepper1 from '@/components/ui/steper1';
 import SupportCard from '@/components/cards/supportCard';
+import { useChatStore } from '@/store/chatStore';
 import Button from '@/components/ui/Button';
 import Footer2 from '@/components/layout/Footer2';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
@@ -33,6 +34,7 @@ import { incomeSourcesSchema } from '@/validation/itrSchema';
 import { toast } from 'react-toastify';
 
 export default function IncomeSourcesPage() {
+  const { openChat } = useChatStore();
   const router = useRouter();
   const { 
     salaryIncome, interestIncome, capitalGains, houseProperties,
@@ -172,7 +174,7 @@ export default function IncomeSourcesPage() {
                   label="₹"
                   placeholder="Add Manually"
                   wrapperClassName="my-custom-wrapper"
-                  inputClassName="bg-gradient-to-r from-[#1498EB] to-[#962DE3] border-[#1498EB] bg-clip-text text-transparent font-medium"
+                  inputClassName="bg-gradient-to-r from-[#1498EB] to-[#962DE3] bg-clip-text text-transparent font-medium"
                   name={source.fieldName}
                   value={formik.values[source.fieldName]}
                   onChange={(e) => {
@@ -189,12 +191,12 @@ export default function IncomeSourcesPage() {
           </div>
 
           {/* Sidebar Area: Support and Navigation */}
-          <div className="w-full lg:w-[320px] flex flex-col gap-6 sticky top-10">
+          <div className="w-full lg:w-[320px] flex flex-col gap-6 fixed right-18 top-45">
             <SupportCard
               title="Contact Support"
               description="AI and expert assistance."
               buttonText="Chat Now"
-              buttonLink="#"
+              onClick={openChat}
             />
 
             <Button

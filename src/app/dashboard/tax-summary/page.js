@@ -28,6 +28,7 @@ import { FiTag } from "react-icons/fi";
 
 import Stepper1 from '@/components/ui/steper1';
 import SupportCard from '@/components/cards/supportCard';
+import { useChatStore } from '@/store/chatStore';
 import Button from '@/components/ui/Button';
 import Footer2 from '@/components/layout/Footer2';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
@@ -43,6 +44,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useEffect } from 'react';
 
 export default function TaxSummaryPage() {
+  const { openChat } = useChatStore();
     const router = useRouter();
     const { user } = useAuth();
     const { calculateSummary, getPayload, resetForm, setField } = useItrStore();
@@ -111,7 +113,7 @@ export default function TaxSummaryPage() {
                 </div>
 
                 <div className="w-[1000px] h-[61px] rounded-lg bg-gradient-to-r from-[#C8D7FF] to-[#E9D1FE] p-[1px]">
-                    <div className="w-full h-full rotate-0 opacity-100 rounded-lg bg-[#F0F4FF] flex justify-start pl-[39px] items-center gap-[23px]">
+                    <div className="w-full h-full rotate-0  rounded-lg bg-[#F0F4FF] flex justify-start pl-[39px] items-center gap-[23px]">
                         <Image
                             width={20}
                             height={20}
@@ -127,7 +129,7 @@ export default function TaxSummaryPage() {
                 <div className="flex flex-col lg:flex-row gap-10 items-start">
                     <div className="flex-1 flex flex-col gap-8">
                         {/* Main Summary Card */}
-                        <div className="w-[1000px] rounded-[28px] bg-gradient-to-r from-[#C8D7FF] to-[#E9D1FE] p-[1px] shadow-sm ">
+                        <div className="w-[1000px] rounded-[28px] bg-gradient-to-r from-[#C8D7FF] to-[#E9D1FE] p-[1px] ">
                             <div className="w-full bg-white rounded-[28px] p-[30px] flex flex-col gap-10">
                                 <h2 className="font-Poppins  font-medium text-[20px] leading-[100%] tracking-normal text-center bg-gradient-to-r from-[#1498EB] to-[#962DE3] bg-clip-text text-transparent pb-1">
                                     Awesome, Let&apos;s finish your tax filing today!
@@ -219,7 +221,7 @@ export default function TaxSummaryPage() {
 
                         {/* Detailed Tax Calculation Section */}
                         <div className="w-[1000px] rounded-[28px] bg-gradient-to-r from-[#C8D7FF] to-[#E9D1FE] p-[1px]">
-                            <div className="w-full bg-white rounded-[28px] p-[20px] flex flex-col gap-10 shadow-sm">
+                            <div className="w-full bg-white rounded-[28px] p-[20px] flex flex-col gap-10">
                                 <div className="flex gap-4">
                                     <div className="w-[44px] h-[44px] rounded-full bg-[#F0F4FF] flex items-center justify-center text-[#3867D6] flex-shrink-0">
                                         <MdOutlineComment size={24} />
@@ -352,16 +354,16 @@ export default function TaxSummaryPage() {
 
 
                     {/* Sidebar Area */}
-                    <div className="w-full lg:w-[320px] flex flex-col gap-6 sticky top-10">
+                    <div className="w-full lg:w-[320px] flex flex-col gap-6 fixed right-18 top-45">
                         <SupportCard
-                            title="Contact Support"
-                            description="AI and expert assistance."
-                            buttonText="Chat Now"
-                            buttonLink="#"
+                          title="Contact Support"
+                          description="AI and expert assistance."
+                          buttonText="Chat Now"
+                          onClick={openChat}
                         />
                         <Button
                             variant="brand"
-                            className="w-full h-[52px] rounded-xl font-semibold text-base shadow-md disabled:opacity-50"
+                            className="w-full h-[52px] rounded-xl font-semibold text-base disabled:opacity-50"
                             onClick={handleSubmit}
                             disabled={isSubmitting}
                             isLoading={isSubmitting}

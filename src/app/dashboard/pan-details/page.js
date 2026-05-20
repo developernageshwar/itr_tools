@@ -9,6 +9,7 @@ import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import Footer2 from '@/components/layout/Footer2';
 import FloatingInput from '@/components/ui/FloatingInput';
 import SupportCard from '@/components/cards/supportCard';
+import { useChatStore } from '@/store/chatStore';
 import OTPModal from '@/components/modals/OTPModal';
 import SuccessModal from '@/components/modals/SuccessModal';
 import panService from '@/services/pan.service';
@@ -16,6 +17,7 @@ import { panSchema } from '@/validation/panSchema';
 import { useAuth } from '@/context/AuthContext';
 
 export default function PanDetailsPage() {
+  const { openChat } = useChatStore();
   const router = useRouter();
   const { user } = useAuth();
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
@@ -84,14 +86,22 @@ export default function PanDetailsPage() {
   return (
     <ProtectedRoute>
       <Toaster position="top-right" />
-      <div className="w-full max-w-[1440px] mx-auto min-h-screen flex flex-col gap-10 justify-between p-10">
+      <div className="w-full max-w-[1440px] mx-auto min-h-screen flex flex-col gap-10 justify-between p-10"> 
 
         <h1 className="font-poppins font-semibold text-[28px] leading-[38.4px]">
           Provide your PAN details
         </h1>
 
         <div className="flex flex-col lg:flex-row gap-10 items-start w-full">
-
+          {/* Sidebar Area */}
+          <div className="w-full lg:w-auto">
+            <SupportCard
+              title="Contact Support"
+              description="AI and expert assistance."
+              buttonText="Chat Now"
+              onClick={openChat}
+            />
+          </div> 
           {/* Main Form Card */}
           <div className="flex-1 flex flex-col rounded-2xl border border-transparent bg-gradient-to-r from-[#C8D7FF] to-[#E9D1FE] bg-clip-padding [background:linear-gradient(white,white)_padding-box,linear-gradient(90deg,#C8D7FF_0%,#E9D1FE_100%)_border-box] overflow-hidden">
             {/* Info Bar */}
@@ -147,27 +157,13 @@ export default function PanDetailsPage() {
                   Back
                 </Button>
               </div>
-
             </form>
           </div>
-
-          {/* Sidebar Area */}
-          <div className="w-full lg:w-auto">
-            <SupportCard
-              title="Contact Support"
-              description="AI and expert assistance."
-              buttonText="Chat Now"
-              buttonLink="#"
-            />
-          </div>
-
         </div>
 
         {/* Footer Area */}
         <Footer2 />
-
-      </div>
-
+      </div> 
       <OTPModal
         isOpen={isOtpModalOpen}
         onClose={() => setIsOtpModalOpen(false)}

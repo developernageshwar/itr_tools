@@ -59,7 +59,7 @@ const FAQ = () => {
 
   return (
     <section className="w-full bg-white pt-[40px] border-b-[4px] border-transparent" style={{ borderImage: 'linear-gradient(to right, #1498EB, #962DE3) 1' }}>
-      <div className="max-w-[1440px] mx-auto flex flex-col gap-[40px] px-4 md:px-20 pb-20">
+      <div className="w-full flex flex-col gap-[40px] px-4 md:px-20 pb-20">
         {/* Header */}
         <div className="flex flex-col gap-4 ">
           <p className="text-[16px] font-medium tracking-wider font-poppins   text-base leading-[26.4px] tracking-normal uppercase [leading-trim:none] bg-gradient-to-r from-[#1498EB] to-[#962DE3] bg-clip-text text-transparent">
@@ -84,7 +84,7 @@ const FAQ = () => {
                 isOpen={openIndex === index}
                 onClick={() => setOpenIndex(openIndex === index ? -1 : index)}
               />
-            ))}
+            ))} 
           </div>
 
           {/* Illustration Column */}

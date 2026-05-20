@@ -28,12 +28,12 @@ const Footer = () => {
       </div>
 
       {/* Main Footer Section */}
-      <div className="w-full bg-gradient-to-r from-[#1498EB] to-[#962DE3] pt-[40px] pb-[40px] text-white px-4 lg:px-[140px] font-poppins mb-1">
+      <div className="w-full bg-gradient-to-r from-[#1498EB] to-[#962DE3] pt-[40px] pb-[40px] text-white px-4 lg:px-[140px] font-poppins">
         <div className="max-w-[1440px] mx-auto flex flex-col lg:flex-row justify-between items-center gap-14 lg:gap-0">
 
           {/* Logo Column */}
           <div className="flex-shrink-0"> 
-            <Image src="/logoimg.png" alt="CANDIDTAX Logo" width={216} height={120} className="object-contain" />
+            <Image src="/logoimg.png" alt="CANDIDTAX Logo" width={200} height={100} className="object-contain" />
           </div>
 
           {/* Links Columns */}

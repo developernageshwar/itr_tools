@@ -1,7 +1,9 @@
   import { MdOutlineInsertComment } from 'react-icons/md';
   import { MdKeyboardArrowRight } from 'react-icons/md';  
   import Link from 'next/link'; 
- const SupportCard = ({title , description , buttonText , buttonLink}) => {
+  const SupportCard = ({title , description , buttonText , bgColor ,buttonLink, onClick}) => {
+    const ActionComponent = onClick ? 'button' : Link;
+    
     return (
          <div 
             className="w-[320px] rounded-2xl border border-transparent bg-clip-padding [background:linear-gradient(white,white)_padding-box,linear-gradient(90deg,#1498EB_0%,#962DE3_100%)_border-box] p-4 flex"
@@ -25,23 +27,24 @@
                 </p>
 
                 {/* Subtle Divider */}
-                <div className="w-full h-[1px] bg-[#E0E0E0]" />
+                <div className={`w-full h-[1px] ${bgColor ? bgColor : "#E0E0E0"}`} />
 
-                {/* Footer Link with brand gradient text */}
-                <Link
-                  href="#"
-                  className="flex justify-between items-center group"
+                {/* Footer Action */}
+                <ActionComponent
+                  href={onClick ? undefined : (buttonLink || "#")}
+                  onClick={onClick}
+                  className="flex justify-between items-center group cursor-pointer w-full"
                 >
                   <span className="font-poppins font-semibold text-base leading-6 bg-gradient-to-r from-[#1498EB] to-[#962DE3] text-transparent bg-clip-text">
                     {buttonText}
                   </span>
                   <MdKeyboardArrowRight size={28} className="text-[#3867D6] transition-transform group-hover:translate-x-1" />
-                </Link>
+                </ActionComponent>
               </div>
             </div>
           </div>
     );
- };  
+ };
 
 
  export default SupportCard;

@@ -11,7 +11,7 @@ const TaxComparisonTable = () => {
 
   return (
     <section className="w-full bg-white pt-[80px] pb-[40px] font-poppins">
-      <div className="max-w-[1440px] flex gap-10 flex-col mx-auto text-center">
+      <div className="w-full flex gap-10 flex-col  text-center">
         {/* Header Section */}
          <div className="flex flex-col gap-4 ">
         <p className="text-[16px] font-medium tracking-wider font-poppins   text-base leading-[26.4px] tracking-normal uppercase [leading-trim:none] bg-gradient-to-r from-[#1498EB] to-[#962DE3] bg-clip-text text-transparent">

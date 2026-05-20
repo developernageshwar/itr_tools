@@ -1,4 +1,5 @@
 import DashboardNavbar from "@/components/layout/DashboardNavbar";
+import HelpSupportChat from "@/components/layout/HelpSupportChat";
 
 export default function DashboardLayout({ children }) {
   return (
@@ -7,6 +8,7 @@ export default function DashboardLayout({ children }) {
       <div className="pt-[140px]">
         {children}
       </div>
+      <HelpSupportChat />
     </div>
   );
 }

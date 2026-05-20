@@ -34,6 +34,7 @@ const initialState = {
   taxesPaid: 0,
   foreignAssets: 0,
   otherDisclosures: 0,
+  bankAccounts: [{ accountNumber: '', ifscCode: '', bankName: '', accountType: 'SAVING' }],
   currentStep: 1,
 };
 
@@ -85,6 +86,7 @@ export const useItrStore = create(
           taxes_paid_TDS_TCS: state.taxesPaid,
           carry_forward_losses_AIS_foreign_assets: state.foreignAssets,
           unlisted_shares_schedule_AL_other_disclosures: state.otherDisclosures,
+          bank_accounts: state.bankAccounts,
         };
       },
 

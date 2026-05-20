@@ -53,58 +53,9 @@ export default function ConfirmPage() {
 
   return (
     <div className="w-full min-h-screen h-[1024px] flex justify-center bg-white font-poppins">
-      <div className="w-full max-w-[1440px] flex gap-10">
+      <div className="w-full flex gap-10">
         {/* Left Section - Form */}
-        <div className="w-[720px] h-full flex flex-col items-start  justify-start pt-[120px] gap-[40px] bg-white">
-
-          <h1 className="font-Poppins font-semibold text-[28px] leading-[38.4px] text-center bg-gradient-to-r from-[#1498EB] to-[#962DE3] bg-clip-text text-transparent">
-            {type === 'register' ? 'Create your Candid Tax Account' : 'Confirm your Candid Tax Account'}
-          </h1>
-
-          {/* Email Badge */}
-          <div className="px-[30px] py-[10px] rounded-full border border-[#962DE3] mx-auto">
-            <span className="font-Poppins font-normal text-base leading-6 tracking-normal bg-gradient-to-r from-[#1498EB] to-[#962DE3] bg-clip-text text-transparent">{email}</span>
-          </div>
-
-          {/* Checkbox block */}
-          <div className=" w-[600px]  pl-[99px]">
-              <Checkbox
-                id="terms"
-                checked={agreed}
-                onChange={(e) => setAgreed(e.target.checked)}
-                label={
-                  <span className="font-poppins text-base leading-6 tracking-normal">
-                    I have read and agrees to the following <span className="font-poppins font-bold text-base leading-6 tracking-normal">Candid Tax Privacy Policy & Terms & Conditions before proceeding.</span>
-                  </span>
-                }
-                required
-              />
-            </div> 
-
-          {/* Action Buttons */}
-          <div className="flex gap-[31px] w-full max-w-[502px]">
-            <Button
-              variant="brand"
-              isLoading={isLoading}
-              className="flex-1 h-[52px] rounded-[8px] font-Poppins font-semibold text-base"
-              onClick={handleConfirm}
-              disabled={!agreed}
-            >
-              Agree and Continue
-            </Button>
-            <Button
-              variant="whiteGradient"
-              className="flex-1 h-[52px] rounded-[8px] font-Poppins font-semibold text-base"
-              onClick={() => router.back()}
-            >
-              I decline
-            </Button>
-          </div>
-        </div>
-
-        {/* Right Section */}
-        <div className="w-[720px] px-[40px] pt-[3px] flex flex-col items-center justify-center bg-gradient-to-r from-[#C8D7FF] to-[#E9D1FE] ">
-
+        <div className="w-[50%] px-[40px] pt-[3px] flex flex-col items-center justify-center bg-gradient-to-r from-[#C8D7FF] to-[#E9D1FE] ">
           <div className="flex flex-col gap-[40px] items-center max-w-[640px]">
             <Image
               src="/loginlogoimg.png"
@@ -151,8 +102,56 @@ export default function ConfirmPage() {
               <Link href="#" className="hover:text-gray-600 transition-colors">Privacy</Link>
             </div>
           </div>
-
         </div>
+        {/* Right Section */}
+
+        <div className="w-[50%] h-full flex flex-col items-center  justify-start pt-[120px] gap-[40px] bg-white">
+
+          <h1 className="font-Poppins font-semibold text-[28px] leading-[38.4px] text-center bg-gradient-to-r from-[#1498EB] to-[#962DE3] bg-clip-text text-transparent">
+            {type === 'register' ? 'Create your Candid Tax Account' : 'Confirm your Candid Tax Account'}
+          </h1>
+
+          {/* Email Badge */}
+          <div className="px-[30px] py-[10px] rounded-full border border-[#962DE3] mx-auto">
+            <span className="font-Poppins font-normal text-base leading-6 tracking-normal bg-gradient-to-r from-[#1498EB] to-[#962DE3] bg-clip-text text-transparent">{email}</span>
+          </div>
+
+          {/* Checkbox block */}
+          <div className=" w-[600px]  pl-[99px]">
+            <Checkbox
+              id="terms"
+              checked={agreed}
+              onChange={(e) => setAgreed(e.target.checked)}
+              label={
+                <span className="font-poppins text-base leading-6 tracking-normal">
+                  I have read and agrees to the following <span className="font-poppins font-bold text-base leading-6 tracking-normal">Candid Tax Privacy Policy & Terms & Conditions before proceeding.</span>
+                </span>
+              }
+              required
+            />
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-[31px] w-full max-w-[700px]">
+            <Button
+              variant="brand"
+              isLoading={isLoading}
+              className="flex-1 h-[52px] rounded-[8px] font-Poppins font-semibold text-base"
+              onClick={handleConfirm}
+              disabled={!agreed}
+            >
+              Agree and Continue
+            </Button>
+            <Button
+              variant="whiteGradient"
+              className="flex-1 h-[52px] rounded-[8px] font-Poppins font-semibold text-base"
+              onClick={() => router.back()}
+            >
+              I decline
+            </Button>
+          </div>
+        </div>
+
       </div>
     </div>
   );

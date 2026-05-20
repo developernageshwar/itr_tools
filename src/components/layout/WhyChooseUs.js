@@ -42,7 +42,7 @@ const WhyChooseUs = () => {
 
   return (
     <section className="bg-light-blue py-[60px] px-10 font-outfit">
-      <div className="max-w-[1440px] flex gap-10 flex-col mx-auto text-center"> 
+      <div className="w-full  flex gap-10 flex-col mx-auto text-center"> 
         <div className="flex flex-col gap-4 ">
         <p className="text-[16px] font-medium tracking-wider font-poppins   text-base leading-[26.4px] tracking-normal uppercase [leading-trim:none] bg-gradient-to-r from-[#1498EB] to-[#962DE3] bg-clip-text text-transparent">
           India's best tax experts at your service for a tailored, accurate and premium tax filing experience.

@@ -9,10 +9,12 @@ import { FaRegComment } from "react-icons/fa6";
 import { MdAccountCircle } from "react-icons/md";
 import ProfileModal from './ProfileModal';
 import ShareModal from '@/components/ui/ShareModal';
-import AddUserModal from '@/components/ui/AddUserModal';
+import AddUserModal from '@/components/ui/AddUserModal'; 
+import { useChatStore } from '@/store/chatStore';
 
 
-const DashboardNavbar = () => {
+const DashboardNavbar = () => {  
+  const {openChat} = useChatStore();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
@@ -48,7 +50,9 @@ const DashboardNavbar = () => {
           </Button>
 
           {/* Chat / Message Icon */}
-          <div className="w-[44px] h-[44px] rounded-[22px] bg-[#3867D633] flex items-center justify-center cursor-pointer flex-shrink-0">
+          <div  
+          onClick={openChat}
+          className="w-[44px] h-[44px] rounded-[22px] bg-[#3867D633] flex items-center justify-center cursor-pointer flex-shrink-0">
             <FaRegComment className=" size-[20px]" color='#3867D6' />
           </div>
 
