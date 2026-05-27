@@ -10,14 +10,24 @@ import { MdAccountCircle } from "react-icons/md";
 import ProfileModal from './ProfileModal';
 import ShareModal from '@/components/ui/ShareModal';
 import AddUserModal from '@/components/ui/AddUserModal'; 
+import StartFillingModal from '@/components/ui/StartFillingModal';
 import { useChatStore } from '@/store/chatStore';
+import { useItrStore } from '@/store/itrStore';
 
 
 const DashboardNavbar = () => {  
   const {openChat} = useChatStore();
+  const { 
+    profiles, activeProfileId, 
+    setIsFilingTypeModalOpen, 
+    saveCurrentProfileData 
+  } = useItrStore();
+  const activeProfile = profiles.find(p => p.id === activeProfileId) || profiles[0];
+
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+  const [isStartFillingModalOpen, setIsStartFillingModalOpen] = useState(false);
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50">
@@ -33,10 +43,10 @@ const DashboardNavbar = () => {
 
           <div 
             className="flex items-center gap-3 cursor-pointer select-none font-poppins font-medium text-xl leading-none tracking-normal text-black"
-            onClick={() => setIsAddUserModalOpen(true)}
+            onClick={() => setIsAddUserModalOpen(prev => !prev)}
           >
             <span>Filling for :</span>
-            <span>New User</span>
+            <span>{activeProfile?.name || 'New User'}</span>
             <MdKeyboardArrowDown size={32} className={`text-[22px] text-[#1E1E1E] transition-transform duration-200 ${isAddUserModalOpen ? 'rotate-180' : ''}`} />
           </div>
 
@@ -83,6 +93,17 @@ const DashboardNavbar = () => {
           <AddUserModal
             isOpen={isAddUserModalOpen}
             onClose={() => setIsAddUserModalOpen(false)}
+            onFileForNew={() => {
+             
+              saveCurrentProfileData();
+              setIsAddUserModalOpen(false);
+              setIsStartFillingModalOpen(true);
+            }}
+          />
+
+          <StartFillingModal
+            isOpen={isStartFillingModalOpen}
+            onClose={() => setIsStartFillingModalOpen(false)}
           />
         </div>
       </nav>

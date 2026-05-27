@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -10,11 +10,42 @@ import Button from '@/components/ui/Button';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';  
 import Footer2 from '@/components/layout/Footer2';
 import StartFillingModal from '@/components/ui/StartFillingModal';
+import { useItrStore } from '@/store/itrStore';
 
 export default function MyTaxReturnsPage() {
   const router = useRouter();
-  const [isExpanded, setIsExpanded] = useState(true);
+  const { profiles, activeProfileId, setActiveProfile, saveCurrentProfileData } = useItrStore();
+  
+  const [expandedProfiles, setExpandedProfiles] = useState({});
   const [isStartFillingOpen, setIsStartFillingOpen] = useState(false);
+
+  // Initialize expanded state for active profile
+  useEffect(() => {
+    if (activeProfileId && expandedProfiles[activeProfileId] === undefined) {
+      setExpandedProfiles(prev => ({ ...prev, [activeProfileId]: true }));
+    }
+  }, [activeProfileId, expandedProfiles]);
+
+  const toggleExpand = (profileId, e) => {
+    e.stopPropagation();
+    setExpandedProfiles(prev => ({
+      ...prev,
+      [profileId]: !prev[profileId]
+    }));
+  };
+
+  const handleProfileSwitch = (profileId) => {
+    if (profileId === activeProfileId) return;
+    saveCurrentProfileData();
+    setActiveProfile(profileId);
+    setExpandedProfiles(prev => ({ ...prev, [profileId]: true }));
+  };
+
+  const sortedProfiles = [...profiles].sort((a, b) => {
+    if (a.id === activeProfileId) return -1;
+    if (b.id === activeProfileId) return 1;
+    return (b.createdAt || 0) - (a.createdAt || 0); // Newest first for others
+  });
 
   return (
     <ProtectedRoute>
@@ -43,82 +74,105 @@ export default function MyTaxReturnsPage() {
           onClose={() => setIsStartFillingOpen(false)} 
         />
 
-        {/* Record Card */}
-        <div className="w-full border-b border-b-[#E0E0E0]  flex flex-col gap-10  opacity-100  pb-10">
+        <div className="flex flex-col gap-10">
+          {sortedProfiles.map((profile) => {
+            const isExpanded = !!expandedProfiles[profile.id];
+            const isActive = profile.id === activeProfileId;
 
-          {/* Top Row: User Info */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              {/* Avatar */}
-              <div className="w-[44px] h-[44px] rounded-full bg-[#3867D633] flex items-center justify-center">
-                <span className="text-[#3867D6] font-semibold text-[16px] font-outfit">N</span>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-3">
-                  <h2 className="font-poppins font-medium text-[20px] text-black tracking-normal">New User</h2>
-                  <span className="w-[84px] h-[25px] rotate-0 opacity-100 bg-[#3867D633] justify-center items-center rounded-sm flex gap-[10px] pt-1 pr-2 pb-1 pl-2">
-                    <span className="font-poppins font-normal text-[14px] leading-[17px] tracking-normal text-[#3867D6]">Individual</span>
-                  </span>
-                </div>
-                <p className="font-poppins font-normal text-[16px] leading-[24px] tracking-normal text-[#8E8E93]">
-                  PAN: Not Available
-                </p>
-              </div>
-            </div>
-
-            {/* Collapse Icon */}
-            <div 
-              className="w-[44px] h-[44px] rounded-full bg-[#3867D633] flex items-center justify-center cursor-pointer transition-colors hover:bg-[#3867D644]"
-              onClick={() => setIsExpanded(!isExpanded)}
-            >
-              <MdKeyboardArrowUp 
-                size={28} 
-                className={`text-[#3867D6] transition-transform duration-300 ${!isExpanded ? 'rotate-180' : ''}`} 
-              />
-            </div>
-          </div>
-
-          {/* Filing Details Section */}
-          {isExpanded && (
-            <div className="flex  ml-14 justify-between animate-in fade-in slide-in-from-top-2 duration-300">
-              {/* Year Info */}
-              <div className="flex flex-col gap-2">
-                <h3 className="font-poppins font-medium text-[20px] leading-[100%] tracking-normal text-black">AY 2026-27</h3>
-                <p className="font-poppins font-normal text-[16px] leading-[24px] tracking-normal text-[#8E8E93]">(Current Year)</p>
-              </div>
-
-              {/* Status Rows */}
-              <div className="flex flex-col gap-2  ">
-                <div className="flex items-center gap-3">
-                  <MdInfoOutline  className="text-[#FF383C]" size={27} />
-                  <p className="font-poppins  font-medium text-[20px] leading-[100%] tracking-normal">
-                    E-Filed | <span className="font-poppins font-normal text-[14px] leading-[17px] tracking-normal text-[#FF383C]">Pending</span>
-                  </p>
-                </div>
-              <div className="flex items-center gap-3">
-                  <MdInfoOutline  className="text-[#FF383C]" size={27} />
-                  <p className="font-poppins  font-medium text-[20px] leading-[100%] tracking-normal">
-                    E- Verification | <span className="font-poppins font-normal text-[14px] leading-[17px] tracking-normal text-[#FF383C]">Pending</span>
-                  </p>
-                </div> 
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex items-center gap-4">
-                <Button  
-                  variant="whiteGradient"
-                  className=" py-2 px-4 gap-[10px] rounded-lg border font-poppins font-semibold text-base leading-6 tracking-normal"
-                  onClick={() => router.push('/dashboard/pan-details')}
+            return (
+              <div key={profile.id} className="w-full border-b border-b-[#E0E0E0] flex flex-col gap-10 opacity-100 pb-10"> 
+                <div 
+                  className={`flex items-center justify-between cursor-pointer ${isActive ? '' : 'hover:opacity-80 transition-opacity'}`}
+                  onClick={() => handleProfileSwitch(profile.id)}
                 >
-                  Continue Filling
-                </Button>
-                <div className="text-[#8E8E93] hover:bg-gray-100 p-2 rounded-full transition-colors cursor-pointer">
-                  <BsThreeDotsVertical size={24} />
+                  <div className="flex items-center gap-4"> 
+                    {/* Avatar */}
+                    <div className="w-[44px] h-[44px] rounded-full bg-[#3867D633] flex items-center justify-center">
+                      <span className="text-[#3867D6] font-semibold text-[16px] font-outfit">
+                        {profile.name ? profile.name.charAt(0).toUpperCase() : 'N'}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-3">
+                        <h2 className="font-poppins font-medium text-[20px] text-black tracking-normal">
+                          {profile.name || 'New User'}
+                        </h2>
+                        <span className="w-auto h-[25px] rotate-0 opacity-100 bg-[#3867D633] justify-center items-center rounded-sm flex gap-[10px] pt-1 pr-2 pb-1 pl-2">
+                          <span className="font-poppins font-normal text-[14px] leading-[17px] tracking-normal text-[#3867D6]">
+                            {profile.filingType || 'Individual'}
+                          </span>
+                        </span>
+                      </div>
+                      <p className="font-poppins font-normal text-[16px] leading-[24px] tracking-normal text-[#8E8E93]">
+                        PAN: {profile.pan || 'Not Available'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Collapse Icon */}
+                  <div 
+                    className="w-[44px] h-[44px] rounded-full bg-[#3867D633] flex items-center justify-center cursor-pointer transition-colors hover:bg-[#3867D644]"
+                    onClick={(e) => toggleExpand(profile.id, e)}
+                  >
+                    <MdKeyboardArrowUp 
+                      size={28} 
+                      className={`text-[#3867D6] transition-transform duration-300 ${!isExpanded ? 'rotate-180' : ''}`} 
+                    />
+                  </div>
                 </div>
+
+                {/* Filing Details Section */}
+                {isExpanded && (
+                  <div className="flex ml-14 justify-between animate-in fade-in slide-in-from-top-2 duration-300">
+                    {/* Year Info */}
+                    <div className="flex flex-col gap-2">
+                      <h3 className="font-poppins font-medium text-[20px] leading-[100%] tracking-normal text-black">
+                        AY {profile.assessmentYear || '2026-27'}
+                      </h3>
+                      <p className="font-poppins font-normal text-[16px] leading-[24px] tracking-normal text-[#8E8E93]">
+                        (Current Year)
+                      </p>
+                    </div>
+
+                    {/* Status Rows */}
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-3">
+                        <MdInfoOutline className="text-[#FF383C]" size={27} />
+                        <p className="font-poppins font-medium text-[20px] leading-[100%] tracking-normal">
+                          E-Filed | <span className="font-poppins font-normal text-[14px] leading-[17px] tracking-normal text-[#FF383C]">Pending</span>
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <MdInfoOutline className="text-[#FF383C]" size={27} />
+                        <p className="font-poppins font-medium text-[20px] leading-[100%] tracking-normal">
+                          E- Verification | <span className="font-poppins font-normal text-[14px] leading-[17px] tracking-normal text-[#FF383C]">Pending</span>
+                        </p>
+                      </div> 
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex items-center gap-4">
+                      <Button  
+                        variant="whiteGradient"
+                        className="py-2 px-4 gap-[10px] rounded-lg border font-poppins font-semibold text-base leading-6 tracking-normal"
+                        onClick={(e) => { 
+                          e.stopPropagation();
+                          if (!isActive) handleProfileSwitch(profile.id);
+                          router.push('/dashboard/pan-details');
+                        }}
+                      >
+                        Continue Filling
+                      </Button>
+                      <div className="text-[#8E8E93] hover:bg-gray-100 p-2 rounded-full transition-colors cursor-pointer">
+                        <BsThreeDotsVertical size={24} />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
-          )}
+            );
+          })}
         </div>
 
         {/* Footer Area */}

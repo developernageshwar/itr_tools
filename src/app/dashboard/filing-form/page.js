@@ -59,7 +59,10 @@ export default function FilingFormPage() {
     setFields, updateStep
   } = useItrStore();
 
+  const targetRouteRef = React.useRef(null);
+
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
       firstName,
       middleName,
@@ -83,21 +86,46 @@ export default function FilingFormPage() {
     validationSchema: itrSchema,
     onSubmit: (values) => {
       setFields(values);
-      updateStep(2);
-      router.push('/dashboard/income-sources');
+      const targetRoute = targetRouteRef.current || '/dashboard/income-sources';
+      const routesToStep = {
+        '/dashboard/filing-form': 1,
+        '/dashboard/income-sources': 2,
+        '/dashboard/tax-saving': 3,
+        '/dashboard/tax-summary': 4,
+      };
+      updateStep(routesToStep[targetRoute] || 2);
+      router.push(targetRoute);
+      targetRouteRef.current = null;
     },
   });
 
   const handleNext = () => {
+    targetRouteRef.current = '/dashboard/income-sources';
     formik.handleSubmit();
     if (!formik.isValid) {
       toast.error('Please fix the errors in the form');
-      // Scroll to first error
-      const firstError = Object.keys(formik.errors)[0];
-      const element = document.getElementsByName(firstError)[0];
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
+      setTimeout(() => {
+        const firstError = Object.keys(formik.errors)[0];
+        const element = document.getElementsByName(firstError)[0];
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 0);
+    }
+  };
+
+  const handleStepClick = (route) => {
+    targetRouteRef.current = route;
+    formik.handleSubmit();
+    if (!formik.isValid) {
+      toast.error('Please fix the errors in the form before proceeding.');
+      setTimeout(() => {
+        const firstError = Object.keys(formik.errors)[0];
+        const element = document.getElementsByName(firstError)[0];
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 0);
     }
   };
 
@@ -108,7 +136,7 @@ export default function FilingFormPage() {
 
           {/* Stepper Header */}
           <div className="flex items-center justify-between">
-            <Stepper1 currentStep={1} />
+            <Stepper1 currentStep={1} onStepClick={handleStepClick} />
             <div className="w-[320px]" /> {/* Spacer for sidebar alignment */}
           </div>
 

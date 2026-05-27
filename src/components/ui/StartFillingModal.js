@@ -1,21 +1,28 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import Modal from './Modal';
 import { IoClose } from 'react-icons/io5';
 import Button from './Button';
+import { useRouter } from 'next/navigation';
+import { useItrStore } from '@/store/itrStore';
 
 const StartFillingModal = ({ isOpen, onClose }) => {
-  const [selected, setSelected] = useState('Individual');
+  const router = useRouter();
+  const { selectedFilingType, setSelectedFilingType, createNewProfile } = useItrStore();
 
   const options = [
-    'Individual', 'HUF',
-    'AOP/BOI', 'Company Public', 
     'Individual', 'HUF',
     'AOP/BOI', 'Company Public',
     'Company Private', 'Firm',
     'Cooperative Society', 'LLP'
-  ]; 
+  ];
+
+  const handleProceed = () => {
+    createNewProfile(selectedFilingType);
+    onClose();
+    router.push('/dashboard/pan-details');
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} className="w-[800px]    rounded-[16px] border border-[#C7C7CC] opacity-100">
@@ -35,12 +42,12 @@ const StartFillingModal = ({ isOpen, onClose }) => {
           {options.map((option, index) => (
             <div
               key={index}
-              onClick={() => setSelected(option)}
+              onClick={() => setSelectedFilingType(option)}
               className=" flex  opacity-100 border gap-3 p-2 rounded-[8px] border-[#C7C7CC]"
             >
-              <div className={`w-5 h-5 rounded-full flex items-center justify-center p-[1.5px] transition-all ${selected === option ? 'bg-gradient-to-r from-[#1498EB] to-[#962DE3]' : 'bg-gradient-to-r from-[#1498EB] to-[#962DE3]'}`}>
+              <div className={`w-5 h-5 rounded-full flex items-center justify-center p-[1.5px] transition-all ${selectedFilingType === option ? 'bg-gradient-to-r from-[#1498EB] to-[#962DE3]' : 'bg-gradient-to-r from-[#1498EB] to-[#962DE3]'}`}>
                 <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
-                  {selected === option && (
+                  {selectedFilingType === option && (
                     <div className="w-[10px] h-[10px] rounded-full bg-gradient-to-r from-[#1498EB] to-[#962DE3]" />
                   )}
                 </div>
@@ -55,7 +62,9 @@ const StartFillingModal = ({ isOpen, onClose }) => {
           <Button
             variant='brand'
             className="font-poppins font-medium text-base leading-6 tracking-normal  w-full  "
-            onClick={onClose}
+            onClick={handleProceed}
+            type='button'
+
           >
             Proceed to e-file
           </Button>

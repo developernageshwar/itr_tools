@@ -32,7 +32,10 @@ export default function TaxSavingPage() {
     setFields, updateStep 
   } = useItrStore();
 
+  const targetRouteRef = React.useRef(null);
+
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
       taxSavingsDeductions: taxSavingsDeductions || 0,
       taxesPaid: taxesPaid || 0,
@@ -42,23 +45,32 @@ export default function TaxSavingPage() {
     validationSchema: taxSavingSchema,
     onSubmit: (values) => {
       setFields(values);
-      updateStep(4);
-      router.push('/dashboard/tax-summary');
+      const targetRoute = targetRouteRef.current || '/dashboard/tax-summary';
+      const routesToStep = {
+        '/dashboard/filing-form': 1,
+        '/dashboard/income-sources': 2,
+        '/dashboard/tax-saving': 3,
+        '/dashboard/tax-summary': 4,
+      };
+      updateStep(routesToStep[targetRoute] || 4);
+      router.push(targetRoute);
+      targetRouteRef.current = null;
     },
   });
 
-  const handleNext = async () => {
-    const errors = await formik.validateForm();
-    if (Object.keys(errors).length === 0) {
-      formik.handleSubmit();
-    } else {
-      formik.setTouched({
-        taxSavingsDeductions: true,
-        taxesPaid: true,
-        foreignAssets: true,
-        otherDisclosures: true,
-      });
+  const handleNext = () => {
+    targetRouteRef.current = '/dashboard/tax-summary';
+    formik.handleSubmit();
+    if (!formik.isValid) {
       toast.error('Please fix the errors in the form');
+    }
+  };
+
+  const handleStepClick = (route) => {
+    targetRouteRef.current = route;
+    formik.handleSubmit();
+    if (!formik.isValid) {
+      toast.error('Please fix the errors in the form before proceeding.');
     }
   };
 
@@ -98,7 +110,7 @@ export default function TaxSavingPage() {
       <div className="w-full max-w-[1440px] mx-auto p-10 flex flex-col gap-10 font-poppins">
 
         <div className="flex items-center justify-between">
-          <Stepper1 currentStep={3} />
+          <Stepper1 currentStep={3} onStepClick={handleStepClick} />
           <div className="w-[320px] hidden lg:block" />
         </div>
 

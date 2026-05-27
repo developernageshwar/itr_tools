@@ -4,13 +4,6 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import {
-    MdCheckCircle,
-    MdOutlineDescription,
-    MdOutlineFormatListBulleted,
-    MdOutlineAccountBalanceWallet,
-    MdOutlinePayment,
-    MdOutlineRotateLeft,
-    MdOutlineErrorOutline,
     MdKeyboardArrowRight,
     MdKeyboardArrowDown
 } from 'react-icons/md';
@@ -18,7 +11,6 @@ import { IoBookmarkOutline } from "react-icons/io5";
 
 import { IoListSharp } from "react-icons/io5";
 import FormSection from '@/components/ui/FormSection';
-import { HiOutlineLink } from "react-icons/hi";
 import { MdOutlineComment, MdPieChartOutlined } from "react-icons/md";
 
 import { LuColumns2 } from "react-icons/lu";
@@ -32,24 +24,57 @@ import { useChatStore } from '@/store/chatStore';
 import Button from '@/components/ui/Button';
 import Footer2 from '@/components/layout/Footer2';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import { FaTag } from "react-icons/fa6";
 import { FiRefreshCw } from "react-icons/fi";
 import SlabRateModal from '@/components/modals/SlabRateModal';
-
+import RegimeComparisonModal from '@/components/modals/RegimeComparisonModal';
+import ConfirmRegimeChangeModal from '@/components/modals/ConfirmRegimeChangeModal';
 
 import { useItrStore } from '@/store/itrStore';
 import itrService from '@/services/itrService';
 import { toast } from 'react-toastify';
 import { useAuth } from '@/context/AuthContext';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { personalDetailsSchema, incomeSourcesSchema, taxSavingSchema } from '@/validation/itrSchema';
+
+// Count up animation component
+const CountUp = ({ value }) => {
+    const [displayValue, setDisplayValue] = useState(value);
+    
+    useEffect(() => {
+        setDisplayValue(value);
+    }, [value]);
+    
+    return <motion.span
+        key={value}
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+    >{displayValue.toLocaleString()}</motion.span>;
+};
 
 export default function TaxSummaryPage() {
-  const { openChat } = useChatStore();
+    const { openChat } = useChatStore();
     const router = useRouter();
     const { user } = useAuth();
-    const { calculateSummary, getPayload, resetForm, setField } = useItrStore();
+    const state = useItrStore();
+    const { calculateSummary, getPayload, resetForm, setField, selectedRegime } = state;
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [isSlabModalOpen, setIsSlabModalOpen] = React.useState(false);
+    const [isComparisonModalOpen, setIsComparisonModalOpen] = React.useState(false);
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = React.useState(false);
+    const [errorSteps, setErrorSteps] = React.useState([]);
+
+    const handleSwitchClick = () => {
+        setIsComparisonModalOpen(false);
+        setIsConfirmModalOpen(true);
+    };
+
+    const handleConfirmSwitch = () => {
+        const newRegime = selectedRegime === 'new' ? 'old' : 'new';
+        setField('selectedRegime', newRegime);
+        setIsConfirmModalOpen(false);
+    };
 
     // Sync userId from AuthContext to Store
     useEffect(() => {
@@ -61,26 +86,57 @@ export default function TaxSummaryPage() {
     const summary = calculateSummary();
 
     const summaryData = [
-        { label: "Gross Income", value: summary.grossIncome.toLocaleString() },
-        { label: "Your Tax Saving", value: summary.totalDeductions.toLocaleString() },
-        { label: "Taxable Income", value: summary.taxableIncome.toLocaleString() },
-        { label: "Total Tax", value: summary.estimatedTax.toLocaleString() },
-        { label: "Tax Already Paid", value: "0" },
-        { label: summary.isRefund ? "Tax Refund" : "Tax Due", value: summary.refundOrDue.toLocaleString(), isGreen: summary.isRefund },
+        { label: "Gross Income", value: summary.grossIncome },
+        { label: "Your Tax Saving", value: summary.totalDeductions },
+        { label: "Taxable Income", value: summary.taxableIncome },
+        { label: "Total Tax", value: summary.estimatedTax },
+        { label: "Tax Already Paid", value: Number(state.taxesPaid) || 0 },
+        { label: summary.isRefund ? "Tax Refund" : "Tax Due", value: summary.refundOrDue, isGreen: !summary.isRefund },
     ];
 
     const handleSubmit = async () => {
         setIsSubmitting(true);
         try {
+            // Validate all previous steps
+            const formData = { ...state };
+            const errors = [];
+            
+            try {
+                await personalDetailsSchema.validate(formData, { abortEarly: false });
+            } catch (err) {
+                errors.push(1);
+            }
+            
+            try {
+                await incomeSourcesSchema.validate(formData, { abortEarly: false });
+            } catch (err) {
+                errors.push(2);
+            }
+            
+            try {
+                await taxSavingSchema.validate(formData, { abortEarly: false });
+            } catch (err) {
+                errors.push(3);
+            }
+            
+            if (errors.length > 0) {
+                setErrorSteps(errors);
+                toast.error("Please fill all required fields before submission.");
+                setIsSubmitting(false);
+                return;
+            }
+            
+            setErrorSteps([]);
+
             const payload = getPayload();
             const response = await itrService.submitItrDetails(payload);
 
             console.log('API Response:', response);
 
             // Robust check for success patterns
-            const isSuccess = 
-                response?.status === 'success' || 
-                response?.status === 200 || 
+            const isSuccess =
+                response?.status === 'success' ||
+                response?.status === 200 ||
                 response?.success === true ||
                 response?.message === "ITR Details Saved Successfully" ||
                 response?.data?.message === "ITR Details Saved Successfully";
@@ -88,8 +144,8 @@ export default function TaxSummaryPage() {
             if (isSuccess) {
                 toast.success(response?.message || "ITR details submitted successfully!");
                 // Reset the entire form state in the store
-               //   resetForm(); 
-                router.push('/dashboard');
+                //   resetForm(); 
+                // router.push('/dashboard');
             } else {
                 toast.error(response?.message || "Submission failed. Please check your details.");
             }
@@ -108,7 +164,7 @@ export default function TaxSummaryPage() {
 
                 {/* Stepper Header */}
                 <div className="flex items-center justify-between mb-4">
-                    <Stepper1 currentStep={4} />
+                    <Stepper1 currentStep={4} errorSteps={errorSteps} />
                     <div className="w-[320px] hidden lg:block" />
                 </div>
 
@@ -145,29 +201,50 @@ export default function TaxSummaryPage() {
                                     <div className="w-[2px] h-4 bg-[#000000]" />
                                     <div className="font-Poppins font-normal flex items-center gap-4 text-base leading-6 tracking-normal">
                                         <span >Your TAX Regime:  </span>
-                                        <span >New Regime </span>
+                                        <span >{selectedRegime === 'new' ? 'New Regime' : 'Old Regime'} </span>
                                         <MdKeyboardArrowRight size={25} color='#1E1E1E' />
                                     </div>
                                 </div>
 
-                                {/* Summary Rows (Right-aligned text with left-extending line) */}
-                                <div className="flex flex-col gap-8 mt-6 w-full max-w-[800px] mx-auto px-4">
-                                    {summaryData.map((item, index) => (
-                                        <div key={index} className="flex items-center w-full group">
-                                            {/* Label and Value (Right Aligned) */}
-                                            <div className="flex justify-end items-center gap-3 min-w-[280px]">
-                                                <div className="bg-transparent outline-none font-poppins font-semibold text-black text-right w-full text-base leading-6 tracking-normal">
-                                                    {item.label}:
+                                {/* Summary Rows */}
+                                <div className="flex flex-col gap-6 mt-6 w-full max-w-[800px] mx-auto px-4">
+                                    {summaryData.map((item, index) => {
+                                        const maxAmount = summary.grossIncome > 0 ? summary.grossIncome : 1;
+                                        let percentage = (item.value / maxAmount) * 100;
+                                        const hasValue = item.value > 0;
+                                        
+                                        // Ensure very small values are visibly represented
+                                        if (hasValue && percentage < 2) {
+                                            percentage = 2;
+                                        }
+                                        percentage = Math.min(100, Math.max(0, percentage));
+                                        
+                                        return (
+                                            <div key={index} className="flex items-center w-full gap-5">
+                                                {/* Label and Value (Right Aligned) */}
+                                                <div className="flex justify-end items-baseline gap-1 min-w-[280px]">
+                                                    <span className="font-poppins text-[#4B5563] text-[16px]">
+                                                        {item.label}:
+                                                    </span>
+                                                    <span className={`font-poppins text-[18px] ml-1 ${item.isGreen ? 'text-[#34C759] font-medium' : 'text-[#1E1E1E]'}`}>
+                                                        ₹<CountUp value={item.value} />
+                                                    </span>
                                                 </div>
-                                                <div className={`bg-transparent outline-none font-poppins text-base w-[100px] ${item.isGreen ? 'text-[#34C759] text-[20px] font-medium ' : 'text-black font-semibold'}`}>
-                                                    ₹ {item.value}
+
+                                                {/* Progress Bar */}
+                                                <div className="flex-1 h-3 bg-[#F3F4F6] rounded-full overflow-hidden">
+                                                    {hasValue && (
+                                                        <motion.div 
+                                                            initial={{ width: 0 }}
+                                                            animate={{ width: `${percentage}%` }}
+                                                            transition={{ duration: 0.5, ease: "easeOut" }}
+                                                            className={`h-full rounded-full ${item.isGreen ? 'bg-[#34C759]' : 'bg-[#818CF8]'}`}
+                                                        />
+                                                    )}
                                                 </div>
                                             </div>
-
-                                            {/* Decorative Connector Line */}
-                                            <div className="w-full rotate-0 opacity-100 border-1 border-[#C7C7CC]" />
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
 
                                 {/* Card Footer Link */}
@@ -211,10 +288,15 @@ export default function TaxSummaryPage() {
                                     <div className='flex  flex-col  justify-center gap-10 pt-2'>
                                         <div className="flex items-center  gap-4">
                                             <span className="font-Poppins font-normal text-base leading-6 tracking-normal">Your TAX Regime:  </span>
-                                            <span className=" text-white font-medium font-Poppins text-[16px] rotate-0 opacity-100 gap-2.5 rounded py-1 px-4 bg-[#9030DD]">New Regime</span>
+                                            <span className=" text-white font-medium font-Poppins text-[16px] rotate-0 opacity-100 gap-2.5 rounded py-1 px-4 bg-[#9030DD]">{selectedRegime === 'new' ? 'New Regime' : 'Old Regime'}</span>
                                         </div>
-                                        <p className="font-Poppins max-w-[300px]  text-[#8E8E93] font-normal text-base leading-6 tracking-normal">New Regime selected; both regimes are equally beneficial</p>
+                                        <p className="font-Poppins max-w-[300px]  text-[#8E8E93] font-normal text-base leading-6 tracking-normal">{selectedRegime === 'new' ? 'New Regime selected; both regimes are equally beneficial' : 'Old Regime selected; customized for your deductions'}</p>
+
+                                        <div onClick={() => setIsComparisonModalOpen(true)} className="font-Poppins font-semibold text-base leading-6 tracking-normal flex gap-3 text-[#3867D6] cursor-pointer">
+                                            Compare/Switch Regime  <MdKeyboardArrowRight size={24} />
+                                        </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -236,7 +318,7 @@ export default function TaxSummaryPage() {
                                 <div className="flex flex-col gap-12 px-10">
                                     {/* Total Tax Row */}
                                     <div className="flex items-center justify-between w-full">
-                                        <div className="flex gap-4 items-start max-w-[450px]">
+                                        <div className="flex gap-4 items-start w-[450px] flex-shrink-0">
                                             <div className="w-[44px] h-[44px] rounded-full bg-[#000000]/20 flex items-center justify-center text-[#000000] flex-shrink-0">
                                                 <IoBookmarkOutline size={24} />
                                             </div>
@@ -248,7 +330,7 @@ export default function TaxSummaryPage() {
                                                         Total Tax = (Slab Rate Tax + Fixed Rate Tax - Tax Reliefs) + Other Charges and Fees
                                                     </p>
                                                 </div>
-                                                <span 
+                                                <span
                                                     className="text-[#3867D6] text-[13px] font-regular font-Poppins cursor-pointer underline font-poppins"
                                                     onClick={() => setIsSlabModalOpen(true)}
                                                 >
@@ -257,9 +339,18 @@ export default function TaxSummaryPage() {
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-4 flex-1 justify-end ml-10">
-                                            <div className="w-[310px] rotate-0 opacity-100 border-1 border-[#C7C7CC]" />
-                                            <div className="flex items-center gap-3">
-                                                <span className="font-Poppins font-semibold text-base leading-6 tracking-normal">₹ {summary.estimatedTax.toLocaleString()}</span>
+                                            <div className="flex-1 h-3 bg-[#F3F4F6] rounded-full overflow-hidden">
+                                                {summary.estimatedTax > 0 && (
+                                                    <motion.div 
+                                                        initial={{ width: 0 }}
+                                                        animate={{ width: `${Math.min(100, Math.max(2, (summary.estimatedTax / (summary.grossIncome || 1)) * 100))}%` }}
+                                                        transition={{ duration: 0.5, ease: "easeOut" }}
+                                                        className="h-full rounded-full bg-[#818CF8]"
+                                                    />
+                                                )}
+                                            </div>
+                                            <div className="flex justify-end items-center gap-3 min-w-[150px]">
+                                                <span className="font-Poppins font-semibold text-base leading-6 tracking-normal">₹ <CountUp value={summary.estimatedTax} /></span>
                                                 <MdKeyboardArrowDown size={24} className="text-black text-2xl cursor-pointer" />
                                             </div>
                                         </div>
@@ -267,7 +358,7 @@ export default function TaxSummaryPage() {
 
                                     {/* Tax Paid Row */}
                                     <div className="flex items-center justify-between w-full">
-                                        <div className="flex gap-4 items-start max-w-[450px]">
+                                        <div className="flex gap-4 items-start w-[450px] flex-shrink-0">
                                             <div className="w-[44px] h-[44px] rounded-full bg-[#000000]/20 flex items-center justify-center text-[#000000] flex-shrink-0">
                                                 <FiTag size={24} />
                                             </div>
@@ -281,9 +372,18 @@ export default function TaxSummaryPage() {
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-4 flex-1 justify-end ml-10">
-                                            <div className="w-[310px] rotate-0 opacity-100 border-1 border-[#C7C7CC]" />
-                                            <div className="flex items-center gap-3">
-                                                <span className="font-Poppins font-semibold text-base leading-6 tracking-normal">₹ 0</span>
+                                            <div className="flex-1 h-3 bg-[#F3F4F6] rounded-full overflow-hidden">
+                                                {(Number(state.taxesPaid) || 0) > 0 && (
+                                                    <motion.div 
+                                                        initial={{ width: 0 }}
+                                                        animate={{ width: `${Math.min(100, Math.max(2, ((Number(state.taxesPaid) || 0) / (summary.grossIncome || 1)) * 100))}%` }}
+                                                        transition={{ duration: 0.5, ease: "easeOut" }}
+                                                        className="h-full rounded-full bg-[#818CF8]"
+                                                    />
+                                                )}
+                                            </div>
+                                            <div className="flex justify-end items-center gap-3 min-w-[150px]">
+                                                <span className="font-Poppins font-semibold text-base leading-6 tracking-normal">₹ <CountUp value={Number(state.taxesPaid) || 0} /></span>
                                                 <MdKeyboardArrowDown size={24} className="text-black text-2xl cursor-pointer" />
                                             </div>
                                         </div>
@@ -291,7 +391,7 @@ export default function TaxSummaryPage() {
 
                                     {/* Refund Row */}
                                     <div className="flex items-center justify-between w-full">
-                                        <div className="flex gap-4 items-start max-w-[450px]">
+                                        <div className="flex gap-4 items-start w-[450px] flex-shrink-0">
                                             <div className="w-[44px] h-[44px] rounded-full bg-[#000000]/20 flex items-center justify-center text-[#000000] flex-shrink-0">
                                                 <FiRefreshCw size={24} />
                                             </div>
@@ -305,9 +405,18 @@ export default function TaxSummaryPage() {
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-4 flex-1 justify-end ml-10">
-                                            <div className="w-[310px] rotate-0 opacity-100 border-1 border-[#C7C7CC]" />
-                                            <div className="flex items-center gap-3">
-                                                <span className="font-Poppins font-semibold text-base leading-6 tracking-normal">₹ {summary.refundOrDue.toLocaleString()}</span>
+                                            <div className="flex-1 h-3 bg-[#F3F4F6] rounded-full overflow-hidden">
+                                                {summary.refundOrDue > 0 && (
+                                                    <motion.div 
+                                                        initial={{ width: 0 }}
+                                                        animate={{ width: `${Math.min(100, Math.max(2, (summary.refundOrDue / (summary.grossIncome || 1)) * 100))}%` }}
+                                                        transition={{ duration: 0.5, ease: "easeOut" }}
+                                                        className={`h-full rounded-full ${!summary.isRefund ? 'bg-[#34C759]' : 'bg-[#818CF8]'}`}
+                                                    />
+                                                )}
+                                            </div>
+                                            <div className="flex justify-end items-center gap-3 min-w-[150px]">
+                                                <span className={`font-Poppins font-semibold text-base leading-6 tracking-normal ${!summary.isRefund ? 'text-[#34C759]' : 'text-black'}`}>₹ <CountUp value={summary.refundOrDue} /></span>
                                                 <MdKeyboardArrowDown size={24} className="text-black text-2xl cursor-pointer" />
                                             </div>
                                         </div>
@@ -352,14 +461,13 @@ export default function TaxSummaryPage() {
                         />
                     </div>
 
-
                     {/* Sidebar Area */}
                     <div className="w-full lg:w-[320px] flex flex-col gap-6 fixed right-18 top-45">
                         <SupportCard
-                          title="Contact Support"
-                          description="AI and expert assistance."
-                          buttonText="Chat Now"
-                          onClick={openChat}
+                            title="Contact Support"
+                            description="AI and expert assistance."
+                            buttonText="Chat Now"
+                            onClick={openChat}
                         />
                         <Button
                             variant="brand"
@@ -374,10 +482,20 @@ export default function TaxSummaryPage() {
                 </div>
                 <Footer2 />
             </div>
-
-            <SlabRateModal 
-                isOpen={isSlabModalOpen} 
-                onClose={() => setIsSlabModalOpen(false)} 
+            <SlabRateModal
+                isOpen={isSlabModalOpen}
+                onClose={() => setIsSlabModalOpen(false)}
+            />
+            <RegimeComparisonModal
+                isOpen={isComparisonModalOpen}
+                onClose={() => setIsComparisonModalOpen(false)}
+                onSwitchClick={handleSwitchClick}
+            />
+            <ConfirmRegimeChangeModal
+                isOpen={isConfirmModalOpen}
+                onClose={() => setIsConfirmModalOpen(false)}
+                onConfirm={handleConfirmSwitch}
+                currentRegime={selectedRegime}
             />
         </ProtectedRoute>
     );

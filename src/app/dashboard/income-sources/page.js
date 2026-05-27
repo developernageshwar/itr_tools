@@ -42,7 +42,10 @@ export default function IncomeSourcesPage() {
     setFields, updateStep 
   } = useItrStore();
 
+  const targetRouteRef = React.useRef(null);
+
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
       salaryIncome: salaryIncome || 0,
       interestIncome: interestIncome || 0,
@@ -56,27 +59,32 @@ export default function IncomeSourcesPage() {
     validationSchema: incomeSourcesSchema,
     onSubmit: (values) => {
       setFields(values);
-      updateStep(3);
-      router.push('/dashboard/tax-saving');
+      const targetRoute = targetRouteRef.current || '/dashboard/tax-saving';
+      const routesToStep = {
+        '/dashboard/filing-form': 1,
+        '/dashboard/income-sources': 2,
+        '/dashboard/tax-saving': 3,
+        '/dashboard/tax-summary': 4,
+      };
+      updateStep(routesToStep[targetRoute] || 3);
+      router.push(targetRoute);
+      targetRouteRef.current = null;
     },
   });
 
-  const handleNext = async () => {
-    const errors = await formik.validateForm();
-    if (Object.keys(errors).length === 0) {
-      formik.handleSubmit();
-    } else {
-      formik.setTouched({
-        salaryIncome: true,
-        interestIncome: true,
-        capitalGains: true,
-        houseProperties: true,
-        dividendIncome: true,
-        businessIncome: true,
-        cryptoIncome: true,
-        otherIncome: true,
-      });
+  const handleNext = () => {
+    targetRouteRef.current = '/dashboard/tax-saving';
+    formik.handleSubmit();
+    if (!formik.isValid) {
       toast.error('Please fix the errors in the form');
+    }
+  };
+
+  const handleStepClick = (route) => {
+    targetRouteRef.current = route;
+    formik.handleSubmit();
+    if (!formik.isValid) {
+      toast.error('Please fix the errors in the form before proceeding.');
     }
   };
 
@@ -145,7 +153,7 @@ export default function IncomeSourcesPage() {
       <div className="w-full max-w-[1440px] mx-auto p-10 flex flex-col gap-10 font-poppins">
 
         <div className="flex items-center justify-between">
-          <Stepper1 currentStep={2} />
+          <Stepper1 currentStep={2} onStepClick={handleStepClick} />
           <div className="w-[320px] hidden lg:block" />
         </div>
 

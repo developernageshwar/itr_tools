@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
-const Stepper1 = ({ currentStep = 1 }) => {
+const Stepper1 = ({ currentStep = 1, onStepClick, errorSteps = [] }) => {
   const router = useRouter();
 
   const steps = [
@@ -14,7 +14,9 @@ const Stepper1 = ({ currentStep = 1 }) => {
   ];
 
   const handleStepClick = (route) => {
-    if (route) {
+    if (onStepClick) {
+      onStepClick(route);
+    } else if (route) {
       router.push(route);
     }
   };
@@ -40,8 +42,8 @@ const Stepper1 = ({ currentStep = 1 }) => {
                 ${isActive
                   ? "bg-gradient-brand text-white"
                   : isCompleted
-                    ? "bg-gradient-to-r from-[#1498EB]/50 to-[#962DE3]/50  text-white font-medium"
-                    : "bg-white border border-[#8E8E93] text-[#8E8E93]" 
+                    ? (errorSteps.includes(step.id) ? " bg-gradient-to-r from-[#1498EB]/50 to-[#962DE3]/50 text-white border-1 border-red-500" : "bg-gradient-to-r from-[#1498EB]/50 to-[#962DE3]/50  text-white font-medium")
+                    : (errorSteps.includes(step.id) ? " bg-gradient-brand border-1 border-red-500" : "border border-[#8E8E93] text-[#8E8E93]")
                 }
               `}
             >
