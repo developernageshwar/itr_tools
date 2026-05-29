@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { calculateTax, NEW_REGIME_SLABS, OLD_REGIME_SLABS } from '../utils/taxCalculator';
+import { calculateTax, NEW_REGIME_SLABS, OLD_REGIME_SLABS, determineITRType } from '../utils/taxCalculator';
 
 const defaultFormData = {
   selectedRegime: 'new',
@@ -19,12 +19,12 @@ const defaultFormData = {
   roadStreet: '',
   areaLocality: '',
   pincode: '',
-  country: 'INDIA', 
+  country: 'INDIA',
   state: '',
   city: '',
   salaryFilePath: '',
-  taxSavingDetails: [],  
-  
+  taxSavingDetails: [],
+
   salaryIncome: 0,
   interestIncome: 0,
   capitalGains: 0,
@@ -83,9 +83,9 @@ export const useItrStore = create(
 
       setIsFilingTypeModalOpen: (value) => set({ isFilingTypeModalOpen: value }),
 
-      setSelectedFilingType: (value) => set({ selectedFilingType: value }), 
+      setSelectedFilingType: (value) => set({ selectedFilingType: value }),
 
-      addProfile: (profile) => set((state) => { 
+      addProfile: (profile) => set((state) => {
         const currentSnapshot = _extractFormData(state);
         const updatedMap = {
           ...state.profileDataMap,
@@ -100,16 +100,16 @@ export const useItrStore = create(
       }),
 
       setActiveProfile: (id) => set((state) => {
-        if (id === state.activeProfileId) return {}; 
+        if (id === state.activeProfileId) return {};
 
         const currentSnapshot = _extractFormData(state);
         const updatedMap = {
           ...state.profileDataMap,
           [state.activeProfileId]: currentSnapshot,
-        }; 
+        };
 
         const targetData = updatedMap[id] || { ...defaultFormData };
- 
+
         const updatedProfiles = state.profiles.map(p => {
           if (p.id === state.activeProfileId) {
             return {
@@ -131,7 +131,7 @@ export const useItrStore = create(
           profileDataMap: updatedMap,
           isDropdownOpen: false,
         };
-      }), 
+      }),
 
       createNewProfile: (filingType) => set((state) => {
         const currentSnapshot = _extractFormData(state);
@@ -182,7 +182,7 @@ export const useItrStore = create(
 
       resetForNewPerson: () => {
         get().createNewProfile('Individual');
-      }, 
+      },
 
       resetForm: () => set((state) => ({
         ...defaultFormData,
@@ -192,7 +192,7 @@ export const useItrStore = create(
         isDropdownOpen: state.isDropdownOpen,
         isFilingTypeModalOpen: state.isFilingTypeModalOpen,
         selectedFilingType: state.selectedFilingType,
-      })), 
+      })),
 
       saveCurrentProfileData: () => set((state) => {
         const snapshot = _extractFormData(state);
@@ -267,29 +267,31 @@ export const useItrStore = create(
           Number(state.salaryIncome) +
           Number(state.interestIncome) +
           Number(state.capitalGains) +
+          Number(state.houseProperties) +
           Number(state.dividendIncome) +
           Number(state.businessIncome) +
           Number(state.cryptoIncome) +
           Number(state.otherIncome);
 
         const totalDeductions = Number(state.taxSavingsDeductions);
-      
-        const standardDeduction = state.salaryIncome > 0 ? 50000 : 0;
-        
-        const oldTaxableIncome = Math.max(0, grossIncome - standardDeduction - totalDeductions);
-        const newTaxableIncome = Math.max(0, grossIncome - standardDeduction);
 
-        const oldRegimeTaxCalc = calculateTax(oldTaxableIncome, OLD_REGIME_SLABS);
-        const newRegimeTaxCalc = calculateTax(newTaxableIncome, NEW_REGIME_SLABS);
+        const standardDeductionOld = state.salaryIncome > 0 ? 50000 : 0;
+        const standardDeductionNew = state.salaryIncome > 0 ? 75000 : 0; // Standard deduction in New Regime
+
+        const oldTaxableIncome = Math.max(0, grossIncome - standardDeductionOld - totalDeductions);
+        const newTaxableIncome = Math.max(0, grossIncome - standardDeductionNew);
+
+        const oldRegimeTaxCalc = calculateTax(oldTaxableIncome, OLD_REGIME_SLABS, 'old');
+        const newRegimeTaxCalc = calculateTax(newTaxableIncome, NEW_REGIME_SLABS, 'new');
 
         const oldRegimeTax = oldRegimeTaxCalc.finalTax;
         const newRegimeTax = newRegimeTaxCalc.finalTax;
 
         const taxComparison = {
-            old: oldRegimeTax,
-            new: newRegimeTax,
-            savings: Math.abs(oldRegimeTax - newRegimeTax),
-            betterRegime: oldRegimeTax <= newRegimeTax ? 'old' : 'new'
+          old: oldRegimeTax,
+          new: newRegimeTax,
+          savings: Math.abs(oldRegimeTax - newRegimeTax),
+          betterRegime: oldRegimeTax <= newRegimeTax ? 'old' : 'new'
         };
 
         const activeTaxableIncome = state.selectedRegime === 'new' ? newTaxableIncome : oldTaxableIncome;
@@ -298,6 +300,8 @@ export const useItrStore = create(
 
         const taxesPaid = Number(state.taxesPaid);
         const refundOrDue = taxesPaid - estimatedTax;
+
+        const itrSelection = determineITRType(state);
 
         return {
           grossIncome,
@@ -311,9 +315,13 @@ export const useItrStore = create(
           taxComparison,
           slabBreakdown: activeTaxCalc.slabWiseBreakdown,
           cess: activeTaxCalc.cess,
-          slabTax: activeTaxCalc.totalTax,
+          slabTax: activeTaxCalc.taxBeforeRebate,
+          rebate: activeTaxCalc.rebate,
+          surcharge: activeTaxCalc.surcharge,
           refundOrDue: Math.abs(refundOrDue),
-          isRefund: refundOrDue > 0
+          isRefund: refundOrDue > 0,
+          itrType: itrSelection.type,
+          itrReason: itrSelection.reason
         };
       }
     }),

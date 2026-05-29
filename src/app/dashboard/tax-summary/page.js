@@ -83,7 +83,9 @@ export default function TaxSummaryPage() {
         }
     }, [user, setField]);
 
-    const summary = calculateSummary();
+    const summary = calculateSummary();  
+
+    console.log(summary, "sumary")
 
     const summaryData = [
         { label: "Gross Income", value: summary.grossIncome },
@@ -195,7 +197,7 @@ export default function TaxSummaryPage() {
                                 <div className="flex items-center justify-center gap-[60px] text-[14px]">
                                     <div className="font-Poppins font-normal flex items-center gap-4 text-base leading-6 tracking-normal">
                                         <span >Your ITR Type : </span>
-                                        <span >ITR 1</span>
+                                        <span >{summary.itrType || 'ITR 1'}</span>
                                         <MdKeyboardArrowRight size={25} color='#1E1E1E' />
                                     </div>
                                     <div className="w-[2px] h-4 bg-[#000000]" />
@@ -272,9 +274,9 @@ export default function TaxSummaryPage() {
                                     <div className='flex  flex-col  justify-center gap-10 pt-2'>
                                         <div className="flex items-center  gap-4">
                                             <span className="font-Poppins font-normal text-base leading-6 tracking-normal">Your ITR Type: </span>
-                                            <span className="w-[66px] text-white font-medium font-Poppins text-[16px] rotate-0 opacity-100 gap-2.5 rounded py-1 px-4 bg-[#3867D6]">ITR 1</span>
+                                            <span className="w-[66px] text-white font-medium font-Poppins text-[16px] rotate-0 opacity-100 gap-2.5 rounded py-1 px-4 bg-[#3867D6] whitespace-nowrap">{summary.itrType || 'ITR 1'}</span> 
                                         </div>
-                                        <p className="font-Poppins  text-[#8E8E93] font-normal text-base leading-6 tracking-normal">Income from salary or interest</p>
+                                        <p className="font-Poppins text-[#8E8E93] font-normal text-[14px] leading-5 tracking-normal max-w-[280px]">{summary.itrReason || 'Income from salary or interest'}</p>
                                     </div>
                                 </div>
                             </div>
