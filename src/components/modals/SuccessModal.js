@@ -17,7 +17,7 @@ const SuccessModal = ({ isOpen, onClose, onProceed }) => {
         >
           <HiCheckCircle className="text-green-500 w-20 h-20" />
         </motion.div>
-        
+
         <div className="space-y-2">
           <h2 className="font-poppins font-semibold text-2xl text-black">Verification Successful!</h2>
           <p className="font-poppins text-gray-500 text-sm">

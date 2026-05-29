@@ -40,13 +40,16 @@ export default function IncomeSourcesPage() {
     salaryIncome, interestIncome, capitalGains, houseProperties,
     dividendIncome, businessIncome, cryptoIncome, otherIncome,
     setFields, updateStep 
-  } = useItrStore();
+  } = useItrStore(); 
+
+  console.log("salaryIncome", salaryIncome);
+  
 
   const targetRouteRef = React.useRef(null);
 
   const formik = useFormik({
     enableReinitialize: true,
-    initialValues: {
+    initialValues: { 
       salaryIncome: salaryIncome || 0,
       interestIncome: interestIncome || 0,
       capitalGains: capitalGains || 0,
@@ -106,7 +109,7 @@ export default function IncomeSourcesPage() {
     },
     {
       id: 'gains',
-      fieldName: 'capitalGains',
+      fieldName: 'capitalGains', 
       icon: IoMdTrendingUp,
       title: "Gains from Stocks, Mutual Funds, FnO & Others.",
       description: "Easy auto-processing of your Gains from selling of Stocks, Mutual Funds, US Stocks, Land, Bonds, RSUs, Jewellery and more.",
