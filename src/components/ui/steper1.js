@@ -3,10 +3,10 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
-const Stepper1 = ({ currentStep = 1, onStepClick, errorSteps = [] }) => {
+const Stepper1 = ({ currentStep = 1, onStepClick, errorSteps = [], customSteps }) => {
   const router = useRouter();
 
-  const steps = [
+  const steps = customSteps || [
     { id: 1, label: "Personal Info", route: "/dashboard/filing-form" },
     { id: 2, label: "Income Sources", route: "/dashboard/income-sources" },
     { id: 3, label: "Tax Saving", route: "/dashboard/tax-saving" },

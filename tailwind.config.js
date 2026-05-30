@@ -12,7 +12,8 @@ module.exports = {
         'light-purple': "#F8F0FF",
         'brand-blue': "#1498EB",
         'brand-purple': "#962DE3",
-        'brand-dark': "#0F172A",
+        'brand-dark': "#0F172A", 
+        'light-gray': "#8e8e93",
         brand: {
           blue: "#1498EB",
           purple: "#962DE3",

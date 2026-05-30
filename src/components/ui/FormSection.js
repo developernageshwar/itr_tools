@@ -12,13 +12,14 @@ const FormSection = ({
   defaultExpanded = true, 
   className,
   hideArrow = false,
-  rightAction
+  rightAction,
+  alwaysOpen = false
 }) => {
-  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+  const [isExpanded, setIsExpanded] = useState(alwaysOpen || defaultExpanded);
 
   return (
     <div className={cn(
-      "w-[1000px] flex flex-col rounded-[28px] border border-[#3867D6] bg-white transition-all duration-300",
+      "w-full flex flex-col rounded-[28px] border border-[#3867D6] bg-white transition-all duration-300",
       isExpanded ? "gap-7 p-5" : "gap-0 p-2",
       className
     )}>
@@ -28,7 +29,7 @@ const FormSection = ({
           "flex items-start justify-between cursor-pointer hover:bg-gray-50 transition-colors rounded-t-[28px]",
           isExpanded ? "p-6" : "p-4"
         )}
-        onClick={() => !rightAction && setIsExpanded(!isExpanded)}
+        onClick={() => !alwaysOpen && !rightAction && setIsExpanded(!isExpanded)}
       >
         <div className="flex items-start gap-4 flex-1">
           {/* Icon Circle - Centered with Title */}

@@ -21,8 +21,12 @@ const StartFillingModal = ({ isOpen, onClose }) => {
   const handleProceed = () => {
     createNewProfile(selectedFilingType);
     onClose();
-    router.push('/dashboard/pan-details');
-  };
+    if (selectedFilingType === 'Company Private') {
+      router.push('/dashboard/company-private/details');
+    } else {
+      router.push('/dashboard/pan-details');
+    }
+  }; 
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} className="w-[800px]    rounded-[16px] border border-[#C7C7CC] opacity-100">

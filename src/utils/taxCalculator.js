@@ -22,7 +22,7 @@ export const calculateTax = (income, slabs, regime = 'new') => {
   for (const slab of slabs) {
     if (income > slab.min) {
       const taxableAmountInSlab = Math.min(income, slab.max) - slab.min;
-      const taxAmount = (taxableAmountInSlab * slab.rate) / 100;
+      const taxAmount = (taxableAmountInSlab * slab.rate) / 100; 
       totalTax += taxAmount;
 
       slabWiseBreakdown.push({
