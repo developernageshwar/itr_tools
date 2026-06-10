@@ -19,9 +19,9 @@ const FormSection = ({
 
   return (
     <div className={cn(
-      "w-full flex flex-col rounded-[28px] border border-[#3867D6] bg-white transition-all duration-300",
+      "w-[1000px] flex flex-col rounded-[28px] border border-[#3867D6] bg-white transition-all duration-300",
       isExpanded ? "gap-7 p-5" : "gap-0 p-2",
-      className
+      className 
     )}>
       {/* Section Header */}
       <div

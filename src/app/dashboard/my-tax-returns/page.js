@@ -4,10 +4,10 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { MdArrowBack, MdKeyboardArrowUp, MdInfoOutline } from 'react-icons/md';
+import { MdArrowBack, MdKeyboardArrowUp, MdInfoOutline, MdCheckCircle } from 'react-icons/md';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import Button from '@/components/ui/Button';
-import ProtectedRoute from '@/components/auth/ProtectedRoute';  
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import Footer2 from '@/components/layout/Footer2';
 import StartFillingModal from '@/components/ui/StartFillingModal';
 import { useItrStore } from '@/store/itrStore';
@@ -15,7 +15,7 @@ import { useItrStore } from '@/store/itrStore';
 export default function MyTaxReturnsPage() {
   const router = useRouter();
   const { profiles, activeProfileId, setActiveProfile, saveCurrentProfileData } = useItrStore();
-  
+
   const [expandedProfiles, setExpandedProfiles] = useState({});
   const [isStartFillingOpen, setIsStartFillingOpen] = useState(false);
 
@@ -69,9 +69,9 @@ export default function MyTaxReturnsPage() {
           </Button>
         </div>
 
-        <StartFillingModal 
-          isOpen={isStartFillingOpen} 
-          onClose={() => setIsStartFillingOpen(false)} 
+        <StartFillingModal
+          isOpen={isStartFillingOpen}
+          onClose={() => setIsStartFillingOpen(false)}
         />
 
         <div className="flex flex-col gap-10">
@@ -80,12 +80,12 @@ export default function MyTaxReturnsPage() {
             const isActive = profile.id === activeProfileId;
 
             return (
-              <div key={profile.id} className="w-full border-b border-b-[#E0E0E0] flex flex-col gap-10 opacity-100 pb-10"> 
-                <div 
+              <div key={profile.id} className="w-full border-b border-b-[#E0E0E0] flex flex-col gap-10 opacity-100 pb-10">
+                <div
                   className={`flex items-center justify-between cursor-pointer ${isActive ? '' : 'hover:opacity-80 transition-opacity'}`}
                   onClick={() => handleProfileSwitch(profile.id)}
                 >
-                  <div className="flex items-center gap-4"> 
+                  <div className="flex items-center gap-4">
                     {/* Avatar */}
                     <div className="w-[44px] h-[44px] rounded-full bg-[#3867D633] flex items-center justify-center">
                       <span className="text-[#3867D6] font-semibold text-[16px] font-outfit">
@@ -111,20 +111,20 @@ export default function MyTaxReturnsPage() {
                   </div>
 
                   {/* Collapse Icon */}
-                  <div 
+                  <div
                     className="w-[44px] h-[44px] rounded-full bg-[#3867D633] flex items-center justify-center cursor-pointer transition-colors hover:bg-[#3867D644]"
                     onClick={(e) => toggleExpand(profile.id, e)}
                   >
-                    <MdKeyboardArrowUp 
-                      size={28} 
-                      className={`text-[#3867D6] transition-transform duration-300 ${!isExpanded ? 'rotate-180' : ''}`} 
+                    <MdKeyboardArrowUp
+                      size={28}
+                      className={`text-[#3867D6] transition-transform duration-300 ${!isExpanded ? 'rotate-180' : ''}`}
                     />
                   </div>
                 </div>
 
                 {/* Filing Details Section */}
                 {isExpanded && (
-                  <div className="flex ml-14 justify-between animate-in fade-in slide-in-from-top-2 duration-300">
+                  <div className="flex ml-14 justify-between items-center animate-in fade-in slide-in-from-top-2 duration-300">
                     {/* Year Info */}
                     <div className="flex flex-col gap-2">
                       <h3 className="font-poppins font-medium text-[20px] leading-[100%] tracking-normal text-black">
@@ -138,32 +138,61 @@ export default function MyTaxReturnsPage() {
                     {/* Status Rows */}
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center gap-3">
-                        <MdInfoOutline className="text-[#FF383C]" size={27} />
-                        <p className="font-poppins font-medium text-[20px] leading-[100%] tracking-normal">
-                          E-Filed | <span className="font-poppins font-normal text-[14px] leading-[17px] tracking-normal text-[#FF383C]">Pending</span>
-                        </p>
+                        {profile.filingStatus === 'Filed' ? (
+                          <>
+                            <MdCheckCircle className="text-[#34C759]" size={27} />
+                            <p className="font-poppins font-medium text-[20px] leading-[100%] tracking-normal">
+                              E-Filed | <span className="font-poppins font-normal text-[14px] leading-[17px] tracking-normal text-[#34C759]">Filed</span>
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <MdInfoOutline className="text-[#FF383C]" size={27} />
+                            <p className="font-poppins font-medium text-[20px] leading-[100%] tracking-normal">
+                              E-Filed | <span className="font-poppins font-normal text-[14px] leading-[17px] tracking-normal text-[#FF383C]">Pending</span>
+                            </p>
+                          </>
+                        )}
                       </div>
                       <div className="flex items-center gap-3">
-                        <MdInfoOutline className="text-[#FF383C]" size={27} />
-                        <p className="font-poppins font-medium text-[20px] leading-[100%] tracking-normal">
-                          E- Verification | <span className="font-poppins font-normal text-[14px] leading-[17px] tracking-normal text-[#FF383C]">Pending</span>
-                        </p>
-                      </div> 
+                        {profile.filingStatus === 'Filed' ? (
+                          <>
+                            <MdCheckCircle className="text-[#34C759]" size={27} />
+                            <p className="font-poppins font-medium text-[20px] leading-[100%] tracking-normal">
+                              E-Verification | <span className="font-poppins font-normal text-[14px] leading-[17px] tracking-normal text-[#34C759]">Completed</span>
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <MdInfoOutline className="text-[#FF383C]" size={27} />
+                            <p className="font-poppins font-medium text-[20px] leading-[100%] tracking-normal">
+                              E- Verification | <span className="font-poppins font-normal text-[14px] leading-[17px] tracking-normal text-[#FF383C]">Pending</span>
+                            </p>
+                          </>
+                        )}
+                      </div>  
                     </div>
 
                     {/* Action Buttons */}
                     <div className="flex items-center gap-4">
-                      <Button  
-                        variant="whiteGradient"
-                        className="py-2 px-4 gap-[10px] rounded-lg border font-poppins font-semibold text-base leading-6 tracking-normal"
-                        onClick={(e) => { 
-                          e.stopPropagation();
-                          if (!isActive) handleProfileSwitch(profile.id);
-                          router.push('/dashboard/pan-details');
-                        }}
-                      >
-                        Continue Filling
-                      </Button>
+                      {profile.filingStatus === 'Filed' ? (
+                        <div className="flex flex-col items-end gap-1">
+                          <span className="text-xs text-[#8E8E93] font-poppins">Ack: {profile.acknowledgementNumber}</span>
+                          <span className="text-sm font-semibold text-[#34C759] font-poppins">Successfully Filed</span>
+                        </div>
+                      ) : (
+                        <Button
+                          variant="whiteGradient"
+                          className="py-2 px-4 gap-[10px] rounded-lg border font-poppins font-semibold text-base leading-6 tracking-normal"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (!isActive) handleProfileSwitch(profile.id);
+                            router.push('/dashboard/pan-details');
+                          }}
+                        >
+                          Continue Filing
+                        </Button>
+                      )}
                       <div className="text-[#8E8E93] hover:bg-gray-100 p-2 rounded-full transition-colors cursor-pointer">
                         <BsThreeDotsVertical size={24} />
                       </div>
@@ -181,4 +210,4 @@ export default function MyTaxReturnsPage() {
       </div>
     </ProtectedRoute>
   );
-}
+} 

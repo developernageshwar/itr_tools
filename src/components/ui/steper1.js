@@ -26,9 +26,9 @@ const Stepper1 = ({ currentStep = 1, onStepClick, errorSteps = [], customSteps }
       {steps.map((step, index) => {
         const isActive = currentStep === step.id;
         const isCompleted = currentStep > step.id;
-        
+
         return (
-          <React.Fragment key={step.id}> 
+          <React.Fragment key={step.id}>
             <div
               onClick={() => handleStepClick(step.route)}
               className={`     
@@ -38,7 +38,7 @@ const Stepper1 = ({ currentStep = 1, onStepClick, errorSteps = [], customSteps }
                 px-[30px] 
                 font-poppins 
                 transition-all duration-300
-                cursor-pointer hover:opacity-80
+                cursor-pointer hover:opacity-80 uppercase
                 ${isActive
                   ? "bg-gradient-brand text-white"
                   : isCompleted
@@ -47,14 +47,13 @@ const Stepper1 = ({ currentStep = 1, onStepClick, errorSteps = [], customSteps }
                 }
               `}
             >
-              {step.label}
+              {step.label} 
             </div>
 
             {/* Connector Line */}
             {index < steps.length - 1 && (
-              <div className={`flex-1 h-[1px] ${
-                currentStep > step.id ? "bg-gradient-brand" : "bg-[#8E8E93]"
-              }`} />
+              <div className={`flex-1 h-[1px] ${currentStep > step.id ? "bg-gradient-brand" : "bg-[#8E8E93]"
+                }`} />
             )}
           </React.Fragment>
         );

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -8,7 +8,7 @@ import { useAuth } from '@/context/AuthContext';
 import Button from '@/components/ui/Button';
 import Checkbox from '@/components/ui/Checkbox';
 
-export default function ConfirmPage() {
+function ConfirmPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get('email') || 'loremipsum@gmail.com';
@@ -151,8 +151,15 @@ export default function ConfirmPage() {
             </Button>
           </div>
         </div>
-
       </div>
     </div>
+  );
+}
+
+export default function ConfirmPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center font-poppins text-lg text-brand-blue">Loading...</div>}>
+      <ConfirmPageContent />
+    </Suspense>
   );
 }

@@ -6,6 +6,7 @@ import { IoClose } from 'react-icons/io5';
 import Button from './Button';
 import { useRouter } from 'next/navigation';
 import { useItrStore } from '@/store/itrStore';
+import { filingTypeConfig } from '@/config/filingConfig';
 
 const StartFillingModal = ({ isOpen, onClose }) => {
   const router = useRouter();
@@ -14,19 +15,18 @@ const StartFillingModal = ({ isOpen, onClose }) => {
   const options = [
     'Individual', 'HUF',
     'AOP/BOI', 'Company Public',
-    'Company Private', 'Firm',
-    'Cooperative Society', 'LLP'
-  ];
+    'Company Private', 'Firm', 
+     'LLP', 'Trust & Exempt Entities' 
+  ];  
+  // "Trust & Exempt Entities"   
+  // Cooperative Society  
 
   const handleProceed = () => {
-    createNewProfile(selectedFilingType);
+    createNewProfile(selectedFilingType); 
     onClose();
-    if (selectedFilingType === 'Company Private') {
-      router.push('/dashboard/company-private/details');
-    } else {
-      router.push('/dashboard/pan-details');
-    }
-  }; 
+    const route = filingTypeConfig[selectedFilingType]?.detailsRoute || '/dashboard/pan-details';
+    router.push(route);
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} className="w-[800px]    rounded-[16px] border border-[#C7C7CC] opacity-100">

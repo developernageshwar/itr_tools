@@ -19,13 +19,27 @@ const FloatingInput = ({
   children,
   ...props
 }) => {
+  const renderLabel = (labelStr) => {
+    if (typeof labelStr === 'string' && labelStr.includes('*')) {
+      const parts = labelStr.split('*');
+      return (
+        <>
+          {parts[0]}
+          <span className="text-red-500 font-bold">*</span>
+          {parts.slice(1).join('*')}
+        </>
+      );
+    }
+    return labelStr;
+  };
+
   if (variant === 'gradient') {
     return (
       <div className={cn("flex flex-col gap-2 w-full max-w-[200px]", className)}>
         <div className={cn("relative pt-2", wrapperClassName)}>
           {/* Small Floating Label Box */}
           <label className={cn("absolute left-3 -top-0.5 z-10 bg-white px-1 font-poppins font-normal text-[14px] leading-none text-[#3867D6] transition-all", labelClassName)}>
-            {label}
+            {renderLabel(label)}
           </label>
 
           {/* Input with Gradient Border */}
@@ -70,7 +84,7 @@ const FloatingInput = ({
     <div className={cn("flex flex-col gap-2 w-full max-w-[400px]", className)}>
       <div className={cn("relative", wrapperClassName)}>
         <label className={cn("absolute left-3 -top-3 z-10 bg-white px-1 font-poppins font-normal text-[14px] leading-6 tracking-normal text-[#49454F]", labelClassName)}>
-          {label}
+          {renderLabel(label)}
         </label>
         <Component
           type={type === 'text' ? undefined : type}

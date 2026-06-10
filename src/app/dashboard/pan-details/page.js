@@ -541,7 +541,17 @@ export default function PanDetailsPage() {
                 helperText="Specify date in format like DD/MM/YYYY"
               />
 
-              <div className="flex flex-col gap-4 w-full max-w-[400px]">
+              <div className="flex flex-col gap-4 w-full max-w-[400px]">  
+
+                <Button
+                  type="button"
+                  variant="whiteGradient"
+                  className="w-full font-poppins font-semibold text-base rounded-lg py-3"
+                  onClick={() => router.push('/dashboard/upload-form16')}
+                >
+                  Skip
+                </Button> 
+
                 <Button
                   type="submit"
                   variant="brand"
@@ -552,6 +562,8 @@ export default function PanDetailsPage() {
                   Verify & Continue
                 </Button>
 
+                
+{/* 
                 <Button
                   type="button"
                   variant="whiteGradient"
@@ -559,7 +571,7 @@ export default function PanDetailsPage() {
                   onClick={() => router.back()}
                 >
                   Back
-                </Button>
+                </Button> */}
               </div>
             </form>
           </div>
