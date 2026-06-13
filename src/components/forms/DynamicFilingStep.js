@@ -948,9 +948,11 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
     const entityName = entityInfo.entityName;
     const formationDate = entityInfo.formationDate;
     const panNumber = entityInfo.panNumber;
+    const currentData = isStructuredType(filingType) ? (state[step]?.[activeTab] || {}) : state;
+    const efileConfig = fieldsConfig[filingType]?.[step]?.[activeTab] || fieldsConfig[filingType]?.filing?.efiling || fieldsConfig[filingType]?.tax?.verification;
 
     return (
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6"> 
         {/* Regime Modals */}
         <RegimeComparisonModal
           isOpen={isRegimeModalOpen}
@@ -1092,52 +1094,77 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
         </FormSection>
 
         {/* Verification & Declaration */}
-        {/* <FormSection
-          title="Filing Declaration & Verification"
-          description="Please verify and sign the declaration below to complete filing."
-          icon={MdSecurity}
-          defaultExpanded={true}
-          alwaysOpen={true}
-          hideArrow={true}
-        >
-          <div className="pt-2 flex flex-col gap-6">
-            <div className="flex items-start gap-3 bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <input
-                type="checkbox"
-                id="declarationCheck"
-                className="mt-1.5 h-4 w-4 text-[#3867D6] focus:ring-[#3867D6] border-gray-300 rounded cursor-pointer"
-                checked={!!state.declarationCheck}
-                onChange={(e) => setFields({ declarationCheck: e.target.checked })}
-              />
-              <label htmlFor="declarationCheck" className="font-poppins font-normal text-sm text-[#1E1E1E] leading-6 cursor-pointer">
-                I, <span className="font-semibold text-black">{state.kartaName || '[Karta Name]'}</span>, in my capacity as Karta of this HUF solemnly declare that to the best of my knowledge and belief, the information given in the return and the schedules thereto is correct and complete and is in accordance with the provisions of the Income-tax Act, 1961.
-              </label>
+        {efileConfig && efileConfig.sections && (
+          <FormSection
+            title={efileConfig.title || "Filing Declaration & Verification"}
+            description={efileConfig.subtitle || "Please verify and sign the declaration below to complete filing."}
+            icon={MdSecurity}
+            defaultExpanded={true}
+            alwaysOpen={true}
+            hideArrow={true}
+          >
+            <div className="pt-2 flex flex-col gap-6">
+              {/* Optional: Render declaration text if desired */}
+              {filingType === 'HUF' && (
+                <div className="flex items-start gap-3 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                  <p className="font-poppins font-normal text-sm text-[#1E1E1E] leading-6">
+                    I, <span className="font-semibold text-black">{state.details?.general?.kartaName || state.details?.permanent?.kartaName || '[Karta Name]'}</span>, in my capacity as Karta of this HUF solemnly declare that to the best of my knowledge and belief, the information given in the return and the schedules thereto is correct and complete and is in accordance with the provisions of the Income-tax Act, 1961.
+                  </p>
+                </div>
+              )}
+              {['Company Private', 'Company Public'].includes(filingType) && (
+                <div className="flex items-start gap-3 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                  <p className="font-poppins font-normal text-sm text-[#1E1E1E] leading-6">
+                    I solemnly declare that to the best of my knowledge and belief, the information given in the return and the schedules thereto is correct and complete and is in accordance with the provisions of the Income-tax Act, 1961. I further declare that I am holding the designation selected below and am authorized to sign this return.
+                  </p>
+                </div>
+              )}
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                {efileConfig.sections.map((sec) => 
+                  sec.fields.map((field, fieldIdx) => {
+                    const val = currentData[field.name] || '';
+                    const isNumber = field.type === 'number';
+                    
+                    if (field.type === 'select') {
+                      return (
+                        <FloatingInput
+                          key={fieldIdx}
+                          as="select"
+                          label={field.label}
+                          name={field.name}
+                          value={val}
+                          onChange={(e) => handleFieldChange(field.name, e.target.value, isNumber)}
+                          error={errors[field.name]}
+                          touched={!!errors[field.name]}
+                        >
+                          <option value="" disabled>Select {field.label?.replace(' *', '')}</option>
+                          {field.options?.map(opt => (
+                            <option key={opt} value={opt}>{opt}</option>
+                          ))}
+                        </FloatingInput>
+                      );
+                    }
+                    
+                    return (
+                      <FloatingInput
+                        key={fieldIdx}
+                        type={field.type || 'text'}
+                        label={field.label}
+                        name={field.name}
+                        placeholder={field.placeholder || ''}
+                        value={val}
+                        onChange={(e) => handleFieldChange(field.name, e.target.value, isNumber)}
+                        error={errors[field.name]}
+                        touched={!!errors[field.name]}
+                      />
+                    );
+                  })
+                )}
+              </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FloatingInput
-                type="text"
-                placeholder="Enter Place"
-                label="Place *"
-                name="verificationPlace"
-                value={state.verificationPlace || ''}
-                onChange={(e) => setFields({ verificationPlace: e.target.value })}
-              />
-
-              <FloatingInput
-                as="select"
-                label="Verification Mode *"
-                name="verificationMode"
-                value={state.verificationMode || ''}
-                onChange={(e) => setFields({ verificationMode: e.target.value })}
-              >
-                <option value="">Select Mode</option>
-                <option value="Aadhaar OTP">Aadhaar OTP</option>
-                <option value="Netbanking">Netbanking</option>
-              </FloatingInput>
-            </div>
-          </div>
-        </FormSection> */}
+          </FormSection>
+        )}
 
         {/* Word Report */}  
 

@@ -51,13 +51,13 @@ const DashboardNavbar = () => {
           </div>
 
           {/* Share Button — gradient border, white bg, gradient text */}
-          <Button
+          {/* <Button
             variant="whiteGradient"
             className=" py-2 px-4 gap-[10px] rounded-lg border font-poppins font-semibold text-base leading-6 tracking-normal"
-            onClick={() => setIsShareModalOpen(true)}
+            onClick={() => setIsShareModalOpen(true)} 
           >
             Share
-          </Button>
+          </Button> */} 
 
           {/* Chat / Message Icon */}
           <div  
@@ -119,4 +119,4 @@ const DashboardNavbar = () => {
   );
 };
 
-export default DashboardNavbar;
+export default DashboardNavbar; 

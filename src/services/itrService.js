@@ -50,6 +50,19 @@ const itrService = {
       console.error('Error saving draft:', error);
       throw error;
     }
+  },
+
+  getItrDetails: async (userId) => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/get_itr_detail`, {
+        user_id: userId
+      });
+      return response.data;  
+      
+    } catch (error) {
+      console.error('Error fetching ITR details:', error);
+      throw error;
+    }
   }
 };
 
