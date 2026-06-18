@@ -4,7 +4,7 @@ const companyCommonDetails = {
     subtitle: 'Basic identity details of the company.',
     sections: [
       {
-        title: 'Company Identity Details',
+        title: 'Company Identity Details', 
         fields: [
           { name: 'companyName', label: 'Name of Company *', type: 'text', required: true },
           { name: 'oldCompanyName', label: 'Old Name (if name changed during the year)', type: 'text', required: false },
@@ -20,8 +20,8 @@ const companyCommonDetails = {
           { name: 'dateOfOriginalReturn', label: 'Date of filing original return', type: 'text', placeholder: 'DD/MM/YYYY', required: false },
           { name: 'dinNumber', label: 'Notice DIN Number', type: 'text', required: false },
           { name: 'dateOfNotice', label: 'Date of Notice/Order', type: 'text', placeholder: 'DD/MM/YYYY', required: false }
-        ]
-      }
+        ] 
+      } 
     ]
   },
   address: {
@@ -70,7 +70,7 @@ const companyCommonDetails = {
           { name: 'personPan', label: 'PAN *', type: 'text', required: true },
           { name: 'personAadhaar', label: 'Aadhaar No.', type: 'text', required: false },
           { name: 'din', label: 'DIN (Director Identification Number)', type: 'text', required: false }
-        ]
+        ] 
       }
     ]
   },
@@ -107,7 +107,7 @@ const companyCommonDetails = {
         ]
       },
       {
-        title: 'Holding Company Details',
+        title: 'Holding Company Details', 
         isList: true,
         listName: 'holdingCompanies',
         condition: (state) => ['Subsidiary', 'Both'].includes(state.details?.holding_status?.holdingStatus),
@@ -206,8 +206,8 @@ const companyCommonDetails = {
         title: 'Liability to Maintenance and Audit',
         fields: [
           { name: 'liableToMaintainAccounts44AA', label: 'Whether liable to maintain accounts u/s 44AA? *', type: 'select', options: ['No', 'Yes'], required: true },
-          { name: 'declaringIncomeUnderPresumptive', label: 'Whether declaring income only u/s 44AE/44B/etc.? *', type: 'select', options: ['No', 'Yes']},
-          { name: 'turnoverBetween1CrTo10Cr', label: 'gross receipts between ₹1 Cr and ₹10 Cr?', type: 'select', options: ['No', 'Yes'], required: false }, 
+          { name: 'declaringIncomeUnderPresumptive', label: 'Whether declaring income only u/s 44AE/44B/etc.? *', type: 'select', options: ['No', 'Yes'] },
+          { name: 'turnoverBetween1CrTo10Cr', label: 'gross receipts between ₹1 Cr and ₹10 Cr?', type: 'select', options: ['No', 'Yes'], required: false },
           { name: 'cashReceiptsLessThan5Percent', label: 'Whether cash receipts ≤ 5% of total receipts?', type: 'select', options: ['No', 'Yes'], required: false },
           { name: 'cashPaymentsLessThan5Percent', label: 'Whether cash payments ≤ 5% of total payments?', type: 'select', options: ['No', 'Yes'], required: false },
           { name: 'liableForAudit44AB', label: 'Whether liable for audit u/s 44AB? *', type: 'select', options: ['No', 'Yes'], required: true },
@@ -302,7 +302,7 @@ const companyCommonIncome = {
   other_sources: {
     title: 'Other Sources',
     subtitle: 'Income from other sources as per Schedule OS.',
-    sections: [
+    sections: [ 
       {
         title: 'Interest and Dividends',
         fields: [
@@ -561,13 +561,13 @@ const companyCommonTaxes = {
           { name: 'matCreditBroughtForward', label: 'MAT Credit brought forward', type: 'number', required: false },
           { name: 'matCreditUtilizedCurrentYear', label: 'MAT Credit utilised current year', type: 'number', required: false },
           { name: 'matCreditCarriedForward', label: 'MAT Credit carried forward (Calculated)', type: 'number', required: false }
-        ]
+        ] 
       }
     ]
   }
 }; 
 
-export const fieldsConfig = {
+export const fieldsConfig = { 
   'HUF': {
     details: {
       permanent: {
@@ -784,7 +784,15 @@ export const fieldsConfig = {
         ]
       }
     }
-  },
+  }, 
+
+
+  
+
+
+
+
+
 
   // Skeleton config structure for other filing types to make the architecture fully reusable
   'AOP/BOI': {
@@ -903,7 +911,7 @@ export const fieldsConfig = {
     }
   },
 
-  'Company Private': { 
+  'Company Private': {
     details: companyCommonDetails,
     income: companyCommonIncome,
     financials: companyCommonFinancials,
@@ -1108,10 +1116,10 @@ export const fieldsConfig = {
         ]
       }
     }
-  },  
+  },
 
 
-   'Trust & Exempt Entities': {
+  'Trust & Exempt Entities': {
     basic: {
       entity_details: {
         title: 'Trust & Exempt Entity — Basic Information',
@@ -1124,7 +1132,7 @@ export const fieldsConfig = {
               {
                 name: 'itr7Category',
                 label: 'ITR-7 Filing Category *',
-                type: 'select', 
+                type: 'select',
                 required: true,
                 options: [
                   {
@@ -1152,21 +1160,21 @@ export const fieldsConfig = {
           {
             title: 'Entity Identification',
             fields: [
-              { name: 'entityName',      label: 'Name of Trust/Institution (as in deed) *',     type: 'text',   required: true },
-              { name: 'panNumber',       label: 'PAN *',                                          type: 'text',   required: true,  maxLength: 10, pattern: '[A-Z]{5}[0-9]{4}[A-Z]' },
-              { name: 'formationDate',   label: 'Date of Formation/Incorporation *',              type: 'text',   required: true,  placeholder: 'DD/MM/YYYY' },
+              { name: 'entityName', label: 'Name of Trust/Institution (as in deed) *', type: 'text', required: true },
+              { name: 'panNumber', label: 'PAN *', type: 'text', required: true, maxLength: 10, pattern: '[A-Z]{5}[0-9]{4}[A-Z]' },
+              { name: 'formationDate', label: 'Date of Formation/Incorporation *', type: 'text', required: true, placeholder: 'DD/MM/YYYY' },
               {
                 name: 'status',
                 label: 'Status *',
                 type: 'select',
                 required: true,
                 options: [
-                  { value: 'trust',       label: 'Trust' },
-                  { value: 'society',     label: 'Society' },
-                  { value: 'company',     label: 'Company (Section 8)' },
-                  { value: 'aop',         label: 'Association of Persons (AOP)' },
+                  { value: 'trust', label: 'Trust' },
+                  { value: 'society', label: 'Society' },
+                  { value: 'company', label: 'Company (Section 8)' },
+                  { value: 'aop', label: 'Association of Persons (AOP)' },
                   { value: 'institution', label: 'Institution' },
-                  { value: 'other',       label: 'Other' },
+                  { value: 'other', label: 'Other' },
                 ],
                 placeholder: 'Select Status'
               },
@@ -1176,37 +1184,37 @@ export const fieldsConfig = {
           {
             title: 'Registered Address',
             fields: [
-              { name: 'flatDoorBlock',   label: 'Flat / Door / Block No.',             type: 'text' },
-              { name: 'premisesName',    label: 'Name of Premises / Building / Village', type: 'text' },
-              { name: 'roadStreet',      label: 'Road / Street / Post Office',          type: 'text' },
-              { name: 'areaLocality',    label: 'Area / Locality',                      type: 'text' },
-              { name: 'townCity',        label: 'Town / City / District',               type: 'text' },
+              { name: 'flatDoorBlock', label: 'Flat / Door / Block No.', type: 'text' },
+              { name: 'premisesName', label: 'Name of Premises / Building / Village', type: 'text' },
+              { name: 'roadStreet', label: 'Road / Street / Post Office', type: 'text' },
+              { name: 'areaLocality', label: 'Area / Locality', type: 'text' },
+              { name: 'townCity', label: 'Town / City / District', type: 'text' },
               {
                 name: 'state', label: 'State', type: 'select',
                 options: [
-                  'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh',
-                  'Goa','Gujarat','Haryana','Himachal Pradesh','Jharkhand','Karnataka',
-                  'Kerala','Madhya Pradesh','Maharashtra','Manipur','Meghalaya','Mizoram',
-                  'Nagaland','Odisha','Punjab','Rajasthan','Sikkim','Tamil Nadu','Telangana',
-                  'Tripura','Uttar Pradesh','Uttarakhand','West Bengal',
-                  'Andaman and Nicobar Islands','Chandigarh','Dadra and Nagar Haveli and Daman and Diu',
-                  'Delhi','Jammu & Kashmir','Ladakh','Lakshadweep','Puducherry',
-                ].map(s => ({ value: s.toLowerCase().replace(/ /g,'_'), label: s })),
+                  'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
+                  'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka',
+                  'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram',
+                  'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana',
+                  'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
+                  'Andaman and Nicobar Islands', 'Chandigarh', 'Dadra and Nagar Haveli and Daman and Diu',
+                  'Delhi', 'Jammu & Kashmir', 'Ladakh', 'Lakshadweep', 'Puducherry',
+                ].map(s => ({ value: s.toLowerCase().replace(/ /g, '_'), label: s })),
                 placeholder: 'Select State'
               },
-              { name: 'pinCode',         label: 'Pin Code',            type: 'text', maxLength: 6 },
-              { name: 'zipCode',         label: 'Zip Code',            type: 'text' },
+              { name: 'pinCode', label: 'Pin Code', type: 'text', maxLength: 6 },
+              { name: 'zipCode', label: 'Zip Code', type: 'text' },
             ],
           },
           {
             title: 'Contact Details',
             fields: [
-              { name: 'stdCode',       label: 'STD Code',         type: 'text',  maxLength: 5 },
-              { name: 'phoneOffice',   label: 'Phone Number (Office)',  type: 'text' },
-              { name: 'mobile1',       label: 'Mobile No. 1 *',         type: 'text',  required: true },
-              { name: 'mobile2',       label: 'Mobile No. 2',           type: 'text' },
-              { name: 'email1',        label: 'Email Address 1 *',      type: 'text', required: true },
-              { name: 'email2',        label: 'Email Address 2',        type: 'text' },
+              { name: 'stdCode', label: 'STD Code', type: 'text', maxLength: 5 },
+              { name: 'phoneOffice', label: 'Phone Number (Office)', type: 'text' },
+              { name: 'mobile1', label: 'Mobile No. 1 *', type: 'text', required: true },
+              { name: 'mobile2', label: 'Mobile No. 2', type: 'text' },
+              { name: 'email1', label: 'Email Address 1 *', type: 'text', required: true },
+              { name: 'email2', label: 'Email Address 2', type: 'text' },
             ],
           },
         ]
@@ -1235,9 +1243,9 @@ export const fieldsConfig = {
             listName: 'projectsList',
             condition: (state) => state.basic?.projects_institutions?.hasProjects === 'Y',
             fields: [
-              { name: 'projectName',     label: 'Name of the project/institution *',  type: 'text', required: true },
-              { name: 'natureActivity',  label: 'Nature of activity *',               type: 'text', required: true },
-              { name: 'classification',  label: 'Classification *',                   type: 'text', required: true },
+              { name: 'projectName', label: 'Name of the project/institution *', type: 'text', required: true },
+              { name: 'natureActivity', label: 'Nature of activity *', type: 'text', required: true },
+              { name: 'classification', label: 'Classification *', type: 'text', required: true },
             ],
           },
           {
@@ -1274,7 +1282,7 @@ export const fieldsConfig = {
             listName: 'tradeCommerceList',
             condition: (state) => state.basic?.projects_institutions?.tradeCommerceActivity === 'Y',
             fields: [
-              { name: 'institutionName',        label: 'Name of Project/Institution *',               type: 'text', required: true },
+              { name: 'institutionName', label: 'Name of Project/Institution *', type: 'text', required: true },
               { name: 'aggregateAnnualReceipts', label: 'Amount of Aggregate Annual Receipts (₹) *', type: 'number', required: true },
             ],
           },
@@ -1298,12 +1306,12 @@ export const fieldsConfig = {
             fields: [
               {
                 name: 'section', label: 'Section *', type: 'select',
-                options: ['10(23C)(iiiab)','10(23C)(iiiac)','10(23C)(iiiad)','10(23C)(iiiae)'].map(s=>({value:s,label:s})),
+                options: ['10(23C)(iiiab)', '10(23C)(iiiac)', '10(23C)(iiiad)', '10(23C)(iiiae)'].map(s => ({ value: s, label: s })),
                 placeholder: 'Select Section',
                 required: true
               },
-              { name: 'institutionName',      label: 'Name of University/Institution *', type: 'text', required: true },
-              { name: 'aggregateAnnualRec',   label: 'Aggregate Annual Receipts (₹) *',  type: 'number', required: true },
+              { name: 'institutionName', label: 'Name of University/Institution *', type: 'text', required: true },
+              { name: 'aggregateAnnualRec', label: 'Aggregate Annual Receipts (₹) *', type: 'number', required: true },
             ],
           },
         ]
@@ -1325,10 +1333,10 @@ export const fieldsConfig = {
                 label: 'Section registered/approved u/s *',
                 type: 'select',
                 options: [
-                  '10(23C)(iv)','10(23C)(v)','10(23C)(vi)','10(23C)(via)',
-                  '10(23C)(iiiab)','10(23C)(iiiac)','10(23C)(iiiad)','10(23C)(iiiae)',
-                  '12A','12AA','12AB','80G','35',
-                ].map(s=>({value:s,label:s})),
+                  '10(23C)(iv)', '10(23C)(v)', '10(23C)(vi)', '10(23C)(via)',
+                  '10(23C)(iiiab)', '10(23C)(iiiac)', '10(23C)(iiiad)', '10(23C)(iiiae)',
+                  '12A', '12AA', '12AB', '80G', '35',
+                ].map(s => ({ value: s, label: s })),
                 placeholder: 'Select Section',
                 required: true
               },
@@ -1337,17 +1345,17 @@ export const fieldsConfig = {
                 label: 'Section for exemption *',
                 type: 'select',
                 options: [
-                  '10(23C)(iv)','10(23C)(v)','10(23C)(vi)','10(23C)(via)',
-                  '10(23C)(iiiab)','10(23C)(iiiac)','10(23C)(iiiad)','10(23C)(iiiae)',
-                  '11 and 12','80G',
-                ].map(s=>({value:s,label:s})),
+                  '10(23C)(iv)', '10(23C)(v)', '10(23C)(vi)', '10(23C)(via)',
+                  '10(23C)(iiiab)', '10(23C)(iiiac)', '10(23C)(iiiad)', '10(23C)(iiiae)',
+                  '11 and 12', '80G',
+                ].map(s => ({ value: s, label: s })),
                 placeholder: 'Select Exemption',
                 required: true
               },
-              { name: 'registrationDate',       label: 'Date of Registration',                  type: 'text', placeholder: 'DD/MM/YYYY' },
-              { name: 'approvalNotificationUrn', label: 'Unique Registration No. (URN)',         type: 'text' },
-              { name: 'approvingAuthority',      label: 'Approving Authority',                 type: 'text' },
-              { name: 'effectiveFromDate',        label: 'Date registration is effective',        type: 'text', placeholder: 'DD/MM/YYYY' },
+              { name: 'registrationDate', label: 'Date of Registration', type: 'text', placeholder: 'DD/MM/YYYY' },
+              { name: 'approvalNotificationUrn', label: 'Unique Registration No. (URN)', type: 'text' },
+              { name: 'approvingAuthority', label: 'Approving Authority', type: 'text' },
+              { name: 'effectiveFromDate', label: 'Date registration is effective', type: 'text', placeholder: 'DD/MM/YYYY' },
             ],
           },
         ]
@@ -1367,19 +1375,19 @@ export const fieldsConfig = {
                 label: 'Law / Portal *',
                 type: 'select',
                 options: [
-                  { value: 'fcra',   label: 'Foreign Contribution (Regulation) Act, 2010' },
+                  { value: 'fcra', label: 'Foreign Contribution (Regulation) Act, 2010' },
                   { value: 'darpan', label: 'DARPAN Portal of NITI Aayog' },
-                  { value: 'sebi',   label: 'SEBI' },
-                  { value: 'other',  label: 'Any Other Law' },
+                  { value: 'sebi', label: 'SEBI' },
+                  { value: 'other', label: 'Any Other Law' },
                 ],
                 placeholder: 'Select Portal',
                 required: true
               },
-              { name: 'otherLawSpecify',  label: 'Specify if "Any other Law"',          type: 'text' },
-              { name: 'regDate',          label: 'Date of Registration',                 type: 'text', placeholder: 'DD/MM/YYYY' },
-              { name: 'approvalRegNo',    label: 'Registration No.',                     type: 'text' },
-              { name: 'authority',        label: 'Approving Authority',                 type: 'text' },
-              { name: 'effectiveFrom',    label: 'Date registration is effective',        type: 'text', placeholder: 'DD/MM/YYYY' },
+              { name: 'otherLawSpecify', label: 'Specify if "Any other Law"', type: 'text' },
+              { name: 'regDate', label: 'Date of Registration', type: 'text', placeholder: 'DD/MM/YYYY' },
+              { name: 'approvalRegNo', label: 'Registration No.', type: 'text' },
+              { name: 'authority', label: 'Approving Authority', type: 'text' },
+              { name: 'effectiveFrom', label: 'Date registration is effective', type: 'text', placeholder: 'DD/MM/YYYY' },
             ],
           },
         ]
@@ -1397,16 +1405,16 @@ export const fieldsConfig = {
                 type: 'select',
                 required: true,
                 options: [
-                  { value: '139(1)',    label: '139(1) — Original Return' },
-                  { value: '139(4)',    label: '139(4) — Belated Return' },
-                  { value: '139(5)',    label: '139(5) — Revised Return' },
-                  { value: '139(8A)',   label: '139(8A) — Updated Return' },
-                  { value: '142(1)',    label: '142(1) — In response to notice' },
-                  { value: '148',      label: '148 — In response to notice' },
-                  { value: '153A',     label: '153A' },
-                  { value: '153C',     label: '153C' },
+                  { value: '139(1)', label: '139(1) — Original Return' },
+                  { value: '139(4)', label: '139(4) — Belated Return' },
+                  { value: '139(5)', label: '139(5) — Revised Return' },
+                  { value: '139(8A)', label: '139(8A) — Updated Return' },
+                  { value: '142(1)', label: '142(1) — In response to notice' },
+                  { value: '148', label: '148 — In response to notice' },
+                  { value: '153A', label: '153A' },
+                  { value: '153C', label: '153C' },
                   { value: '119(2)(b)', label: '119(2)(b)' },
-                  { value: '92CD',     label: '92CD' },
+                  { value: '92CD', label: '92CD' },
                 ],
                 placeholder: 'Select Section'
               },
@@ -1415,12 +1423,12 @@ export const fieldsConfig = {
                 label: 'Section under which exemption is claimed',
                 type: 'select',
                 options: [
-                  '11 and 12','10(23C)(iv)','10(23C)(v)','10(23C)(vi)','10(23C)(via)',
-                  '10(23C)(iiiab)','10(23C)(iiiac)','10(23C)(iiiad)','10(23C)(iiiae)',
-                  '10(21)','10(22B)','10(23A)','10(23AAA)','10(23B)','10(23D)',
-                  '10(23DA)','10(23EC)','10(23ED)','10(23EE)','10(29A)',
-                  '10(46)','10(47)',
-                ].map(s=>({value:s,label:s})),
+                  '11 and 12', '10(23C)(iv)', '10(23C)(v)', '10(23C)(vi)', '10(23C)(via)',
+                  '10(23C)(iiiab)', '10(23C)(iiiac)', '10(23C)(iiiad)', '10(23C)(iiiae)',
+                  '10(21)', '10(22B)', '10(23A)', '10(23AAA)', '10(23B)', '10(23D)',
+                  '10(23DA)', '10(23EC)', '10(23ED)', '10(23EE)', '10(29A)',
+                  '10(46)', '10(47)',
+                ].map(s => ({ value: s, label: s })),
                 placeholder: 'Select Section'
               },
             ],
@@ -1428,15 +1436,15 @@ export const fieldsConfig = {
           {
             title: 'Revised / Defective Return Details',
             fields: [
-              { name: 'originalReceiptNo',  label: 'Receipt No. of Original Return',      type: 'text' },
-              { name: 'originalFilingDate', label: 'Date of Filing of Original Return',   type: 'text', placeholder: 'DD/MM/YYYY' },
+              { name: 'originalReceiptNo', label: 'Receipt No. of Original Return', type: 'text' },
+              { name: 'originalFilingDate', label: 'Date of Filing of Original Return', type: 'text', placeholder: 'DD/MM/YYYY' },
             ],
           },
           {
             title: 'Notice / Order Details',
             fields: [
-              { name: 'noticeDin',  label: 'Unique Number / DIN',                          type: 'text' },
-              { name: 'noticeDate', label: 'Date of Notice or Order',                      type: 'text', placeholder: 'DD/MM/YYYY' },
+              { name: 'noticeDin', label: 'Unique Number / DIN', type: 'text' },
+              { name: 'noticeDate', label: 'Date of Notice or Order', type: 'text', placeholder: 'DD/MM/YYYY' },
             ],
           },
           {
@@ -1447,7 +1455,7 @@ export const fieldsConfig = {
                 label: 'Residential Status',
                 type: 'select',
                 options: [
-                  { value: 'resident',     label: 'Resident' },
+                  { value: 'resident', label: 'Resident' },
                   { value: 'non_resident', label: 'Non-Resident' },
                 ],
                 placeholder: 'Select Status'
@@ -1466,17 +1474,17 @@ export const fieldsConfig = {
                 options: [{ value: 'Y', label: 'Yes' }, { value: 'N', label: 'No' }],
                 placeholder: 'Select Option'
               },
-              { name: 'representativeName',    label: 'Name of Representative',           type: 'text',   conditionalOn: { field: 'representativeAssessee', value: 'Y' } },
+              { name: 'representativeName', label: 'Name of Representative', type: 'text', conditionalOn: { field: 'representativeAssessee', value: 'Y' } },
               {
                 name: 'representativeCapacity', label: 'Capacity of Representative',
                 type: 'select',
                 conditionalOn: { field: 'representativeAssessee', value: 'Y' },
-                options: ['Guardian','Trustee','Agent','Manager','Other'].map(s=>({value:s.toLowerCase(),label:s})),
+                options: ['Guardian', 'Trustee', 'Agent', 'Manager', 'Other'].map(s => ({ value: s.toLowerCase(), label: s })),
                 placeholder: 'Select Capacity'
               },
-              { name: 'representativeAddress', label: 'Address of Representative',         type: 'text', conditionalOn: { field: 'representativeAssessee', value: 'Y' } },
-              { name: 'representativePan',      label: 'PAN of Representative',             type: 'text',   conditionalOn: { field: 'representativeAssessee', value: 'Y' } },
-              { name: 'representativeAadhaar',  label: 'Aadhaar No. of Representative',     type: 'text',   conditionalOn: { field: 'representativeAssessee', value: 'Y' } },
+              { name: 'representativeAddress', label: 'Address of Representative', type: 'text', conditionalOn: { field: 'representativeAssessee', value: 'Y' } },
+              { name: 'representativePan', label: 'PAN of Representative', type: 'text', conditionalOn: { field: 'representativeAssessee', value: 'Y' } },
+              { name: 'representativeAadhaar', label: 'Aadhaar No. of Representative', type: 'text', conditionalOn: { field: 'representativeAssessee', value: 'Y' } },
               {
                 name: 'isPartnerInFirm',
                 label: 'Whether Partner in a Firm?',
@@ -1485,7 +1493,7 @@ export const fieldsConfig = {
                 placeholder: 'Select Option'
               },
               { name: 'partnerFirmName', label: 'Name of Firm', type: 'text', conditionalOn: { field: 'isPartnerInFirm', value: 'Y' } },
-              { name: 'partnerFirmPan',  label: 'PAN of Firm',  type: 'text', conditionalOn: { field: 'isPartnerInFirm', value: 'Y' } },
+              { name: 'partnerFirmPan', label: 'PAN of Firm', type: 'text', conditionalOn: { field: 'isPartnerInFirm', value: 'Y' } },
               {
                 name: 'leiNumber',
                 label: 'Legal Entity Identifier (LEI) Number',
@@ -1519,20 +1527,20 @@ export const fieldsConfig = {
             listName: 'hasUnlistedSharesRows',
             condition: (state) => state.personal?.other_details?.hasUnlistedShares === 'Y',
             fields: [
-              { name: 'companyName',           label: 'Name of Company *',                    type: 'text', required: true },
-              { name: 'companyType',           label: 'Type of Company',                    type: 'text' },
-              { name: 'pan',                   label: 'PAN',                                type: 'text' },
-              { name: 'openingShares',         label: 'Opening Shares (No.)',               type: 'number' },
-              { name: 'openingCost',           label: 'Opening Cost (₹)',                    type: 'number' },
-              { name: 'sharesAcquired',        label: 'Shares Acquired (No.)',              type: 'number' },
-              { name: 'dateSubscription',      label: 'Date acquired',                      type: 'text', placeholder: 'DD/MM/YYYY' },
-              { name: 'faceValue',             label: 'Face Value (₹)',                     type: 'number' },
-              { name: 'issuePrice',            label: 'Issue Price (₹)',                    type: 'number' },
-              { name: 'purchasePrice',         label: 'Purchase Price (₹)',                 type: 'number' },
-              { name: 'sharesTransferred',     label: 'Shares Transferred (No.)',           type: 'number' },
-              { name: 'saleConsideration',     label: 'Sale Consideration (₹)',             type: 'number' },
-              { name: 'closingShares',         label: 'Closing Shares (No.)',               type: 'number' },
-              { name: 'closingCost',           label: 'Closing Cost (₹)',                    type: 'number' },
+              { name: 'companyName', label: 'Name of Company *', type: 'text', required: true },
+              { name: 'companyType', label: 'Type of Company', type: 'text' },
+              { name: 'pan', label: 'PAN', type: 'text' },
+              { name: 'openingShares', label: 'Opening Shares (No.)', type: 'number' },
+              { name: 'openingCost', label: 'Opening Cost (₹)', type: 'number' },
+              { name: 'sharesAcquired', label: 'Shares Acquired (No.)', type: 'number' },
+              { name: 'dateSubscription', label: 'Date acquired', type: 'text', placeholder: 'DD/MM/YYYY' },
+              { name: 'faceValue', label: 'Face Value (₹)', type: 'number' },
+              { name: 'issuePrice', label: 'Issue Price (₹)', type: 'number' },
+              { name: 'purchasePrice', label: 'Purchase Price (₹)', type: 'number' },
+              { name: 'sharesTransferred', label: 'Shares Transferred (No.)', type: 'number' },
+              { name: 'saleConsideration', label: 'Sale Consideration (₹)', type: 'number' },
+              { name: 'closingShares', label: 'Closing Shares (No.)', type: 'number' },
+              { name: 'closingCost', label: 'Closing Cost (₹)', type: 'number' },
             ],
           },
           {
@@ -1545,18 +1553,18 @@ export const fieldsConfig = {
                 options: [{ value: 'Y', label: 'Yes' }, { value: 'N', label: 'No' }],
                 placeholder: 'Select Option'
               },
-              { name: 'reg12ANo',       label: 'Registration No.',            type: 'text',  conditionalOn: { field: 'registered12A', value: 'Y' } },
-              { name: 'reg12AAuthority', label: 'Commissioner who granted reg',   type: 'text',  conditionalOn: { field: 'registered12A', value: 'Y' } },
-              { name: 'reg12ADate',     label: 'Date of Registration',        type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'registered12A', value: 'Y' } },
+              { name: 'reg12ANo', label: 'Registration No.', type: 'text', conditionalOn: { field: 'registered12A', value: 'Y' } },
+              { name: 'reg12AAuthority', label: 'Commissioner who granted reg', type: 'text', conditionalOn: { field: 'registered12A', value: 'Y' } },
+              { name: 'reg12ADate', label: 'Date of Registration', type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'registered12A', value: 'Y' } },
               {
                 name: 'activityType',
                 label: 'Whether activity is',
                 type: 'select',
                 conditionalOn: { field: 'registered12A', value: 'Y' },
                 options: [
-                  { value: 'charitable',  label: 'Charitable' },
-                  { value: 'religious',   label: 'Religious' },
-                  { value: 'both',        label: 'Both' },
+                  { value: 'charitable', label: 'Charitable' },
+                  { value: 'religious', label: 'Religious' },
+                  { value: 'both', label: 'Both' },
                 ],
                 placeholder: 'Select Type'
               },
@@ -1572,18 +1580,18 @@ export const fieldsConfig = {
                 options: [{ value: 'Y', label: 'Yes' }, { value: 'N', label: 'No' }],
                 placeholder: 'Select Option'
               },
-              { name: 'sec35Clause',    label: 'Relevant clause of Section 35',  type: 'text',  conditionalOn: { field: 'approved35', value: 'Y' } },
-              { name: 'sec35RegNo',     label: 'Registration No.',               type: 'text',  conditionalOn: { field: 'approved35', value: 'Y' } },
-              { name: 'sec35ApprDate', label: 'Date of Approval',               type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'approved35', value: 'Y' } },
-              { name: 'sec35Authority', label: 'Approving Authority',            type: 'text',  conditionalOn: { field: 'approved35', value: 'Y' } },
+              { name: 'sec35Clause', label: 'Relevant clause of Section 35', type: 'text', conditionalOn: { field: 'approved35', value: 'Y' } },
+              { name: 'sec35RegNo', label: 'Registration No.', type: 'text', conditionalOn: { field: 'approved35', value: 'Y' } },
+              { name: 'sec35ApprDate', label: 'Date of Approval', type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'approved35', value: 'Y' } },
+              { name: 'sec35Authority', label: 'Approving Authority', type: 'text', conditionalOn: { field: 'approved35', value: 'Y' } },
               {
                 name: 'researchType',
                 label: 'Whether research is',
                 type: 'select',
                 conditionalOn: { field: 'approved35', value: 'Y' },
                 options: [
-                  { value: 'scientific',            label: 'Scientific Research' },
-                  { value: 'social_statistical',    label: 'Social/Statistical Research' },
+                  { value: 'scientific', label: 'Scientific Research' },
+                  { value: 'social_statistical', label: 'Social/Statistical Research' },
                 ],
                 placeholder: 'Select Type'
               },
@@ -1599,8 +1607,8 @@ export const fieldsConfig = {
                 options: [{ value: 'Y', label: 'Yes' }, { value: 'N', label: 'No' }],
                 placeholder: 'Select Option'
               },
-              { name: 'approvalNo80G', label: 'Approval No.',          type: 'text', conditionalOn: { field: 'approved80G', value: 'Y' } },
-              { name: 'approvalDate80G', label: 'Date of Approval',   type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'approved80G', value: 'Y' } },
+              { name: 'approvalNo80G', label: 'Approval No.', type: 'text', conditionalOn: { field: 'approved80G', value: 'Y' } },
+              { name: 'approvalDate80G', label: 'Date of Approval', type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'approved80G', value: 'Y' } },
             ],
           },
           {
@@ -1613,7 +1621,7 @@ export const fieldsConfig = {
                 options: [{ value: 'Y', label: 'Yes' }, { value: 'N', label: 'No' }],
                 placeholder: 'Select Option'
               },
-              { name: 'changeDate',                label: 'Date of such change',           type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'changeInObjects', value: 'Y' } },
+              { name: 'changeDate', label: 'Date of such change', type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'changeInObjects', value: 'Y' } },
               {
                 name: 'freshRegApplied',
                 label: 'Application for fresh registration made within 30 days?',
@@ -1643,10 +1651,10 @@ export const fieldsConfig = {
                 options: [{ value: 'Y', label: 'Yes' }, { value: 'N', label: 'No' }],
                 placeholder: 'Select Option'
               },
-              { name: 'fcraRegNo',        label: 'FCRA Registration No.',         type: 'text',  conditionalOn: { field: 'registeredFcra', value: 'Y' } },
-              { name: 'fcraRegDate',      label: 'Date of FCRA Registration',    type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'registeredFcra', value: 'Y' } },
+              { name: 'fcraRegNo', label: 'FCRA Registration No.', type: 'text', conditionalOn: { field: 'registeredFcra', value: 'Y' } },
+              { name: 'fcraRegDate', label: 'Date of FCRA Registration', type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'registeredFcra', value: 'Y' } },
               { name: 'foreignContribAmt', label: 'Total foreign contribution (₹)', type: 'number', conditionalOn: { field: 'registeredFcra', value: 'Y' } },
-              { name: 'foreignContribPurpose', label: 'Purpose of foreign contribution',              type: 'text', conditionalOn: { field: 'registeredFcra', value: 'Y' } },
+              { name: 'foreignContribPurpose', label: 'Purpose of foreign contribution', type: 'text', conditionalOn: { field: 'registeredFcra', value: 'Y' } },
             ],
           },
           {
@@ -1659,7 +1667,7 @@ export const fieldsConfig = {
                 options: [{ value: 'Y', label: 'Yes' }, { value: 'N', label: 'No' }],
                 placeholder: 'Select Option'
               },
-              { name: 'sebiRegNo',   label: 'SEBI Registration No.',    type: 'text', conditionalOn: { field: 'sebiBusinessTrust', value: 'Y' } },
+              { name: 'sebiRegNo', label: 'SEBI Registration No.', type: 'text', conditionalOn: { field: 'sebiBusinessTrust', value: 'Y' } },
               { name: 'sebiRegDate', label: 'Date of SEBI Registration', type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'sebiBusinessTrust', value: 'Y' } },
             ],
           },
@@ -1707,13 +1715,13 @@ export const fieldsConfig = {
                 options: [{ value: 'Y', label: 'Yes' }, { value: 'N', label: 'No' }],
                 placeholder: 'Select Option'
               },
-              { name: 'audit92EDate',          label: 'Date of Audit Report',                    type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'liableAudit92E', value: 'Y' } },
-              { name: 'auditor92EName',         label: 'Name of Auditor Signing',                type: 'text',  conditionalOn: { field: 'liableAudit92E', value: 'Y' } },
-              { name: 'auditor92EMembership',   label: 'Membership No. of Auditor',              type: 'text',  conditionalOn: { field: 'liableAudit92E', value: 'Y' } },
-              { name: 'auditor92EFirm',         label: 'Name of Auditor Firm',  type: 'text',  conditionalOn: { field: 'liableAudit92E', value: 'Y' } },
-              { name: 'auditor92EPan',          label: 'PAN of Auditor Firm',                    type: 'text',  conditionalOn: { field: 'liableAudit92E', value: 'Y' } },
-              { name: 'audit92EReportDate',     label: 'Date of Audit Report',                   type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'liableAudit92E', value: 'Y' } },
-              { name: 'audit92EFurnishingDate', label: 'Date of Furnishing of Report',     type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'liableAudit92E', value: 'Y' } },
+              { name: 'audit92EDate', label: 'Date of Audit Report', type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'liableAudit92E', value: 'Y' } },
+              { name: 'auditor92EName', label: 'Name of Auditor Signing', type: 'text', conditionalOn: { field: 'liableAudit92E', value: 'Y' } },
+              { name: 'auditor92EMembership', label: 'Membership No. of Auditor', type: 'text', conditionalOn: { field: 'liableAudit92E', value: 'Y' } },
+              { name: 'auditor92EFirm', label: 'Name of Auditor Firm', type: 'text', conditionalOn: { field: 'liableAudit92E', value: 'Y' } },
+              { name: 'auditor92EPan', label: 'PAN of Auditor Firm', type: 'text', conditionalOn: { field: 'liableAudit92E', value: 'Y' } },
+              { name: 'audit92EReportDate', label: 'Date of Audit Report', type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'liableAudit92E', value: 'Y' } },
+              { name: 'audit92EFurnishingDate', label: 'Date of Furnishing of Report', type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'liableAudit92E', value: 'Y' } },
             ],
           },
         ]
@@ -1732,18 +1740,18 @@ export const fieldsConfig = {
                 options: [{ value: 'Y', label: 'Yes' }, { value: 'N', label: 'No' }],
                 placeholder: 'Select Option'
               },
-              { name: 'itAuditSection',       label: 'Section under which liable for audit',    type: 'text',  conditionalOn: { field: 'liableItAudit', value: 'Y' } },
-              { name: 'otherSectionName',      label: 'Other Section Name (if "Others")',        type: 'text',  conditionalOn: { field: 'liableItAudit', value: 'Y' } },
-              { name: 'itAuditDate',           label: 'Date of Audit',                           type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'liableItAudit', value: 'Y' } },
-              { name: 'itAuditorName',         label: 'Name of Auditor', type: 'text', conditionalOn: { field: 'liableItAudit', value: 'Y' } },
-              { name: 'itAuditorMembership',   label: 'Membership No. of Auditor',          type: 'text',  conditionalOn: { field: 'liableItAudit', value: 'Y' } },
-              { name: 'itAuditorFirm',         label: 'Name of Auditor Firm',               type: 'text',  conditionalOn: { field: 'liableItAudit', value: 'Y' } },
-              { name: 'itAuditorFirmPan',      label: 'PAN of Auditor Firm',                type: 'text',  conditionalOn: { field: 'liableItAudit', value: 'Y' } },
-              { name: 'itAuditorAadhaar',      label: 'Aadhaar Number of CA',       type: 'text',  conditionalOn: { field: 'liableItAudit', value: 'Y' } },
-              { name: 'itAuditReportDate',     label: 'Date of Audit Report',               type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'liableItAudit', value: 'Y' } },
-              { name: 'itAuditFurnishDate',    label: 'Date of Furnishing Audit Report',    type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'liableItAudit', value: 'Y' } },
-              { name: 'itAuditAckNo',          label: 'Ack No. of Audit Report', type: 'text', conditionalOn: { field: 'liableItAudit', value: 'Y' } },
-              { name: 'itAuditUdin',           label: 'UDIN', type: 'text', conditionalOn: { field: 'liableItAudit', value: 'Y' } },
+              { name: 'itAuditSection', label: 'Section under which liable for audit', type: 'text', conditionalOn: { field: 'liableItAudit', value: 'Y' } },
+              { name: 'otherSectionName', label: 'Other Section Name (if "Others")', type: 'text', conditionalOn: { field: 'liableItAudit', value: 'Y' } },
+              { name: 'itAuditDate', label: 'Date of Audit', type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'liableItAudit', value: 'Y' } },
+              { name: 'itAuditorName', label: 'Name of Auditor', type: 'text', conditionalOn: { field: 'liableItAudit', value: 'Y' } },
+              { name: 'itAuditorMembership', label: 'Membership No. of Auditor', type: 'text', conditionalOn: { field: 'liableItAudit', value: 'Y' } },
+              { name: 'itAuditorFirm', label: 'Name of Auditor Firm', type: 'text', conditionalOn: { field: 'liableItAudit', value: 'Y' } },
+              { name: 'itAuditorFirmPan', label: 'PAN of Auditor Firm', type: 'text', conditionalOn: { field: 'liableItAudit', value: 'Y' } },
+              { name: 'itAuditorAadhaar', label: 'Aadhaar Number of CA', type: 'text', conditionalOn: { field: 'liableItAudit', value: 'Y' } },
+              { name: 'itAuditReportDate', label: 'Date of Audit Report', type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'liableItAudit', value: 'Y' } },
+              { name: 'itAuditFurnishDate', label: 'Date of Furnishing Audit Report', type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'liableItAudit', value: 'Y' } },
+              { name: 'itAuditAckNo', label: 'Ack No. of Audit Report', type: 'text', conditionalOn: { field: 'liableItAudit', value: 'Y' } },
+              { name: 'itAuditUdin', label: 'UDIN', type: 'text', conditionalOn: { field: 'liableItAudit', value: 'Y' } },
             ],
           },
         ]
@@ -1757,10 +1765,10 @@ export const fieldsConfig = {
             isList: true,
             listName: 'otherActAuditRows',
             fields: [
-              { name: 'act',     label: 'Act *',      type: 'text', required: true },
-              { name: 'desc',    label: 'Description', type: 'text' },
-              { name: 'section', label: 'Section *',   type: 'text', required: true },
-              { name: 'date',    label: 'Date of Furnishing Audit Report', type: 'text', placeholder: 'DD/MM/YYYY' },
+              { name: 'act', label: 'Act *', type: 'text', required: true },
+              { name: 'desc', label: 'Description', type: 'text' },
+              { name: 'section', label: 'Section *', type: 'text', required: true },
+              { name: 'date', label: 'Date of Furnishing Audit Report', type: 'text', placeholder: 'DD/MM/YYYY' },
             ],
           },
         ]
@@ -1775,18 +1783,18 @@ export const fieldsConfig = {
             isList: true,
             listName: 'membersAopRows',
             fields: [
-              { name: 'name',              label: 'Name *',                      type: 'text', required: true },
-              { name: 'address',           label: 'Address',                   type: 'text' },
-              { name: 'city',              label: 'City',                      type: 'text' },
-              { name: 'state',             label: 'State',                     type: 'text' },
-              { name: 'country',           label: 'Country',                   type: 'text' },
-              { name: 'pinCode',           label: 'Pin Code',                  type: 'text' },
-              { name: 'sharePercentage',   label: 'Share %',   type: 'number' },
-              { name: 'pan',               label: 'PAN',                       type: 'text' },
-              { name: 'aadhaar',           label: 'Aadhaar Number',            type: 'text' },
+              { name: 'name', label: 'Name *', type: 'text', required: true },
+              { name: 'address', label: 'Address', type: 'text' },
+              { name: 'city', label: 'City', type: 'text' },
+              { name: 'state', label: 'State', type: 'text' },
+              { name: 'country', label: 'Country', type: 'text' },
+              { name: 'pinCode', label: 'Pin Code', type: 'text' },
+              { name: 'sharePercentage', label: 'Share %', type: 'number' },
+              { name: 'pan', label: 'PAN', type: 'text' },
+              { name: 'aadhaar', label: 'Aadhaar Number', type: 'text' },
               {
                 name: 'status', label: 'Status', type: 'select',
-                options: ['Individual','HUF','Company','Firm','Trust','Other'].map(s=>({value:s.toLowerCase(),label:s})),
+                options: ['Individual', 'HUF', 'Company', 'Firm', 'Trust', 'Other'].map(s => ({ value: s.toLowerCase(), label: s })),
                 placeholder: 'Select Status'
               },
             ],
@@ -1796,9 +1804,9 @@ export const fieldsConfig = {
             isList: true,
             listName: 'trusteeFounderRows',
             fields: [
-              { name: 'name',             label: 'Name *',                      type: 'text', required: true },
-              { name: 'relation',         label: 'Relation',                  type: 'text' },
-              { name: 'shareholding',     label: 'Shareholding %',            type: 'number' },
+              { name: 'name', label: 'Name *', type: 'text', required: true },
+              { name: 'relation', label: 'Relation', type: 'text' },
+              { name: 'shareholding', label: 'Shareholding %', type: 'number' },
               {
                 name: 'residentIndia',
                 label: 'Resident of India?',
@@ -1808,13 +1816,13 @@ export const fieldsConfig = {
               },
               {
                 name: 'idType', label: 'ID Type', type: 'select',
-                options: ['PAN','Aadhaar','Passport','Other'].map(s=>({value:s.toLowerCase(),label:s})),
+                options: ['PAN', 'Aadhaar', 'Passport', 'Other'].map(s => ({ value: s.toLowerCase(), label: s })),
                 placeholder: 'Select Type'
               },
-              { name: 'idNumber',   label: 'ID Number', type: 'text' },
-              { name: 'address',    label: 'Address',               type: 'text' },
-              { name: 'mobile',     label: 'Mobile Number',         type: 'text'  },
-              { name: 'email',      label: 'Email Address',         type: 'text' },
+              { name: 'idNumber', label: 'ID Number', type: 'text' },
+              { name: 'address', label: 'Address', type: 'text' },
+              { name: 'mobile', label: 'Mobile Number', type: 'text' },
+              { name: 'email', label: 'Email Address', type: 'text' },
             ],
           },
           {
@@ -1822,7 +1830,7 @@ export const fieldsConfig = {
             isList: true,
             listName: 'beneficialOwnerRows',
             fields: [
-              { name: 'name',           label: 'Name *',                    type: 'text', required: true },
+              { name: 'name', label: 'Name *', type: 'text', required: true },
               {
                 name: 'residentIndia', label: 'Resident of India?', type: 'select',
                 options: [{ value: 'Y', label: 'Yes' }, { value: 'N', label: 'No' }],
@@ -1830,11 +1838,11 @@ export const fieldsConfig = {
               },
               {
                 name: 'idType', label: 'ID Type', type: 'select',
-                options: ['PAN','Aadhaar','Passport','Other'].map(s=>({value:s.toLowerCase(),label:s})),
+                options: ['PAN', 'Aadhaar', 'Passport', 'Other'].map(s => ({ value: s.toLowerCase(), label: s })),
                 placeholder: 'Select Type'
               },
-              { name: 'idNumber',            label: 'ID Number',    type: 'text' },
-              { name: 'address',             label: 'Address',                  type: 'text' },
+              { name: 'idNumber', label: 'ID Number', type: 'text' },
+              { name: 'address', label: 'Address', type: 'text' },
               { name: 'beneficialOwnership', label: 'Beneficial Ownership %', type: 'number' },
             ],
           },
@@ -1843,10 +1851,10 @@ export const fieldsConfig = {
             isList: true,
             listName: 'substantialContributorRows',
             fields: [
-              { name: 'name',    label: 'Name *',            type: 'text', required: true },
-              { name: 'address', label: 'Address',         type: 'text' },
-              { name: 'pan',     label: 'PAN',             type: 'text' },
-              { name: 'aadhaar', label: 'Aadhaar Number',  type: 'text' },
+              { name: 'name', label: 'Name *', type: 'text', required: true },
+              { name: 'address', label: 'Address', type: 'text' },
+              { name: 'pan', label: 'PAN', type: 'text' },
+              { name: 'aadhaar', label: 'Aadhaar Number', type: 'text' },
             ],
           },
           {
@@ -1854,10 +1862,10 @@ export const fieldsConfig = {
             isList: true,
             listName: 'relativeRows',
             fields: [
-              { name: 'name',    label: 'Name *',            type: 'text', required: true },
-              { name: 'address', label: 'Address',         type: 'text' },
-              { name: 'pan',     label: 'PAN',             type: 'text' },
-              { name: 'aadhaar', label: 'Aadhaar Number',  type: 'text' },
+              { name: 'name', label: 'Name *', type: 'text', required: true },
+              { name: 'address', label: 'Address', type: 'text' },
+              { name: 'pan', label: 'PAN', type: 'text' },
+              { name: 'aadhaar', label: 'Aadhaar Number', type: 'text' },
             ],
           },
         ]
@@ -1873,13 +1881,13 @@ export const fieldsConfig = {
             isList: true,
             listName: 'scheduleIRows',
             fields: [
-              { name: 'yearAccumulation',    label: 'Year of Accumulation (F.Yr.) *',   type: 'text', required: true },
-              { name: 'amountAccumulated',   label: 'Amount Accumulated (₹) *',          type: 'number', required: true },
-              { name: 'purpose',             label: 'Purpose of Accumulation',         type: 'text' },
-              { name: 'amountApplied',       label: 'Amount Applied (₹)',              type: 'number' },
-              { name: 'balance',             label: 'Balance (₹)',                     type: 'number' },
-              { name: 'amountTaxedEarlier',  label: 'Amount Taxed in Earlier AY (₹)', type: 'number' },
-              { name: 'balanceForApplication', label: 'Balance for Application (₹)',  type: 'number' },
+              { name: 'yearAccumulation', label: 'Year of Accumulation (F.Yr.) *', type: 'text', required: true },
+              { name: 'amountAccumulated', label: 'Amount Accumulated (₹) *', type: 'number', required: true },
+              { name: 'purpose', label: 'Purpose of Accumulation', type: 'text' },
+              { name: 'amountApplied', label: 'Amount Applied (₹)', type: 'number' },
+              { name: 'balance', label: 'Balance (₹)', type: 'number' },
+              { name: 'amountTaxedEarlier', label: 'Amount Taxed in Earlier AY (₹)', type: 'number' },
+              { name: 'balanceForApplication', label: 'Balance for Application (₹)', type: 'number' },
               { name: 'appliedFromPrevYears', label: 'Amount Applied from Prev Years (₹)', type: 'number' },
             ],
           },
@@ -1893,26 +1901,26 @@ export const fieldsConfig = {
             title: 'Domestic Contributions',
             fields: [
               { name: 'vcCorpusDonationRenovation', label: 'Corpus: Donations for renovation/repair u/s 80G(2)(b) (₹)', type: 'number' },
-              { name: 'vcCorpusOther',               label: 'Corpus: Other than above (₹)',                                                  type: 'number' },
-              { name: 'vcGrantsGovt',                label: 'Grants from Government (₹)',                                                    type: 'number' },
-              { name: 'vcGrantsCsr',                 label: 'Grants from Companies under CSR (₹)',                                           type: 'number' },
-              { name: 'vcSpecificGrants',            label: 'Other Specific Grants (₹)',                                                      type: 'number' },
-              { name: 'vcOtherDonations',            label: 'Other Donations (₹)',                                                            type: 'number' },
+              { name: 'vcCorpusOther', label: 'Corpus: Other than above (₹)', type: 'number' },
+              { name: 'vcGrantsGovt', label: 'Grants from Government (₹)', type: 'number' },
+              { name: 'vcGrantsCsr', label: 'Grants from Companies under CSR (₹)', type: 'number' },
+              { name: 'vcSpecificGrants', label: 'Other Specific Grants (₹)', type: 'number' },
+              { name: 'vcOtherDonations', label: 'Other Donations (₹)', type: 'number' },
             ],
           },
           {
             title: 'Foreign Contributions',
             fields: [
               { name: 'vcForeignCorpusRenovation', label: 'Foreign Corpus: Renovation/repair places u/s 80G(2)(b) (₹)', type: 'number' },
-              { name: 'vcForeignCorpusOther',      label: 'Foreign Corpus: Other (₹)',                                   type: 'number' },
-              { name: 'vcForeignOther',            label: 'Foreign: Other than corpus donation (₹)',                     type: 'number' },
-              { name: 'vcForeignPurpose',          label: 'Purpose of foreign contribution received',                    type: 'text' },
+              { name: 'vcForeignCorpusOther', label: 'Foreign Corpus: Other (₹)', type: 'number' },
+              { name: 'vcForeignOther', label: 'Foreign: Other than corpus donation (₹)', type: 'number' },
+              { name: 'vcForeignPurpose', label: 'Purpose of foreign contribution received', type: 'text' },
             ],
           },
           {
             title: 'Anonymous Donations u/s 115BBC',
             fields: [
-              { name: 'vcAnonymousDonations',      label: 'Aggregate anonymous donations received (₹)',  type: 'number' },
+              { name: 'vcAnonymousDonations', label: 'Aggregate anonymous donations received (₹)', type: 'number' },
             ],
           },
         ]
@@ -1924,55 +1932,55 @@ export const fieldsConfig = {
           {
             title: 'Schedule AI — Aggregate Income',
             fields: [
-              { name: 'aiReceiptsMainObjects',       label: 'Receipts from main objects (₹)', type: 'number' },
+              { name: 'aiReceiptsMainObjects', label: 'Receipts from main objects (₹)', type: 'number' },
               { name: 'aiReceiptsIncidentalObjects', label: 'Receipts from incidental objects (₹)', type: 'number' },
-              { name: 'aiRent',                      label: 'Rent (₹)', type: 'number' },
-              { name: 'aiCommission',                label: 'Commission (₹)', type: 'number' },
-              { name: 'aiDividend',                  label: 'Dividend income (₹)', type: 'number' },
-              { name: 'aiInterest',                  label: 'Interest income (₹)', type: 'number' },
-              { name: 'aiAgriculture',               label: 'Agriculture income (₹)', type: 'number' },
+              { name: 'aiRent', label: 'Rent (₹)', type: 'number' },
+              { name: 'aiCommission', label: 'Commission (₹)', type: 'number' },
+              { name: 'aiDividend', label: 'Dividend income (₹)', type: 'number' },
+              { name: 'aiInterest', label: 'Interest income (₹)', type: 'number' },
+              { name: 'aiAgriculture', label: 'Agriculture income (₹)', type: 'number' },
               { name: 'aiCapitalAssetConsideration', label: 'Net consideration on transfer of capital asset (₹)', type: 'number' },
-              { name: 'aiOtherIncome',               label: 'Any other income (₹)', type: 'number' },
+              { name: 'aiOtherIncome', label: 'Any other income (₹)', type: 'number' },
             ],
           },
           {
             title: 'Schedule ER — Revenue Account Application',
             fields: [
-              { name: 'erRents',                label: 'Rents (₹)',                           type: 'number' },
-              { name: 'erRepairs',              label: 'Repairs and Maintenance (₹)',          type: 'number' },
-              { name: 'erCompensation',         label: 'Compensation to Employees (₹)',        type: 'number' },
-              { name: 'erInsurance',            label: 'Insurance (₹)',                        type: 'number' },
-              { name: 'erStaffWelfare',         label: 'Workmen and Staff Welfare (₹)',        type: 'number' },
-              { name: 'erEntertainment',        label: 'Entertainment & Hospitality (₹)',      type: 'number' },
-              { name: 'erAdvertisement',        label: 'Advertisement (₹)',                    type: 'number' },
-              { name: 'erProfessionalFees',     label: 'Professional/Consultancy Fees (₹)',   type: 'number' },
-              { name: 'erConveyance',           label: 'Conveyance & Traveling Expenses (₹)', type: 'number' },
-              { name: 'erRemunerationSec13',    label: 'Remuneration to persons u/s 13(3) (₹)', type: 'number' },
-              { name: 'erRatesTaxes',           label: 'Rates & Taxes to Government (₹)',    type: 'number' },
-              { name: 'erInterest',             label: 'Interest (₹)',                        type: 'number' },
-              { name: 'erAuditFee',             label: 'Audit Fee (₹)',                       type: 'number' },
-              { name: 'erDepreciation',         label: 'Depreciation/Amortization (₹)',       type: 'number' },
-              { name: 'erDonationNonCorpus',    label: 'Donation to registered trust — Non-Corpus (₹)', type: 'number' },
-              { name: 'erReligious',            label: 'Religious (₹)',                        type: 'number' },
-              { name: 'erReliefPoor',           label: 'Relief of Poor (₹)',                  type: 'number' },
-              { name: 'erEducational',          label: 'Educational (₹)',                      type: 'number' },
-              { name: 'erYoga',                 label: 'Yoga (₹)',                             type: 'number' },
-              { name: 'erMedicalRelief',        label: 'Medical Relief (₹)',                  type: 'number' },
-              { name: 'erEnvironment',          label: 'Preservation of Environment (₹)',     type: 'number' },
-              { name: 'erMonuments',            label: 'Preservation of Monuments (₹)',       type: 'number' },
-              { name: 'erGeneralPublicUtility', label: 'General Public Utility (₹)',          type: 'number' },
-              { name: 'erAmountNotPaid',        label: 'Amount not actually paid during year (₹)', type: 'number' },
-              { name: 'erAmountPaidEarlier',    label: 'Amount paid during year which accrued in earlier year (₹)', type: 'number' },
+              { name: 'erRents', label: 'Rents (₹)', type: 'number' },
+              { name: 'erRepairs', label: 'Repairs and Maintenance (₹)', type: 'number' },
+              { name: 'erCompensation', label: 'Compensation to Employees (₹)', type: 'number' },
+              { name: 'erInsurance', label: 'Insurance (₹)', type: 'number' },
+              { name: 'erStaffWelfare', label: 'Workmen and Staff Welfare (₹)', type: 'number' },
+              { name: 'erEntertainment', label: 'Entertainment & Hospitality (₹)', type: 'number' },
+              { name: 'erAdvertisement', label: 'Advertisement (₹)', type: 'number' },
+              { name: 'erProfessionalFees', label: 'Professional/Consultancy Fees (₹)', type: 'number' },
+              { name: 'erConveyance', label: 'Conveyance & Traveling Expenses (₹)', type: 'number' },
+              { name: 'erRemunerationSec13', label: 'Remuneration to persons u/s 13(3) (₹)', type: 'number' },
+              { name: 'erRatesTaxes', label: 'Rates & Taxes to Government (₹)', type: 'number' },
+              { name: 'erInterest', label: 'Interest (₹)', type: 'number' },
+              { name: 'erAuditFee', label: 'Audit Fee (₹)', type: 'number' },
+              { name: 'erDepreciation', label: 'Depreciation/Amortization (₹)', type: 'number' },
+              { name: 'erDonationNonCorpus', label: 'Donation to registered trust — Non-Corpus (₹)', type: 'number' },
+              { name: 'erReligious', label: 'Religious (₹)', type: 'number' },
+              { name: 'erReliefPoor', label: 'Relief of Poor (₹)', type: 'number' },
+              { name: 'erEducational', label: 'Educational (₹)', type: 'number' },
+              { name: 'erYoga', label: 'Yoga (₹)', type: 'number' },
+              { name: 'erMedicalRelief', label: 'Medical Relief (₹)', type: 'number' },
+              { name: 'erEnvironment', label: 'Preservation of Environment (₹)', type: 'number' },
+              { name: 'erMonuments', label: 'Preservation of Monuments (₹)', type: 'number' },
+              { name: 'erGeneralPublicUtility', label: 'General Public Utility (₹)', type: 'number' },
+              { name: 'erAmountNotPaid', label: 'Amount not actually paid during year (₹)', type: 'number' },
+              { name: 'erAmountPaidEarlier', label: 'Amount paid during year which accrued in earlier year (₹)', type: 'number' },
             ],
           },
           {
             title: 'Schedule EC — Capital Account Application',
             fields: [
-              { name: 'ecCapitalWIP',        label: 'Addition to Capital WIP (₹)',                                type: 'number' },
-              { name: 'ecCapitalAsset',      label: 'Acquisition of Capital Asset (₹)',                           type: 'number' },
-              { name: 'ecExemption11_1A',    label: 'Cost of new asset for claim of Exemption u/s 11(1A) (₹)',   type: 'number' },
-              { name: 'ecAmountNotPaid',     label: 'Amount not actually paid (₹)',                              type: 'number' },
-              { name: 'ecAmountPaidEarlier', label: 'Amount paid in year, accrued in earlier year (₹)',          type: 'number' },
+              { name: 'ecCapitalWIP', label: 'Addition to Capital WIP (₹)', type: 'number' },
+              { name: 'ecCapitalAsset', label: 'Acquisition of Capital Asset (₹)', type: 'number' },
+              { name: 'ecExemption11_1A', label: 'Cost of new asset for claim of Exemption u/s 11(1A) (₹)', type: 'number' },
+              { name: 'ecAmountNotPaid', label: 'Amount not actually paid (₹)', type: 'number' },
+              { name: 'ecAmountPaidEarlier', label: 'Amount paid in year, accrued in earlier year (₹)', type: 'number' },
             ],
           },
         ]
@@ -1986,15 +1994,15 @@ export const fieldsConfig = {
             isList: true,
             listName: 'corpusJRows',
             fields: [
-              { name: 'corpusDonationType',     label: 'Corpus Donation Type *',                 type: 'text', required: true },
-              { name: 'openingBalance',         label: 'Opening Balance as on 01.04.2024 (₹)', type: 'number' },
-              { name: 'receivedDuringYear',     label: 'Received during year (₹)',             type: 'number' },
-              { name: 'appliedDuringYear',      label: 'Applied during year (₹)',              type: 'number' },
-              { name: 'reinvestedAmount',       label: 'Reinvested amount u/s 11(5) (₹)',      type: 'number' },
-              { name: 'fyAppliedEarlier',       label: 'FY applied in earlier years',          type: 'text' },
-              { name: 'closingBalance',         label: 'Closing Balance as on 31.03.2025 (₹)', type: 'number' },
-              { name: 'investedSec11_5',        label: 'Invested in modes u/s 11(5) (₹)',      type: 'number' },
-              { name: 'taxedInAY2024_25',       label: 'Taxed in AY 2024-25 (₹)',              type: 'number' },
+              { name: 'corpusDonationType', label: 'Corpus Donation Type *', type: 'text', required: true },
+              { name: 'openingBalance', label: 'Opening Balance as on 01.04.2024 (₹)', type: 'number' },
+              { name: 'receivedDuringYear', label: 'Received during year (₹)', type: 'number' },
+              { name: 'appliedDuringYear', label: 'Applied during year (₹)', type: 'number' },
+              { name: 'reinvestedAmount', label: 'Reinvested amount u/s 11(5) (₹)', type: 'number' },
+              { name: 'fyAppliedEarlier', label: 'FY applied in earlier years', type: 'text' },
+              { name: 'closingBalance', label: 'Closing Balance as on 31.03.2025 (₹)', type: 'number' },
+              { name: 'investedSec11_5', label: 'Invested in modes u/s 11(5) (₹)', type: 'number' },
+              { name: 'taxedInAY2024_25', label: 'Taxed in AY 2024-25 (₹)', type: 'number' },
               { name: 'investedOtherThanSec11_5', label: 'Invested in modes other than u/s 11(5) (₹)', type: 'number' },
             ],
           },
@@ -2003,13 +2011,13 @@ export const fieldsConfig = {
             isList: true,
             listName: 'loanJRows',
             fields: [
-              { name: 'openingBalance',  label: 'Opening Balance (₹)',                       type: 'number' },
-              { name: 'loanTaken',       label: 'Loan taken during year (₹)',                 type: 'number' },
-              { name: 'appliedForObj',   label: 'Applied for objects (₹)',                    type: 'number' },
-              { name: 'repaidAmount',    label: 'Repaid (out of earlier applied) (₹)',        type: 'number' },
-              { name: 'fyApplied',       label: 'FY in which applied',                        type: 'text' },
-              { name: 'totalRepayment',  label: 'Total Repayment during year (₹)',               type: 'number' },
-              { name: 'closingBalance',  label: 'Closing Balance as on 31.03.2025 (₹)',          type: 'number' },
+              { name: 'openingBalance', label: 'Opening Balance (₹)', type: 'number' },
+              { name: 'loanTaken', label: 'Loan taken during year (₹)', type: 'number' },
+              { name: 'appliedForObj', label: 'Applied for objects (₹)', type: 'number' },
+              { name: 'repaidAmount', label: 'Repaid (out of earlier applied) (₹)', type: 'number' },
+              { name: 'fyApplied', label: 'FY in which applied', type: 'text' },
+              { name: 'totalRepayment', label: 'Total Repayment during year (₹)', type: 'number' },
+              { name: 'closingBalance', label: 'Closing Balance as on 31.03.2025 (₹)', type: 'number' },
             ],
           },
           {
@@ -2017,9 +2025,9 @@ export const fieldsConfig = {
             isList: true,
             listName: 'investJRows',
             fields: [
-              { name: 'investmentSource', label: 'Investment source *',                         type: 'text', required: true },
-              { name: 'modeOfInvestment', label: 'Mode u/s 11(5) *',                           type: 'text', required: true },
-              { name: 'amount',           label: 'Amount (₹) *',                                type: 'number', required: true },
+              { name: 'investmentSource', label: 'Investment source *', type: 'text', required: true },
+              { name: 'modeOfInvestment', label: 'Mode u/s 11(5) *', type: 'text', required: true },
+              { name: 'amount', label: 'Amount (₹) *', type: 'number', required: true },
             ],
           },
         ]
@@ -2038,8 +2046,8 @@ export const fieldsConfig = {
                 options: [{ value: 'Y', label: 'Yes' }, { value: 'N', label: 'No' }],
                 placeholder: 'Select Option'
               },
-              { name: 'laRegNumber', label: 'Registration Number',     type: 'text', conditionalOn: { field: 'laRegisteredUnder29A', value: 'Y' } },
-              { name: 'laRegDate',   label: 'Date of Registration',    type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'laRegisteredUnder29A', value: 'Y' } },
+              { name: 'laRegNumber', label: 'Registration Number', type: 'text', conditionalOn: { field: 'laRegisteredUnder29A', value: 'Y' } },
+              { name: 'laRegDate', label: 'Date of Registration', type: 'text', placeholder: 'DD/MM/YYYY', conditionalOn: { field: 'laRegisteredUnder29A', value: 'Y' } },
               {
                 name: 'laRecognizedByECI',
                 label: 'Whether recognized by Election Commission of India?',
@@ -2130,43 +2138,43 @@ export const fieldsConfig = {
           {
             title: 'Consolidated Balance Sheet — Sources of Funds',
             fields: [
-              { name: 'bsCorpus80G',           label: 'Corpus u/s 80G(2)(b) (₹)',  type: 'number' },
-              { name: 'bsCorpusOtherAfter21',  label: 'Other Corpus from 01.04.2021 (₹)', type: 'number' },
-              { name: 'bsCorpusOther',          label: 'Corpus other than above (₹)',           type: 'number' },
-              { name: 'bsIncomeAccumulated',    label: 'Income accumulated u/s 11(2) (₹)', type: 'number' },
-              { name: 'bsDeemedIncomeBal',      label: 'Balance of Deemed Income (₹)',                type: 'number' },
-              { name: 'bsSecuredLoans',         label: 'Secured Loans (₹)',                           type: 'number' },
-              { name: 'bsUnsecuredLoans',       label: 'Unsecured Loans / Deposits (₹)',              type: 'number' },
-              { name: 'bsAdvances',             label: 'Advances (₹)',                                 type: 'number' },
+              { name: 'bsCorpus80G', label: 'Corpus u/s 80G(2)(b) (₹)', type: 'number' },
+              { name: 'bsCorpusOtherAfter21', label: 'Other Corpus from 01.04.2021 (₹)', type: 'number' },
+              { name: 'bsCorpusOther', label: 'Corpus other than above (₹)', type: 'number' },
+              { name: 'bsIncomeAccumulated', label: 'Income accumulated u/s 11(2) (₹)', type: 'number' },
+              { name: 'bsDeemedIncomeBal', label: 'Balance of Deemed Income (₹)', type: 'number' },
+              { name: 'bsSecuredLoans', label: 'Secured Loans (₹)', type: 'number' },
+              { name: 'bsUnsecuredLoans', label: 'Unsecured Loans / Deposits (₹)', type: 'number' },
+              { name: 'bsAdvances', label: 'Advances (₹)', type: 'number' },
             ],
           },
           {
             title: 'Consolidated Balance Sheet — Application of Funds',
             fields: [
-              { name: 'bsGrossFixedAssets',     label: 'Gross Fixed Assets (₹)',                    type: 'number' },
-              { name: 'bsDepreciation',         label: 'Depreciation (₹)',                          type: 'number' },
-              { name: 'bsInvestments',          label: 'Investments (₹)',                           type: 'number' },
+              { name: 'bsGrossFixedAssets', label: 'Gross Fixed Assets (₹)', type: 'number' },
+              { name: 'bsDepreciation', label: 'Depreciation (₹)', type: 'number' },
+              { name: 'bsInvestments', label: 'Investments (₹)', type: 'number' },
               { name: 'bsInvestmentsNonSec11_5', label: 'Investments in modes other than u/s 11(5) (₹)', type: 'number' },
-              { name: 'bsInventories',          label: 'Inventories (₹)',                        type: 'number' },
-              { name: 'bsSundryDebtors',        label: 'Sundry Debtors (₹)',                    type: 'number' },
-              { name: 'bsCashBank',             label: 'Balance with Banks (₹)',              type: 'number' },
-              { name: 'bsCashInHand',           label: 'Cash in Hand (₹)',                   type: 'number' },
-              { name: 'bsLoansAdvances',        label: 'Loans and Advances (₹)',                   type: 'number' },
-              { name: 'bsSundryCreditors',      label: 'Sundry Creditors (₹)',                 type: 'number' },
-              { name: 'bsOtherPayables',        label: 'Other Payables (₹)',                   type: 'number' },
-              { name: 'bsProvisions',           label: 'Provisions (₹)',                       type: 'number' },
-              { name: 'bsAccumulatedDeficit',   label: 'Deficit / Reserve (deficit) (₹)', type: 'number' },
+              { name: 'bsInventories', label: 'Inventories (₹)', type: 'number' },
+              { name: 'bsSundryDebtors', label: 'Sundry Debtors (₹)', type: 'number' },
+              { name: 'bsCashBank', label: 'Balance with Banks (₹)', type: 'number' },
+              { name: 'bsCashInHand', label: 'Cash in Hand (₹)', type: 'number' },
+              { name: 'bsLoansAdvances', label: 'Loans and Advances (₹)', type: 'number' },
+              { name: 'bsSundryCreditors', label: 'Sundry Creditors (₹)', type: 'number' },
+              { name: 'bsOtherPayables', label: 'Other Payables (₹)', type: 'number' },
+              { name: 'bsProvisions', label: 'Provisions (₹)', type: 'number' },
+              { name: 'bsAccumulatedDeficit', label: 'Deficit / Reserve (deficit) (₹)', type: 'number' },
             ],
           },
           {
             title: 'Schedule R — Reconciliation of Corpus',
             fields: [
-              { name: 'rClosingBalanceJ_1',     label: 'Closing balance J — Col 1 (₹)',  type: 'number' },
-              { name: 'rClosingBalanceJ_2',     label: 'Closing balance J — Col 2 (₹)',  type: 'number' },
-              { name: 'rClosingBalanceJ_3',     label: 'Closing balance J — Col 3 (₹)',  type: 'number' },
-              { name: 'rDiffFixedAssetPurchase', label: 'Difference: Fixed asset purchase (₹)',       type: 'number' },
-              { name: 'rDiffDepreciation',       label: 'Difference: Depreciation (₹)',                 type: 'number' },
-              { name: 'rDiffOther',              label: 'Difference: Other reasons (₹)',            type: 'number' },
+              { name: 'rClosingBalanceJ_1', label: 'Closing balance J — Col 1 (₹)', type: 'number' },
+              { name: 'rClosingBalanceJ_2', label: 'Closing balance J — Col 2 (₹)', type: 'number' },
+              { name: 'rClosingBalanceJ_3', label: 'Closing balance J — Col 3 (₹)', type: 'number' },
+              { name: 'rDiffFixedAssetPurchase', label: 'Difference: Fixed asset purchase (₹)', type: 'number' },
+              { name: 'rDiffDepreciation', label: 'Difference: Depreciation (₹)', type: 'number' },
+              { name: 'rDiffOther', label: 'Difference: Other reasons (₹)', type: 'number' },
             ],
           },
         ]
@@ -2182,25 +2190,25 @@ export const fieldsConfig = {
             isList: true,
             listName: 'housePropertiesList',
             fields: [
-              { name: 'propertyAddress',   label: 'Address of Property *',              type: 'text', required: true },
-              { name: 'town',              label: 'Town/City *',                         type: 'text', required: true },
-              { name: 'state',             label: 'State *',                             type: 'text', required: true },
+              { name: 'propertyAddress', label: 'Address of Property *', type: 'text', required: true },
+              { name: 'town', label: 'Town/City *', type: 'text', required: true },
+              { name: 'state', label: 'State *', type: 'text', required: true },
               {
                 name: 'owner', label: 'Owner', type: 'select',
-                options: ['Self','Co-owner'].map(s=>({value:s.toLowerCase(),label:s})),
+                options: ['Self', 'Co-owner'].map(s => ({ value: s.toLowerCase(), label: s })),
                 placeholder: 'Select Owner'
               },
-              { name: 'coOwnedPct',   label: 'Assessee Share %',                 type: 'number' },
+              { name: 'coOwnedPct', label: 'Assessee Share %', type: 'number' },
               {
                 name: 'propertyType', label: 'Property Type', type: 'select',
-                options: ['Let Out','Self Occupied','Deemed Let Out'].map(s=>({value:s.toLowerCase().replace(/ /g,'_'),label:s})),
+                options: ['Let Out', 'Self Occupied', 'Deemed Let Out'].map(s => ({ value: s.toLowerCase().replace(/ /g, '_'), label: s })),
                 placeholder: 'Select Type'
               },
-              { name: 'annualRentReceivable', label: 'Gross Rent Received/Receivable (₹)',    type: 'number' },
-              { name: 'unrealizedRent',        label: 'Rent which cannot be realized (₹)', type: 'number' },
-              { name: 'taxPaidLocal',          label: 'Local Authority Taxes Paid (₹)',    type: 'number' },
-              { name: 'interestBorrowedCapital', label: 'Interest on Borrowed Capital (₹)',  type: 'number' },
-              { name: 'arrearUnrealizedRent',  label: 'Arrears less 30% (₹)', type: 'number' },
+              { name: 'annualRentReceivable', label: 'Gross Rent Received/Receivable (₹)', type: 'number' },
+              { name: 'unrealizedRent', label: 'Rent which cannot be realized (₹)', type: 'number' },
+              { name: 'taxPaidLocal', label: 'Local Authority Taxes Paid (₹)', type: 'number' },
+              { name: 'interestBorrowedCapital', label: 'Interest on Borrowed Capital (₹)', type: 'number' },
+              { name: 'arrearUnrealizedRent', label: 'Arrears less 30% (₹)', type: 'number' },
             ],
           },
         ]
@@ -2212,18 +2220,18 @@ export const fieldsConfig = {
           {
             title: 'Short-Term Capital Gains (STCG)',
             fields: [
-              { name: 'stcgSec111A',         label: 'STCG u/s 111A (STT paid) (₹)',           type: 'number' },
-              { name: 'stcgOther',           label: 'STCG (other assets) (₹)',                type: 'number' },
-              { name: 'stcgDepreciableAsset', label: 'Deemed STCG on depreciable assets (₹)',  type: 'number' },
-              { name: 'stcgExemptions',      label: 'Exemptions (other than 11(1A)) (₹)',      type: 'number' },
+              { name: 'stcgSec111A', label: 'STCG u/s 111A (STT paid) (₹)', type: 'number' },
+              { name: 'stcgOther', label: 'STCG (other assets) (₹)', type: 'number' },
+              { name: 'stcgDepreciableAsset', label: 'Deemed STCG on depreciable assets (₹)', type: 'number' },
+              { name: 'stcgExemptions', label: 'Exemptions (other than 11(1A)) (₹)', type: 'number' },
             ],
           },
           {
             title: 'Long-Term Capital Gains (LTCG)',
             fields: [
-              { name: 'ltcgSec112',     label: 'LTCG u/s 112 (without indexation proviso) (₹)', type: 'number' },
-              { name: 'ltcgSec112A',    label: 'LTCG u/s 112A / 112(1) proviso (₹)',             type: 'number' },
-              { name: 'ltcgExemptions', label: 'Exemptions u/s 54 etc. (₹)',                      type: 'number' },
+              { name: 'ltcgSec112', label: 'LTCG u/s 112 (without indexation proviso) (₹)', type: 'number' },
+              { name: 'ltcgSec112A', label: 'LTCG u/s 112A / 112(1) proviso (₹)', type: 'number' },
+              { name: 'ltcgExemptions', label: 'Exemptions u/s 54 etc. (₹)', type: 'number' },
             ],
           },
         ]
@@ -2235,14 +2243,14 @@ export const fieldsConfig = {
           {
             title: 'Schedule OS — Income from Other Sources',
             fields: [
-              { name: 'osDividend',           label: 'Dividend (₹)',                       type: 'number' },
-              { name: 'osInterestSavings',    label: 'Interest from Savings Account (₹)',  type: 'number' },
-              { name: 'osInterestDeposits',   label: 'Interest from Deposits (₹)',         type: 'number' },
-              { name: 'osInterestITRefund',   label: 'Interest on Income Tax Refund (₹)',  type: 'number' },
-              { name: 'osRentalIncome',       label: 'Rental income (₹)', type: 'number' },
+              { name: 'osDividend', label: 'Dividend (₹)', type: 'number' },
+              { name: 'osInterestSavings', label: 'Interest from Savings Account (₹)', type: 'number' },
+              { name: 'osInterestDeposits', label: 'Interest from Deposits (₹)', type: 'number' },
+              { name: 'osInterestITRefund', label: 'Interest on Income Tax Refund (₹)', type: 'number' },
+              { name: 'osRentalIncome', label: 'Rental income (₹)', type: 'number' },
               { name: 'osAnonymousDonations', label: 'Anonymous donations u/s 115BBC (₹)', type: 'number' },
-              { name: 'osOtherIncome',        label: 'Any other income (₹)',               type: 'number' },
-              { name: 'osDeductions',         label: 'Deductions (₹)',                      type: 'number' },
+              { name: 'osOtherIncome', label: 'Any other income (₹)', type: 'number' },
+              { name: 'osDeductions', label: 'Deductions (₹)', type: 'number' },
             ],
           },
         ]
@@ -2261,15 +2269,15 @@ export const fieldsConfig = {
                 options: [{ value: 'Y', label: 'Yes' }, { value: 'N', label: 'No' }],
                 placeholder: 'Select Option'
               },
-              { name: 'bpGrossProfitPL',          label: 'Net Profit/Loss from P&L (₹)',                        type: 'number', conditionalOn: { field: 'hasBusinessIncome', value: 'Y' } },
-              { name: 'bpSpecifiedBusinessProfit', label: 'Profits from Specified Business u/s 35AD (₹)',        type: 'number', conditionalOn: { field: 'hasBusinessIncome', value: 'Y' } },
-              { name: 'bpSpeculativeProfit',       label: 'Speculative Profit (₹)',                                 type: 'number', conditionalOn: { field: 'hasBusinessIncome', value: 'Y' } },
-              { name: 'bpDepreciation',            label: 'Depreciation claimed in books (₹)',                      type: 'number', conditionalOn: { field: 'hasBusinessIncome', value: 'Y' } },
-              { name: 'bpDepreciationAllowable',   label: 'Depreciation allowable under IT Act (₹)',                 type: 'number', conditionalOn: { field: 'hasBusinessIncome', value: 'Y' } },
-              { name: 'bpDisallowanceSec36',       label: 'Disallowance under Section 36 (₹)',                       type: 'number', conditionalOn: { field: 'hasBusinessIncome', value: 'Y' } },
-              { name: 'bpDisallowanceSec37',       label: 'Disallowance under Section 37 (e.g. CSR expenditure) (₹)', type: 'number', conditionalOn: { field: 'hasBusinessIncome', value: 'Y' } },
-              { name: 'bpDeemedIncomeSec41',       label: 'Deemed income taxable u/s 41 (₹)',                        type: 'number', conditionalOn: { field: 'hasBusinessIncome', value: 'Y' } },
-              { name: 'bpDeductions32Ac',          label: 'Deductions u/s 32AC (₹)',                                type: 'number', conditionalOn: { field: 'hasBusinessIncome', value: 'Y' } },
+              { name: 'bpGrossProfitPL', label: 'Net Profit/Loss from P&L (₹)', type: 'number', conditionalOn: { field: 'hasBusinessIncome', value: 'Y' } },
+              { name: 'bpSpecifiedBusinessProfit', label: 'Profits from Specified Business u/s 35AD (₹)', type: 'number', conditionalOn: { field: 'hasBusinessIncome', value: 'Y' } },
+              { name: 'bpSpeculativeProfit', label: 'Speculative Profit (₹)', type: 'number', conditionalOn: { field: 'hasBusinessIncome', value: 'Y' } },
+              { name: 'bpDepreciation', label: 'Depreciation claimed in books (₹)', type: 'number', conditionalOn: { field: 'hasBusinessIncome', value: 'Y' } },
+              { name: 'bpDepreciationAllowable', label: 'Depreciation allowable under IT Act (₹)', type: 'number', conditionalOn: { field: 'hasBusinessIncome', value: 'Y' } },
+              { name: 'bpDisallowanceSec36', label: 'Disallowance under Section 36 (₹)', type: 'number', conditionalOn: { field: 'hasBusinessIncome', value: 'Y' } },
+              { name: 'bpDisallowanceSec37', label: 'Disallowance under Section 37 (e.g. CSR expenditure) (₹)', type: 'number', conditionalOn: { field: 'hasBusinessIncome', value: 'Y' } },
+              { name: 'bpDeemedIncomeSec41', label: 'Deemed income taxable u/s 41 (₹)', type: 'number', conditionalOn: { field: 'hasBusinessIncome', value: 'Y' } },
+              { name: 'bpDeductions32Ac', label: 'Deductions u/s 32AC (₹)', type: 'number', conditionalOn: { field: 'hasBusinessIncome', value: 'Y' } },
             ],
           },
         ]
@@ -2281,14 +2289,14 @@ export const fieldsConfig = {
           {
             title: 'Schedule CYLA — Current Year Losses Set-off',
             fields: [
-              { name: 'cylaHousePropertyLoss', label: 'House Property Loss set off (₹)',  type: 'number' },
-              { name: 'cylaBusinessLoss',      label: 'Business Loss set off (₹)',         type: 'number' },
+              { name: 'cylaHousePropertyLoss', label: 'House Property Loss set off (₹)', type: 'number' },
+              { name: 'cylaBusinessLoss', label: 'Business Loss set off (₹)', type: 'number' },
             ],
           },
           {
             title: 'Schedule PTI — Pass Through Income',
             fields: [
-              { name: 'ptiBusinessTrustIncome',  label: 'Pass through from business trust (₹)', type: 'number' },
+              { name: 'ptiBusinessTrustIncome', label: 'Pass through from business trust (₹)', type: 'number' },
               { name: 'ptiInvestmentFundIncome', label: 'Pass through from investment fund (₹)', type: 'number' },
             ],
           },
@@ -2296,8 +2304,8 @@ export const fieldsConfig = {
             title: 'Schedule SI — Income at Special Rates',
             fields: [
               { name: 'siAnonymousDonations', label: 'Anonymous donations taxable @ 30% u/s 115BBC (₹)', type: 'number' },
-              { name: 'siAccretedIncome115TD', label: 'Accreted income u/s 115TD (₹)',            type: 'number' },
-              { name: 'si115BBI',              label: 'Specified income u/s 115BBI (₹)', type: 'number' },
+              { name: 'siAccretedIncome115TD', label: 'Accreted income u/s 115TD (₹)', type: 'number' },
+              { name: 'si115BBI', label: 'Specified income u/s 115BBI (₹)', type: 'number' },
             ],
           },
         ]
@@ -2311,12 +2319,12 @@ export const fieldsConfig = {
             isList: true,
             listName: 'foreignIncomeList',
             fields: [
-              { name: 'country',              label: 'Country *',                              type: 'text', required: true },
-              { name: 'taxIdentificationNo',  label: 'Taxpayer ID No.',                      type: 'text' },
-              { name: 'headOfIncome',         label: 'Head of Income',                       type: 'text' },
-              { name: 'incomeOutsideIndia',   label: 'Income accruing outside India (₹) *',    type: 'number', required: true },
-              { name: 'taxPaidOutside',       label: 'Tax paid outside India (₹)',           type: 'number' },
-              { name: 'taxReliefClaimed',     label: 'Tax Relief Claimed (₹)',               type: 'number' },
+              { name: 'country', label: 'Country *', type: 'text', required: true },
+              { name: 'taxIdentificationNo', label: 'Taxpayer ID No.', type: 'text' },
+              { name: 'headOfIncome', label: 'Head of Income', type: 'text' },
+              { name: 'incomeOutsideIndia', label: 'Income accruing outside India (₹) *', type: 'number', required: true },
+              { name: 'taxPaidOutside', label: 'Tax paid outside India (₹)', type: 'number' },
+              { name: 'taxReliefClaimed', label: 'Tax Relief Claimed (₹)', type: 'number' },
             ],
           },
           {
@@ -2337,12 +2345,12 @@ export const fieldsConfig = {
             listName: 'foreignAssetsList',
             condition: (state) => state.income?.foreign_income?.hasForeignAssets === 'Y',
             fields: [
-              { name: 'countryName',    label: 'Country Name *',              type: 'text', required: true },
-              { name: 'assetType',      label: 'Type of Asset *',             type: 'text', required: true },
-              { name: 'assetDetails',   label: 'Asset Details',             type: 'text' },
-              { name: 'dateAcquisition', label: 'Date of Acquisition',      type: 'text', placeholder: 'DD/MM/YYYY' },
-              { name: 'acquisitionCost', label: 'Acquisition Cost (₹) *',     type: 'number', required: true },
-              { name: 'incomeFromAsset', label: 'Income from Asset (₹)',    type: 'number' },
+              { name: 'countryName', label: 'Country Name *', type: 'text', required: true },
+              { name: 'assetType', label: 'Type of Asset *', type: 'text', required: true },
+              { name: 'assetDetails', label: 'Asset Details', type: 'text' },
+              { name: 'dateAcquisition', label: 'Date of Acquisition', type: 'text', placeholder: 'DD/MM/YYYY' },
+              { name: 'acquisitionCost', label: 'Acquisition Cost (₹) *', type: 'number', required: true },
+              { name: 'incomeFromAsset', label: 'Income from Asset (₹)', type: 'number' },
             ],
           },
         ]
@@ -2356,27 +2364,27 @@ export const fieldsConfig = {
           {
             title: 'Part B-TI — Statement of Total Income',
             fields: [
-              { name: 'tiHouseProperty',    label: 'Income from House Property (₹)',        type: 'number' },
+              { name: 'tiHouseProperty', label: 'Income from House Property (₹)', type: 'number' },
               { name: 'tiBusinessProfession', label: 'Income from Business/Profession (₹)', type: 'number' },
-              { name: 'tiCapitalGains',      label: 'Income from Capital Gains (₹)',         type: 'number' },
-              { name: 'tiOtherSources',      label: 'Income from Other Sources (₹)',         type: 'number' },
+              { name: 'tiCapitalGains', label: 'Income from Capital Gains (₹)', type: 'number' },
+              { name: 'tiOtherSources', label: 'Income from Other Sources (₹)', type: 'number' },
               { name: 'tiVoluntaryContributions', label: 'Voluntary Contributions / Donations received (₹)', type: 'number' },
-              { name: 'tiCorpusDonations',   label: 'Corpus Donations u/s 11(1)(d) (₹)',      type: 'number' },
-              { name: 'tiAggregateIncome',   label: 'Aggregate Income (₹)',                  type: 'number' },
-              { name: 'tiGrossTotal',        label: 'Gross Total Income (₹)',                type: 'number' },
-              { name: 'tiExemptIncome',      label: 'Exempt Income u/s 11/12/10 (₹)',        type: 'number' },
-              { name: 'tiTotalIncome',       label: 'Total Income (₹)',                      type: 'number' },
+              { name: 'tiCorpusDonations', label: 'Corpus Donations u/s 11(1)(d) (₹)', type: 'number' },
+              { name: 'tiAggregateIncome', label: 'Aggregate Income (₹)', type: 'number' },
+              { name: 'tiGrossTotal', label: 'Gross Total Income (₹)', type: 'number' },
+              { name: 'tiExemptIncome', label: 'Exempt Income u/s 11/12/10 (₹)', type: 'number' },
+              { name: 'tiTotalIncome', label: 'Total Income (₹)', type: 'number' },
             ],
           },
           {
             title: 'Part B-TTI — Tax Liability',
             fields: [
-              { name: 'ttiTaxOnTotalIncome', label: 'Tax on total income (₹)',           type: 'number' },
-              { name: 'ttiSurcharge',        label: 'Surcharge (₹)',                     type: 'number' },
+              { name: 'ttiTaxOnTotalIncome', label: 'Tax on total income (₹)', type: 'number' },
+              { name: 'ttiSurcharge', label: 'Surcharge (₹)', type: 'number' },
               { name: 'ttiHealthEducationCess', label: 'Health & Education Cess (4%) (₹)', type: 'number' },
-              { name: 'ttiTotalTaxPayable',  label: 'Total Tax Payable (₹)',             type: 'number' },
-              { name: 'ttiTaxRelief',        label: 'Tax Relief u/s 90/90A/91 (₹)',     type: 'number' },
-              { name: 'ttiNetTaxPayable',    label: 'Net Tax Payable (₹)',              type: 'number' },
+              { name: 'ttiTotalTaxPayable', label: 'Total Tax Payable (₹)', type: 'number' },
+              { name: 'ttiTaxRelief', label: 'Tax Relief u/s 90/90A/91 (₹)', type: 'number' },
+              { name: 'ttiNetTaxPayable', label: 'Net Tax Payable (₹)', type: 'number' },
             ],
           },
         ]
@@ -2395,16 +2403,16 @@ export const fieldsConfig = {
                 label: 'Type of Payment *',
                 type: 'select',
                 options: [
-                  { value: 'advance_tax',      label: 'Advance Tax' },
-                  { value: 'self_assessment',   label: 'Self-Assessment Tax' },
+                  { value: 'advance_tax', label: 'Advance Tax' },
+                  { value: 'self_assessment', label: 'Self-Assessment Tax' },
                 ],
                 placeholder: 'Select Type',
                 required: true
               },
-              { name: 'bsrCode',     label: 'BSR Code *',                   type: 'text', required: true },
-              { name: 'dateDeposit', label: 'Date of Deposit *',             type: 'text', placeholder: 'DD/MM/YYYY', required: true },
-              { name: 'serialNo',    label: 'Serial Number of Challan *',    type: 'text', required: true },
-              { name: 'amount',      label: 'Tax Paid (₹) *',                type: 'number', required: true },
+              { name: 'bsrCode', label: 'BSR Code *', type: 'text', required: true },
+              { name: 'dateDeposit', label: 'Date of Deposit *', type: 'text', placeholder: 'DD/MM/YYYY', required: true },
+              { name: 'serialNo', label: 'Serial Number of Challan *', type: 'text', required: true },
+              { name: 'amount', label: 'Tax Paid (₹) *', type: 'number', required: true },
             ],
           },
           {
@@ -2412,14 +2420,14 @@ export const fieldsConfig = {
             isList: true,
             listName: 'tdsRows',
             fields: [
-              { name: 'tanDeductor',   label: 'TAN of Deductor *',                    type: 'text', required: true },
-              { name: 'nameDeductor',  label: 'Name of Deductor',                   type: 'text' },
-              { name: 'panDeductor',   label: 'PAN of Deductor',                    type: 'text' },
-              { name: 'year',          label: 'Year of Tax Deduction',              type: 'text', placeholder: 'YYYY' },
-              { name: 'incomeType',    label: 'Nature of Income',                   type: 'text' },
-              { name: 'amountPaidCredited', label: 'Amount Paid/Credited (₹)',     type: 'number' },
-              { name: 'tdsAmount',     label: 'Tax Deducted (₹) *',                  type: 'number', required: true },
-              { name: 'tdsClaimed',    label: 'TDS Claimed (₹) *',                  type: 'number', required: true },
+              { name: 'tanDeductor', label: 'TAN of Deductor *', type: 'text', required: true },
+              { name: 'nameDeductor', label: 'Name of Deductor', type: 'text' },
+              { name: 'panDeductor', label: 'PAN of Deductor', type: 'text' },
+              { name: 'year', label: 'Year of Tax Deduction', type: 'text', placeholder: 'YYYY' },
+              { name: 'incomeType', label: 'Nature of Income', type: 'text' },
+              { name: 'amountPaidCredited', label: 'Amount Paid/Credited (₹)', type: 'number' },
+              { name: 'tdsAmount', label: 'Tax Deducted (₹) *', type: 'number', required: true },
+              { name: 'tdsClaimed', label: 'TDS Claimed (₹) *', type: 'number', required: true },
             ],
           },
           {
@@ -2427,13 +2435,13 @@ export const fieldsConfig = {
             isList: true,
             listName: 'tcsRows',
             fields: [
-              { name: 'tanCollector',  label: 'TAN of Collector *',                   type: 'text', required: true },
-              { name: 'nameCollector', label: 'Name of Collector',                  type: 'text' },
-              { name: 'panCollector',  label: 'PAN of Collector',                   type: 'text' },
-              { name: 'year',          label: 'Year of Tax Collection',             type: 'text', placeholder: 'YYYY' },
-              { name: 'amountPaid',    label: 'Amount Paid (₹)',                   type: 'number' },
-              { name: 'tcsAmount',     label: 'Tax Collected (₹) *',                 type: 'number', required: true },
-              { name: 'tcsClaimed',    label: 'TCS Claimed (₹) *',                   type: 'number', required: true },
+              { name: 'tanCollector', label: 'TAN of Collector *', type: 'text', required: true },
+              { name: 'nameCollector', label: 'Name of Collector', type: 'text' },
+              { name: 'panCollector', label: 'PAN of Collector', type: 'text' },
+              { name: 'year', label: 'Year of Tax Collection', type: 'text', placeholder: 'YYYY' },
+              { name: 'amountPaid', label: 'Amount Paid (₹)', type: 'number' },
+              { name: 'tcsAmount', label: 'Tax Collected (₹) *', type: 'number', required: true },
+              { name: 'tcsClaimed', label: 'TCS Claimed (₹) *', type: 'number', required: true },
             ],
           },
         ]
@@ -2445,18 +2453,18 @@ export const fieldsConfig = {
           {
             title: 'Verification Details',
             fields: [
-              { name: 'verificationName',         label: 'Name of Signatory *',                                    type: 'text' },
-              { name: 'verificationFatherName',   label: "Father's Name",                                          type: 'text' },
-              { name: 'verificationDesignation',  label: 'Designation / Capacity *',                              type: 'text' },
-              { name: 'verificationPan',          label: 'PAN of Signatory *',                                    type: 'text' },
-              { name: 'verificationAadhaar',      label: 'Aadhaar of Signatory',                                  type: 'text' },
-              { name: 'verificationPlace',        label: 'Place *',                                               type: 'text' },
-              { name: 'verificationDate',         label: 'Date *',                                                type: 'text', placeholder: 'DD/MM/YYYY' },
+              { name: 'verificationName', label: 'Name of Signatory *', type: 'text' },
+              { name: 'verificationFatherName', label: "Father's Name", type: 'text' },
+              { name: 'verificationDesignation', label: 'Designation / Capacity *', type: 'text' },
+              { name: 'verificationPan', label: 'PAN of Signatory *', type: 'text' },
+              { name: 'verificationAadhaar', label: 'Aadhaar of Signatory', type: 'text' },
+              { name: 'verificationPlace', label: 'Place *', type: 'text' },
+              { name: 'verificationDate', label: 'Date *', type: 'text', placeholder: 'DD/MM/YYYY' },
               {
                 name: 'verificationDeclaration',
                 label: 'Declaration',
                 type: 'checkbox',
-               
+
                 checkboxLabel: 'I solemnly declare that to the best of my knowledge and belief, the information given in the return and its schedules is correct and complete and in accordance with the provisions of the Income-tax Act, 1961. I further declare that I am making this return in my capacity as the authorized signatory and I am also competent to make this return and verify it.',
               },
             ],
@@ -2464,7 +2472,7 @@ export const fieldsConfig = {
         ]
       }
     }
-  },  
+  },
 
   'LLP': {
     details: {
@@ -2983,3 +2991,253 @@ if (fieldsConfig['LLP']) {
     fieldsConfig['AOP/BOI'].details.partners.sections[0].fields[4].label = 'Profit/Loss Sharing Ratio (%) *';
   }
 }
+
+// 3. Setup configurations for Individual2, Individual3, and Individual4
+const individualCommonDetails = {
+  general: {
+    title: 'General Information',
+    subtitle: 'Basic identity details of the individual.',
+    sections: [
+      {
+        title: 'Identity Details',
+        fields: [
+          { name: 'fullName', label: 'Full Name *', type: 'text', required: true },
+          { name: 'pan', label: 'PAN *', type: 'text', required: true },
+          { name: 'dateOfBirth', label: 'Date of Birth *', type: 'text', placeholder: 'DD/MM/YYYY', required: true },
+          { name: 'aadhaar', label: 'Aadhaar Number *', type: 'text', placeholder: '12-digit Aadhaar', required: true },
+          { name: 'gender', label: 'Gender *', type: 'select', options: ['Male', 'Female', 'Other'], required: true },
+          { name: 'residentialStatus', label: 'Residential Status *', type: 'select', options: ['Resident', 'Non-Resident'], required: true },
+          { name: 'filingSection', label: 'Filing Status Type *', type: 'select', options: ['139(1) - On or before due date', '139(4) - Belated', '139(5) - Revised'], required: true },
+          { name: 'optingOutNewRegime', label: 'Opting out of New Tax Regime u/s 115BAC? *', type: 'select', options: ['No', 'Yes'], required: true }
+        ]
+      }
+    ]
+  },
+  address: {
+    title: 'Registered Address',
+    subtitle: 'Provide the residential/communication address details.',
+    sections: [
+      {
+        title: 'Address details',
+        fields: [
+          { name: 'flatNo', label: 'Flat/Door/Block No. *', type: 'text', required: true },
+          { name: 'premiseName', label: 'Name of Premises/Building', type: 'text', required: false },
+          { name: 'roadStreet', label: 'Road/Street/Lane', type: 'text', required: false },
+          { name: 'areaLocality', label: 'Area/Locality *', type: 'text', required: true },
+          { name: 'city', label: 'Town/City/District *', type: 'text', required: true },
+          { name: 'state', label: 'State *', type: 'select', options: ['Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal', 'Delhi'], required: true },
+          { name: 'pincode', label: 'PIN Code *', type: 'number', required: true },
+          { name: 'country', label: 'Country *', type: 'select', options: ['INDIA'], required: true },
+          { name: 'mobile', label: 'Mobile Number *', type: 'text', placeholder: '10-digit Mobile', required: true },
+          { name: 'email', label: 'Email Address *', type: 'text', placeholder: 'Email Address', required: true }
+        ]
+      }
+    ]
+  },
+  additional: {
+    title: 'Additional Details',
+    subtitle: 'Disclosures under Seventh Proviso to Section 139(1).',
+    sections: [
+      {
+        title: 'Seventh Proviso Disclosures',
+        fields: [
+          { name: 'depositedExceeding1Cr', label: 'Have you deposited amount exceeding 1 Crore in current accounts? *', type: 'select', options: ['No', 'Yes'], required: true },
+          { name: 'depositedAmount', label: 'Deposit Amount (₹) *', type: 'number', required: true, conditionalOn: { field: 'depositedExceeding1Cr', value: 'Yes' } },
+          { name: 'foreignTravelExceeding2L', label: 'Have you incurred foreign travel expenditure exceeding 2 Lakhs? *', type: 'select', options: ['No', 'Yes'], required: true },
+          { name: 'travelAmount', label: 'Travel Expenditure (₹) *', type: 'number', required: true, conditionalOn: { field: 'foreignTravelExceeding2L', value: 'Yes' } },
+          { name: 'electricityExceeding1L', label: 'Have you incurred electricity expenditure exceeding 1 Lakh? *', type: 'select', options: ['No', 'Yes'], required: true },
+          { name: 'electricityAmount', label: 'Electricity Expenditure (₹) *', type: 'number', required: true, conditionalOn: { field: 'electricityExceeding1L', value: 'Yes' } }
+        ]
+      }
+    ]
+  }
+};
+
+const individualCommonIncome = {
+  salary: {
+    title: 'Salary / Pension Income',
+    subtitle: 'Provide details of salary, perquisites, and profits in lieu of salary.',
+    sections: [
+      {
+        title: 'Salary details u/s 17',
+        fields: [
+          { name: 'salary17_1', label: 'Salary as per Section 17(1) (₹) *', type: 'number', required: true },
+          { name: 'salary17_2', label: 'Value of perquisites as per Section 17(2) (₹)', type: 'number', required: false },
+          { name: 'salary17_3', label: 'Profits in lieu of salary as per Section 17(3) (₹)', type: 'number', required: false },
+          { name: 'grossSalary', label: 'Gross Salary (i) (₹)', type: 'number', required: false, disabled: true },
+          { name: 'sec10_13A', label: 'Sec 10(13A) - HRA Exemption (₹)', type: 'number', required: false },
+          { name: 'exemptAllowances', label: 'Less: Exempt Allowances u/s 10 (₹)', type: 'number', required: false },
+          { name: 'deductionStandard', label: 'Standard Deduction u/s 16(ia) (₹)', type: 'number', required: false, disabled: true },
+          { name: 'professionalTax', label: 'Professional Tax paid u/s 16(iii) (₹)', type: 'number', required: false },
+          { name: 'incomeChargeableSalaries', label: 'Income chargeable under Head "Salaries" (v) (₹)', type: 'number', required: false, disabled: true }
+        ]
+      }
+    ]
+  },
+  house_property: {
+    title: 'House Property Income',
+    subtitle: 'Details of income/loss from House Property.',
+    sections: [
+      {
+        title: 'House Property List',
+        isList: true,
+        listName: 'housePropertiesList',
+        fields: [
+          { name: 'propertyAddress', label: 'Address of Property *', type: 'text', required: true },
+          { name: 'propertyType', label: 'Property Type *', type: 'select', options: ['Self Occupied', 'Let Out', 'Deemed Let Out'], required: true },
+          { name: 'rentReceived', label: 'Gross Rent Received *', type: 'number', required: true },
+          { name: 'municipalTaxes', label: 'Municipal Taxes Paid', type: 'number', required: false },
+          { name: 'homeLoanInterest', label: 'Interest on Home Loan u/s 24', type: 'number', required: false },
+          { name: 'incomeFromProperty', label: 'Income from Property *', type: 'number', required: true }
+        ]
+      }
+    ]
+  },
+  other_sources: {
+    title: 'Other Sources',
+    subtitle: 'Interest, dividend, and miscellaneous incomes.',
+    sections: [
+      {
+        title: 'Interest and Dividends',
+        fields: [
+          { name: 'savingsInterest', label: 'Interest from Savings Bank Accounts (₹)', type: 'number', required: false },
+          { name: 'depositInterest', label: 'Interest from Deposits (FD/Post Office) (₹)', type: 'number', required: false },
+          { name: 'refundInterest', label: 'Income Tax Refund Interest (₹)', type: 'number', required: false },
+          { name: 'dividendIncome', label: 'Dividend Income (₹)', type: 'number', required: false },
+          { name: 'otherIncome', label: 'Other Miscellaneous Income (₹)', type: 'number', required: false }
+        ]
+      }
+    ]
+  }
+};
+
+const individualCommonDeductions = {
+  chapter6a: {
+    title: 'Chapter VI-A Deductions',
+    subtitle: 'Deductions that reduce taxable income.',
+    sections: [
+      {
+        title: 'Deductions u/s 80',
+        fields: [
+          { name: 'deduction80C', label: 'Section 80C (Max 1,50,000) (₹)', type: 'number', required: false },
+          { name: 'deduction80D', label: 'Section 80D (Health Insurance) (₹)', type: 'number', required: false },
+          { name: 'deduction80G', label: 'Section 80G (Donations) (₹)', type: 'number', required: false },
+          { name: 'deduction80TTA', label: 'Section 80TTA (Max 10,000) (₹)', type: 'number', required: false },
+          { name: 'deduction80TTB', label: 'Section 80TTB (Max 50,000 for Senior Citizens) (₹)', type: 'number', required: false },
+          { name: 'deduction80E', label: 'Section 80E (Education Loan Interest) (₹)', type: 'number', required: false },
+          { name: 'deduction80GGC', label: 'Section 80GGC (Political Contribution) (₹)', type: 'number', required: false }
+        ]
+      }
+    ]
+  },
+  exempt_income: {
+    title: 'Exempt Income',
+    subtitle: 'Incomes exempt from taxation under Section 10.',
+    sections: [
+      {
+        title: 'Exempt Incomes',
+        fields: [
+          { name: 'agriculturalIncome', label: 'Section 10(38) / Agricultural Income (₹)', type: 'number', required: false },
+          { name: 'exemptInterest', label: 'Exempt Interest Income (₹)', type: 'number', required: false },
+          { name: 'otherExemptIncome', label: 'Other Exempt Incomes (₹)', type: 'number', required: false }
+        ]
+      }
+    ]
+  }
+};
+
+const individualCommonTaxes = {
+  tds: {
+    title: 'TDS details',
+    subtitle: 'Tax Deducted at Source details.',
+    sections: [
+      {
+        title: 'TDS Claims',
+        isList: true,
+        listName: 'tdsRows',
+        fields: [
+          { name: 'tanOfDeductor', label: 'TAN of Deductor *', type: 'text', required: true },
+          { name: 'nameOfDeductor', label: 'Name of Deductor *', type: 'text', required: true },
+          { name: 'tdsRelation', label: 'TDS credit relating to *', type: 'select', options: ['Self', 'Other Person'], required: true },
+          { name: 'grossIncomeAmount', label: 'Gross Income Amount *', type: 'number', required: true },
+          { name: 'totalTaxDeducted', label: 'TDS of current FY *', type: 'number', required: true },
+          { name: 'tdsSection', label: 'Section *', type: 'select', options: ['194C', '194J', '194I', '194A', '195', 'Others'], required: true },
+          { name: 'amountClaimed', label: 'TDS credit claimed this year *', type: 'number', required: true }
+        ]
+      }
+    ]
+  },
+  tcs: {
+    title: 'TCS details',
+    subtitle: 'Tax Collected at Source details.',
+    sections: [
+      {
+        title: 'TCS Claims',
+        isList: true,
+        listName: 'tcsRows',
+        fields: [
+          { name: 'tanOfCollector', label: 'TAN of Collector *', type: 'text', required: true },
+          { name: 'nameOfCollector', label: 'Collector Name *', type: 'text', required: true },
+          { name: 'tcsRelation', label: 'TCS credit relating to *', type: 'select', options: ['Self', 'Other Person'], required: true },
+          { name: 'transactionAmount', label: 'Transaction Amount *', type: 'number', required: true },
+          { name: 'totalTaxCollected', label: 'TCS of current FY *', type: 'number', required: true },
+          { name: 'amountClaimedTCS', label: 'TCS credit claimed this year *', type: 'number', required: true }
+        ]
+      }
+    ]
+  },
+  advance_tax: {
+    title: 'Advance & Self-Assessment Tax',
+    subtitle: 'Challan tax deposit payments.',
+    sections: [
+      {
+        title: 'Tax Payments List',
+        isList: true,
+        listName: 'taxPayments',
+        fields: [
+          { name: 'bsrCode', label: 'BSR Code (6 digits) *', type: 'text', required: true },
+          { name: 'dateOfDeposit', label: 'Date of Deposit *', type: 'text', placeholder: 'DD/MM/YYYY', required: true },
+          { name: 'challanSerial', label: 'Challan Serial Number (5 digits) *', type: 'text', required: true },
+          { name: 'taxAmountDeposited', label: 'Tax Amount Deposited *', type: 'number', required: true },
+          { name: 'taxType', label: 'Type of Tax *', type: 'select', options: ['Advance Tax', 'Self Assessment Tax'], required: true }
+        ]
+      }
+    ]
+  }
+};
+
+const individualCommonFiling = {
+  bank: {
+    title: 'Bank Accounts',
+    subtitle: 'Provide active bank details.',
+    sections: [
+      {
+        title: 'Refund Destination Bank',
+        isList: true,
+        listName: 'bankAccounts',
+        fields: [
+          { name: 'bankIfscCode', label: 'IFSC Code *', type: 'text', required: true },
+          { name: 'bankName', label: 'Bank Name *', type: 'text', required: true },
+          { name: 'bankAccountNumber', label: 'Account Number *', type: 'text', required: true },
+          { name: 'selectedForRefund', label: 'Select for Refund *', type: 'select', options: ['Yes', 'No'], required: true }
+        ]
+      }
+    ]
+  },
+  efiling: {
+    title: 'E-Filing & Verification',
+    subtitle: 'Verification details of the individual.',
+    sections: [
+      {
+        title: 'Verification Info',
+        fields: [
+          { name: 'verifierName', label: 'Name of Verifier *', type: 'text', required: true },
+          { name: 'verifierPan', label: 'PAN of Verifier *', type: 'text', required: true },
+          { name: 'verifierAadhaar', label: 'Aadhaar of Verifier', type: 'text', required: false },
+          { name: 'placeOfSigning', label: 'Place of Signing *', type: 'text', required: true },
+          { name: 'dateOfSigning', label: 'Date of Signing *', type: 'text', placeholder: 'DD/MM/YYYY', required: true }
+        ]
+      }
+    ]
+  }
+};

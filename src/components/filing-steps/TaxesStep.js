@@ -176,7 +176,7 @@ export default function TaxesStep({ filingType, activeTab, handleNextTab }) {
             <span className="text-lg">✓</span> Everything looks cool
           </div>
 
-          {/* Section 1 */} 
+          {/* Section 1 */}
           <FormSection
             title="Details of Previous Years' Losses"
             description="Add any losses from the previous years to set off against the income for AY 2026-2027."
@@ -186,7 +186,7 @@ export default function TaxesStep({ filingType, activeTab, handleNextTab }) {
             rightAction={
               <Button variant="brand" className="px-6 py-2 h-auto text-md font-medium rounded text-white border-none">
                 Add Previous Year Loss
-              </Button> 
+              </Button>
             }
           >
           </FormSection>
@@ -208,10 +208,10 @@ export default function TaxesStep({ filingType, activeTab, handleNextTab }) {
 
           {/* Section 3 */}
           <FormSection
-            title="Filing and Due Dates for Loss Set-off in Previous Years" 
+            title="Filing and Due Dates for Loss Set-off in Previous Years"
             description="Add any losses from the previous years to set off against the income for AY 2026-2027."
             icon={MdDateRange}
-            defaultExpanded={true} 
+            defaultExpanded={true}
             rightAction={
               <Button variant="brand" className="px-6 py-2 h-auto text-md font-medium rounded text-white border-none">
                 Edit Dates
@@ -244,7 +244,7 @@ export default function TaxesStep({ filingType, activeTab, handleNextTab }) {
           <div className="mt-4 mb-2">
             <Button variant="brand" className="px-8 py-2.5 h-auto text-md font-medium rounded text-white border-none">
               Save
-            </Button> 
+            </Button>
           </div>
         </div>
       )}

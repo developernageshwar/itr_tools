@@ -175,7 +175,7 @@ export const calculateTax = (
 
   // ── Rebate u/s 87A (only Resident Individual) ──────────
   let rebate = 0;
-  if (filingType === 'Individual') {
+  if (['Individual', 'Individual2', 'Individual3', 'Individual4'].includes(filingType)) {
     if (regime === 'new'  && income <= 700_000)  rebate = Math.min(totalTax, 25_000);
     if (regime === 'old'  && income <= 500_000)  rebate = Math.min(totalTax, 12_500);
   }
@@ -206,6 +206,16 @@ export const calculateTax = (
 // ──────────────────────────────────────────────
 export const determineITRType = (state) => {
   const filingType = state.selectedFilingType || state.filingType || 'Individual';
+
+  if (filingType === 'Individual2') {
+    return { type: 'ITR-2', reason: 'Individual with detailed Salary, House Property or Capital Gains' };
+  }
+  if (filingType === 'Individual3') {
+    return { type: 'ITR-3', reason: 'Individual with detailed Business/Profession Income (Schedule BP & Financials)' };
+  }
+  if (filingType === 'Individual4') {
+    return { type: 'ITR-4', reason: 'Individual with Presumptive Business/Profession Income' };
+  }
 
   // ITR-7: Trust & Exempt Entities
   if (
@@ -282,15 +292,24 @@ export const determineITRType = (state) => {
   const hasCapitalGains =
     Number(state.capitalGains || 0) > 0 ||
     Number(state.stcg         || 0) > 0 ||
-    Number(state.ltcg         || 0) > 0;
+    Number(state.ltcg         || 0) > 0 ||
+    Number(state.deductions?.more?.stcg || 0) > 0 ||
+    Number(state.deductions?.more?.ltcg || 0) > 0 ||
+    Number(state.deductions?.more?.stcg111A || 0) > 0 ||
+    Number(state.deductions?.more?.ltcg112A || 0) > 0;
 
   const hasForeignAssets =
     Number(state.foreignAssets      || 0) > 0 ||
-    Number(state.otherDisclosures   || 0) > 0;
+    Number(state.otherDisclosures   || 0) > 0 ||
+    Number(state.deductions?.more?.foreignAssets || 0) > 0 ||
+    Number(state.deductions?.more?.otherDisclosures || 0) > 0;
 
-  const salary   = Number(state.salaryIncome || 0);
-  const interest = Number(state.interestIncome || 0);
-  const total    = salary + interest + Number(state.capitalGains || 0) + Number(state.businessIncome || 0);
+  const salary   = Number(state.salaryIncome || 0) + Number(state.income?.salary?.grossSalary || 0);
+  const interest = Number(state.interestIncome || 0) +
+    Number(state.income?.other?.savingsInterest || 0) +
+    Number(state.income?.other?.depositInterest || 0) +
+    Number(state.income?.other?.refundInterest || 0);
+  const total    = salary + interest + Number(state.capitalGains || state.deductions?.more?.stcg || state.deductions?.more?.ltcg || 0) + Number(state.businessIncome || state.income?.business?.netBusinessIncome || 0);
   const isHigh   = total > 5_000_000;
 
   if (hasPresumptive && !hasCapitalGains && !hasForeignAssets && !isHigh) {

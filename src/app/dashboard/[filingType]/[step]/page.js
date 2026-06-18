@@ -14,7 +14,11 @@ import FinancialsStep from '@/components/filing-steps/FinancialsStep';
 import DeductionsStep from '@/components/filing-steps/DeductionsStep';
 import TaxesStep from '@/components/filing-steps/TaxesStep';
 import FilingStep from '@/components/filing-steps/FilingStep';
+import TaxSummaryStep from '@/components/filing-steps/TaxSummaryStep';
 import DynamicFilingStep from '@/components/forms/DynamicFilingStep';
+import SupportCard from '@/components/cards/supportCard';
+import { useChatStore } from '@/store/chatStore';
+import Button from '@/components/ui/Button';
 
 
 export default function FilingFlowPage() {
@@ -23,7 +27,8 @@ export default function FilingFlowPage() {
   const [activeTab, setActiveTab] = useState('');
   const state = useItrStore();
   const errorSteps = state.errorSteps || [];
-  
+  const openChat = useChatStore((state) => state.openChat);
+
   // E.g., 'company-private', 'huf', etc.
   const rawFilingType = params?.filingType;
   const currentStepRoute = params?.step;
@@ -67,6 +72,14 @@ export default function FilingFlowPage() {
     }
   };
 
+  const handleSidebarSaveAndNext = () => {
+    if (typeof window !== 'undefined' && window.currentSaveHandler) {
+      window.currentSaveHandler();
+    } else {
+      handleNextTab();
+    }
+  };
+
   // Render the proper step component
   const renderStepComponent = () => {
     const commonProps = {
@@ -100,20 +113,79 @@ export default function FilingFlowPage() {
         return <TaxesStep {...commonProps} />;
       case 'filing':
         return <FilingStep {...commonProps} />;
+      case 'tax-summary':
+        return <TaxSummaryStep {...commonProps} />;
       default:
         return <div>Step implementation pending...</div>;
     }
   };
 
+  const isIndividualType = filingType.startsWith('Individual');
+
+  const renderSubTabs = () => {
+    if (currentSubTabs.length === 0) return null;
+    return (
+      <div className="flex gap-8 mb-4 overflow-x-auto select-none border-b border-gray-100 scrollbar-hide">
+        {currentSubTabs.map((tab) => (
+          <div
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)} 
+            className={`
+              pb-3 cursor-pointer font-poppins font-semibold transition-all whitespace-nowrap border-b-2 text-base outline-none
+              ${effectiveActiveTab === tab.id
+                ? "text-[#3867D6] border-[#3867D6]"
+                : "text-[#8E8E93] border-transparent hover:text-gray-600"
+              }
+            `}
+          >
+            {tab.label}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const handleStepClick = (route) => {
+    if (typeof window !== 'undefined' && window.currentSaveHandler) {
+      window.currentSaveHandler();
+    }
+    router.push(`${configEntry.baseRoute}/${route}`);
+  };
+
   return (
     <div className="w-full min-h-screen bg-[#F8F9FC]">
       {/* Top Main Navigation (Reusable Stepper) */}
-      <div className="w-full flex justify-center pt-8 pb-4">
-        <Stepper1 currentStep={currentStepId} customSteps={steps} errorSteps={errorSteps} />
+      <div className="w-full flex justify-center pt-8 pb-4 px-4">
+        <div className="max-w-[1440px] w-full px-6">
+          {isIndividualType ? (
+            <div className="flex flex-col lg:flex-row gap-10 items-start">
+              {/* Spacer matching the LEFT Sidebar Area */}
+              <div className="w-full lg:w-[320px] hidden lg:block flex-shrink-0" />
+              {/* Stepper aligned with RIGHT Content Area */}
+              <div className="flex-1 w-full flex justify-start min-w-0 overflow-x-auto scrollbar-hide">
+                <Stepper1
+                  currentStep={currentStepId}
+                  customSteps={steps}
+                  errorSteps={errorSteps}
+                  onStepClick={handleStepClick}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="max-w-[1000px] mx-auto w-full flex justify-center">
+              <Stepper1
+                currentStep={currentStepId}
+                customSteps={steps}
+                errorSteps={errorSteps}
+                onStepClick={handleStepClick}
+              />
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Sub Tabs Navigation */}
-      {currentSubTabs.length > 0 && (
+      {/* Sub Tabs Navigation (For non-Individual types) */}
+      {!isIndividualType && currentSubTabs.length > 0 && (
         <div className="w-full flex justify-center">
           <div className="flex gap-10 max-w-[1000px] w-full px-4 overflow-x-auto">
             {currentSubTabs.map((tab) => (
@@ -138,14 +210,45 @@ export default function FilingFlowPage() {
 
       {/* Form Content Area */}
       <div className="w-full flex justify-center py-10 pb-1 px-4">
-        <div className="max-w-[1000px] w-full">
-          {renderStepComponent()}
+        <div className="max-w-[1440px] w-full px-6">
+          {isIndividualType ? (
+            <div className="flex flex-col lg:flex-row gap-10 items-start">
+              {/* LEFT Sidebar Area */}
+              <div className="w-full lg:w-[320px] flex flex-col gap-6 lg:sticky lg:top-10">
+                <SupportCard
+                  title="Contact Support"
+                  description="AI and expert assistance."
+                  buttonText="Chat Now"
+                  onClick={openChat}
+                />
+
+                <Button
+                  variant="brand"
+                  type="button"
+                  className="w-full h-[52px] rounded-xl font-semibold text-base shadow-md"
+                  onClick={handleSidebarSaveAndNext}
+                >
+                  {currentStepRoute === 'tax-summary' ? 'Final Submission' : 'Go to next'}
+                </Button>
+              </div>
+
+              {/* RIGHT Content Area */}
+              <div className="flex-1 w-full flex flex-col gap-6 min-w-0">
+                {renderSubTabs()}
+                {renderStepComponent()}
+              </div>
+            </div>
+          ) : (
+            <div className="max-w-[1000px] mx-auto w-full">
+              {renderStepComponent()}
+            </div>
+          )}
         </div>
       </div>
 
       {/* Footer */}
       <div className="px-4 pb-8 flex justify-center w-full">
-        <div className="w-full max-w-[1000px]">
+        <div className="w-full max-w-[1440px] px-6">
           <Footer2 />
         </div>
       </div>

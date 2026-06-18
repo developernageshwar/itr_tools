@@ -20,7 +20,7 @@ function ConfirmPageContent() {
 
   React.useEffect(() => {
     if (!tempAuthData) {
-      router.push('/login');
+      router.push('/login'); 
     }
   }, [tempAuthData, router]);
 

@@ -3,6 +3,52 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { calculateTax, NEW_REGIME_SLABS, OLD_REGIME_SLABS, determineITRType } from '../utils/taxCalculator';
 import { taxReturnService } from '../services/taxReturnService';
 
+const getProfileDetails = (currentFilingType, state, p) => {
+  let profileName = p.name;
+  let profilePan = p.pan;
+  if (currentFilingType === 'Individual4') {
+    const perm = state.details?.permanent || {};
+    profileName = [perm.firstName, perm.middleName, perm.lastName].filter(Boolean).join(' ') || p.name;
+    profilePan = perm.panNumber || p.pan;
+  } else if (currentFilingType === 'Individual2') {
+    const perm = state.details?.permanent || {};
+    profileName = [perm.firstName, perm.middleName, perm.lastName].filter(Boolean).join(' ') || p.name;
+    profilePan = perm.panNumber || p.pan;
+  } else if (currentFilingType === 'Individual3') {
+    const perm = state.details?.permanent || {};
+    profileName = [perm.firstName, perm.middleName, perm.lastName].filter(Boolean).join(' ') || p.name;
+    profilePan = perm.panNumber || p.pan;
+  } else if (currentFilingType === 'HUF') {
+    const hufInfo = state.details?.permanent || {};
+    profileName = hufInfo.hufName || p.name;
+    profilePan = hufInfo.panNumber || p.pan;
+  } else if (currentFilingType === 'LLP') {
+    const llpInfo = state.details?.general || {};
+    profileName = llpInfo.llpName || p.name;
+    profilePan = llpInfo.panNumber || p.pan;
+  } else if (currentFilingType === 'Firm') {
+    const firmInfo = state.details?.general || {};
+    profileName = firmInfo.firmName || p.name;
+    profilePan = firmInfo.panNumber || p.pan;
+  } else if (currentFilingType === 'AOP/BOI') {
+    const aopInfo = state.details?.general || {};
+    profileName = aopInfo.aopName || p.name;
+    profilePan = aopInfo.panNumber || p.pan;
+  } else if (['Company Private', 'Company Public'].includes(currentFilingType)) {
+    const companyInfo = state.details?.general || {};
+    profileName = companyInfo.companyName || p.name;
+    profilePan = companyInfo.panNumber || p.pan;
+  } else if (currentFilingType === 'Trust & Exempt Entities') {
+    const trustInfo = state.basic?.entity_details || {};
+    profileName = trustInfo.entityName || p.name;
+    profilePan = trustInfo.panNumber || p.pan;
+  } else {
+    profileName = state.firstName && state.lastName ? `${state.firstName} ${state.lastName}`.trim() : p.name;
+    profilePan = state.panNumber || p.pan;
+  }
+  return { name: profileName, pan: profilePan };
+};
+
 const defaultFormData = {
   entityType: '',
   formData: {
@@ -438,28 +484,7 @@ export const useItrStore = create(
         const updatedProfiles = state.profiles.map(p => {
           if (p.id === state.activeProfileId) {
             const currentFilingType = state.selectedFilingType || state.filingType || 'Individual';
-            let profileName = p.name;
-            let profilePan = p.pan;
-            if (currentFilingType === 'HUF') {
-              const hufInfo = state.details?.permanent || {};
-              profileName = hufInfo.hufName || p.name;
-              profilePan = hufInfo.panNumber || p.pan;
-            } else if (currentFilingType === 'LLP') {
-              const llpInfo = state.details?.general || {};
-              profileName = llpInfo.llpName || p.name;
-              profilePan = llpInfo.panNumber || p.pan;
-            } else if (currentFilingType === 'Firm') {
-              const firmInfo = state.details?.general || {};
-              profileName = firmInfo.firmName || p.name;
-              profilePan = firmInfo.panNumber || p.pan;
-            } else if (currentFilingType === 'AOP/BOI') {
-              const aopInfo = state.details?.general || {};
-              profileName = aopInfo.aopName || p.name;
-              profilePan = aopInfo.panNumber || p.pan;
-            } else {
-              profileName = state.firstName && state.lastName ? `${state.firstName} ${state.lastName}`.trim() : p.name;
-              profilePan = state.panNumber || p.pan;
-            }
+            const { name: profileName, pan: profilePan } = getProfileDetails(currentFilingType, state, p);
 
             return {
               ...p,
@@ -490,28 +515,7 @@ export const useItrStore = create(
         const updatedProfiles = state.profiles.map(p => {
           if (p.id === state.activeProfileId) {
             const currentFilingType = state.selectedFilingType || state.filingType || 'Individual';
-            let profileName = p.name;
-            let profilePan = p.pan;
-            if (currentFilingType === 'HUF') {
-              const hufInfo = state.details?.permanent || {};
-              profileName = hufInfo.hufName || p.name;
-              profilePan = hufInfo.panNumber || p.pan;
-            } else if (currentFilingType === 'LLP') {
-              const llpInfo = state.details?.general || {};
-              profileName = llpInfo.llpName || p.name;
-              profilePan = llpInfo.panNumber || p.pan;
-            } else if (currentFilingType === 'Firm') {
-              const firmInfo = state.details?.general || {};
-              profileName = firmInfo.firmName || p.name;
-              profilePan = firmInfo.panNumber || p.pan;
-            } else if (currentFilingType === 'AOP/BOI') {
-              const aopInfo = state.details?.general || {};
-              profileName = aopInfo.aopName || p.name;
-              profilePan = aopInfo.panNumber || p.pan;
-            } else {
-              profileName = state.firstName && state.lastName ? `${state.firstName} ${state.lastName}`.trim() : p.name;
-              profilePan = state.panNumber || p.pan;
-            }
+            const { name: profileName, pan: profilePan } = getProfileDetails(currentFilingType, state, p);
 
             return {
               ...p,
@@ -568,41 +572,12 @@ export const useItrStore = create(
       saveCurrentProfileData: () => set((state) => {
         const snapshot = _extractFormData(state);
         const currentFilingType = state.selectedFilingType || state.filingType || 'Individual';
-        const isStructured = ['HUF', 'LLP', 'Firm', 'AOP/BOI', 'Company Private', 'Company Public', 'Trust & Exempt Entities'].includes(currentFilingType);
+        const isStructured = ['HUF', 'LLP', 'Firm', 'AOP/BOI', 'Company Private', 'Company Public', 'Trust & Exempt Entities', 'Individual2', 'Individual3', 'Individual4'].includes(currentFilingType);
 
         const updatedProfiles = state.profiles.map(p => {
           if (p.id === state.activeProfileId) {
             const currentFilingType = state.selectedFilingType || state.filingType || 'Individual';
-            let profileName = p.name;
-            let profilePan = p.pan;
-            if (currentFilingType === 'HUF') {
-              const hufInfo = state.details?.permanent || {};
-              profileName = hufInfo.hufName || p.name;
-              profilePan = hufInfo.panNumber || p.pan;
-            } else if (currentFilingType === 'LLP') {
-              const llpInfo = state.details?.general || {};
-              profileName = llpInfo.llpName || p.name;
-              profilePan = llpInfo.panNumber || p.pan;
-            } else if (currentFilingType === 'Firm') {
-              const firmInfo = state.details?.general || {};
-              profileName = firmInfo.firmName || p.name;
-              profilePan = firmInfo.panNumber || p.pan;
-            } else if (currentFilingType === 'AOP/BOI') {
-              const aopInfo = state.details?.general || {};
-              profileName = aopInfo.aopName || p.name;
-              profilePan = aopInfo.panNumber || p.pan;
-            } else if (['Company Private', 'Company Public'].includes(currentFilingType)) {
-              const companyInfo = state.details?.general || {};
-              profileName = companyInfo.companyName || p.name;
-              profilePan = companyInfo.panNumber || p.pan;
-            } else if (currentFilingType === 'Trust & Exempt Entities') {
-              const trustInfo = state.basic?.entity_details || {};
-              profileName = trustInfo.entityName || p.name;
-              profilePan = trustInfo.panNumber || p.pan;
-            } else {
-              profileName = state.firstName && state.lastName ? `${state.firstName} ${state.lastName}`.trim() : p.name;
-              profilePan = state.panNumber || p.pan;
-            }
+            const { name: profileName, pan: profilePan } = getProfileDetails(currentFilingType, state, p);
 
             return {
               ...p,
@@ -712,15 +687,15 @@ export const useItrStore = create(
         }
 
         // For structured types, dynamically copy values from store
-        if (['HUF', 'LLP', 'Firm', 'AOP/BOI', 'Company Private', 'Company Public'].includes(filingType)) {
+        if (['HUF', 'LLP', 'Firm', 'AOP/BOI', 'Company Private', 'Company Public', 'Individual2', 'Individual3', 'Individual4'].includes(filingType)) {
           payload.details = state.details || {};
           payload.income = state.income || {};
           payload.deductions = state.deductions || {};
           payload.taxes = state.taxes || {};
           payload.filing = state.filing || {};
 
-          // LLP & Companies also have financials
-          if (['LLP', 'Firm', 'AOP/BOI', 'Company Private', 'Company Public'].includes(filingType)) {
+          // LLP, Companies & Individual3 also have financials
+          if (['LLP', 'Firm', 'AOP/BOI', 'Company Private', 'Company Public', 'Individual3'].includes(filingType)) {
             payload.financials = state.financials || {};
           }
         }
@@ -771,11 +746,11 @@ export const useItrStore = create(
 
         // Helper: house property net income for a single property object
         const hpNet = (hp) => {
-          const grossRent = n(hp.grossRent || hp.annualRentReceivable || hp.annualValue || 0);
-          const munTax = n(hp.municipalTaxes || hp.taxPaidLocal || 0);
+          const grossRent = n(hp.grossRent || hp.annualRentReceivable || hp.annualValue || hp.grossRentReceived || 0);
+          const munTax = n(hp.municipalTaxes || hp.taxPaidLocal || hp.localTaxesPaid || 0);
           const nav = grossRent - munTax;
           const stdDed = Math.round(nav * 0.3);
-          const loanInt = n(hp.homeLoanInterest || hp.interestBorrowedCapital || hp.interestOnHomeLoan || 0);
+          const loanInt = n(hp.homeLoanInterest || hp.interestBorrowedCapital || hp.interestOnHomeLoan || hp.loanInterestSec24b || 0);
           // self-occupied: NAV = 0, loss capped at 2L
           if (hp.housePropertyType === 'Self-Occupied' || hp.propertyType === 'Self-Occupied') {
             return Math.max(-200000, -loanInt);
@@ -793,8 +768,8 @@ export const useItrStore = create(
         let house = 0;
         let anonDonations = 0;
 
-        // â”€â”€ HUF â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        if (isHuf) {
+        // ── HUF ────────────────────────────────────────────────────────
+        if (isHuf || ['Individual2', 'Individual3', 'Individual4'].includes(filingType)) {
           const income = state.income || {};
           const deductionsSec = state.deductions || {};
           const taxesSec = state.taxes || {};
@@ -813,19 +788,23 @@ export const useItrStore = create(
           business = n(businessHP.presumptiveIncome44AD)
             + n(businessHP.presumptiveIncome44ADA)
             + n(businessHP.presumptiveIncome44AE)
-            + n(businessHP.netBusinessIncome);
+            + n(businessHP.netBusinessIncome)
+            + n(businessHP.finalNetBpIncome);
 
-          // House property â€” support list or single
-          const hpList = houseProperty.housePropertiesList || [];
+          // House property — support list or single
+          const hpList = houseProperty.housePropertiesList || houseProperty.properties || [];
           if (hpList.length > 0) {
-            house = hpList.reduce((s, hp) => s + (n(hp.incomeFromProperty) || hpNet(hp)), 0);
+            house = hpList.reduce((s, hp) => s + (n(hp.incomeFromProperty || hp.annualValueHP) || hpNet(hp)), 0);
           } else {
             house = hpNet(houseProperty);
           }
 
           // Capital gains
+          const capGains = income.capital_gains || {};
           capital = n(more.stcg) + n(more.ltcg)
-            + n(more.stcg111A) + n(more.ltcg112A);
+            + n(more.stcg111A) + n(more.ltcg112A)
+            + n(capGains.stcg) + n(capGains.ltcg)
+            + n(capGains.stcg111A) + n(capGains.ltcg112A);
 
           // Other sources
           interest = n(otherSrc.savingsInterest) + n(otherSrc.depositInterest) + n(otherSrc.refundInterest);
@@ -848,7 +827,14 @@ export const useItrStore = create(
             + n(chapter6a.deduction80U);
 
           // Taxes paid
-          const tdsSum = (tds.tdsRows || []).reduce((s, r) => s + n(r.amountClaimed || r.tdsClaimed), 0);
+          let tdsSum = 0;
+          if (filingType === 'Individual4') {
+            const tds1 = (tds.salaryTdsRegistry || []).reduce((s, r) => s + n(r.taxDeductedSalary), 0);
+            const tds2 = (tds.nonSalaryTdsRows || []).reduce((s, r) => s + n(r.tdsClaimedThisYear), 0);
+            tdsSum = tds1 + tds2;
+          } else {
+            tdsSum = (tds.tdsRows || []).reduce((s, r) => s + n(r.amountClaimed || r.tdsClaimed), 0);
+          }
           const tcsSum = (tcs.tcsRows || []).reduce((s, r) => s + n(r.amountClaimedTCS || r.tcsClaimed), 0);
           const advSum = (advanceTax.taxPayments || []).reduce((s, r) => s + n(r.taxAmountDeposited), 0);
           const satSum = (selfAssess.selfAssessmentRows || []).reduce((s, r) => s + n(r.taxAmountDeposited || r.amount), 0);
@@ -1038,14 +1024,44 @@ export const useItrStore = create(
         }
 
         // â”€â”€ Gross Total Income â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        const salary = isIndividual ? n(state.salaryIncome) : 0;
+        const isAnyIndividual = ['Individual', 'Individual2', 'Individual3', 'Individual4'].includes(filingType);
+        let salary = 0;
+        if (isIndividual) {
+          salary = n(state.salaryIncome);
+        } else if (filingType === 'Individual4') {
+          const otherSec = (state.income || {}).other || {};
+          const gross = n(otherSec.salarySec17_1) + n(otherSec.perquisitesSec17_2);
+          const regime = state.selectedRegime || 'new';
+          const stdDedLimit = regime === 'new' ? 75000 : 50000;
+          const stdDed = Math.min(gross, stdDedLimit);
+          const profTax = n(otherSec.profTaxSec16_iii);
+          salary = Math.max(0, gross - stdDed - profTax);
+        } else if (filingType === 'Individual2') {
+          const salarySec = (state.income || {}).salary || {};
+          const exemptAllowancesVal = Array.isArray(salarySec.exemptAllowances)
+            ? salarySec.exemptAllowances.reduce((acc, curr) => acc + n(curr.amount), 0)
+            : n(salarySec.exemptAllowances);
+          const hraVal = n(salarySec.sec10_13A);
+          const grossVal = n(salarySec.grossSalary) || (n(salarySec.salary17_1) + n(salarySec.salary17_2) + n(salarySec.salary17_3));
+          
+          salary = grossVal + n(salarySec.perquisites) + n(salarySec.profitsInLieu) 
+            - exemptAllowancesVal - hraVal - n(salarySec.professionalTax || salarySec.deductionProfessional);
+        } else if (filingType === 'Individual3') {
+          const salarySec = (state.income || {}).other || (state.income || {}).salary || {};
+          const employers = salarySec.employers || [];
+          salary = employers.reduce((acc, emp) => {
+            const gross = n(emp.salarySec17_1) + n(emp.perquisitesSec17_2) + n(emp.profitInLieuSalary);
+            const net = gross - n(emp.exemptAllowancesSec10) - n(emp.standardDeduction16) - n(emp.professionalTax);
+            return acc + Math.max(0, net);
+          }, 0);
+        }
         const crypto = n(state.cryptoIncome);
         const grossIncome = salary + interest + capital + house + dividend + business + crypto + other;
         const totalDeductions = Math.max(0, deductions);
 
         // â”€â”€ Standard Deduction (salary earners only) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        const stdDedOld = (isIndividual && salary > 0) ? 50000 : 0;
-        const stdDedNew = (isIndividual && salary > 0) ? 75000 : 0;
+        const stdDedOld = (isAnyIndividual && salary > 0) ? 50000 : 0;
+        const stdDedNew = (isAnyIndividual && salary > 0) ? 75000 : 0;
 
         // â”€â”€ Net Taxable Income â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         const oldTaxableIncome = Math.max(0, grossIncome - stdDedOld - totalDeductions);

@@ -19,7 +19,7 @@ const FormSection = ({
 
   return (
     <div className={cn(
-      "w-[1000px] flex flex-col rounded-[28px] border border-[#3867D6] bg-white transition-all duration-300",
+      "max-w-[1000px] w-full flex flex-col rounded-[28px] border border-[#3867D6] bg-white transition-all duration-300",
       isExpanded ? "gap-7 p-5" : "gap-0 p-2",
       className 
     )}>

@@ -13,7 +13,7 @@ const StartFillingModal = ({ isOpen, onClose }) => {
   const { selectedFilingType, setSelectedFilingType, createNewProfile } = useItrStore();
 
   const options = [
-    'Individual', 'HUF',
+    'Individual','Individual2', 'Individual3','Individual4',  'HUF',
     'AOP/BOI', 'Company Public',
     'Company Private', 'Firm', 
      'LLP', 'Trust & Exempt Entities' 

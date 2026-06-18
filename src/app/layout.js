@@ -29,7 +29,7 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
-  return (
+  return (  
     <html
       lang="en"
       className={`${outfit.variable} ${montserrat.variable} ${poppins.variable} h-full antialiased`}
