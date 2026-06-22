@@ -3,7 +3,7 @@ const itr4FieldConfig = {
   mainSections: {
     partAGeneralInformation: {
       id: "partAGeneralInformation",
-    //   label: "SECTION 1 — Part A: General Information", 
+      //   label: "SECTION 1 — Part A: General Information", 
       subsections: {
         identityAndContact: {
           id: "identityAndContact",
@@ -17,16 +17,16 @@ const itr4FieldConfig = {
                 { id: "middleName", label: "Middle Name", type: "text", required: false, validation: "Alpha only" },
                 { id: "lastName", label: "Last Name", type: "text", required: true, validation: "Alpha only" },
                 { id: "pan", label: "Permanent Account Number (PAN)", type: "text", required: true, validation: "Format AAAAA0000A (10 chars)" },
-                { 
-                  id: "status", 
-                  label: "Status", 
-                  type: "dropdown", 
-                  required: true, 
+                {
+                  id: "status",
+                  label: "Status",
+                  type: "dropdown",
+                  required: true,
                   options: [
                     { value: "I", label: "I – Individual" },
                     { value: "H", label: "H – HUF" },
                     { value: "F", label: "F – Firm (other than LLP)" }
-                  ] 
+                  ]
                 },
                 { id: "dobFormationDate", label: "Date of Birth / Formation", type: "date", required: true, validation: "DD/MM/YYYY; DOB for Individual, Formation date for HUF/Firm" },
                 { id: "wardCircle", label: "Income Tax Ward / Circle", type: "text", required: false, validation: "Optional; auto-populated in some cases" }
@@ -52,11 +52,11 @@ const itr4FieldConfig = {
               id: "secondaryAddress",
               label: "1.3 Secondary Address",
               fields: [
-                { 
-                  id: "isSecondaryAddressSame", 
-                  label: "Is the secondary address same as primary address?", 
-                  type: "dropdown", 
-                  required: true, 
+                {
+                  id: "isSecondaryAddressSame",
+                  label: "Is the secondary address same as primary address?",
+                  type: "dropdown",
+                  required: true,
                   options: [{ value: "Yes", label: "Yes" }, { value: "No", label: "No" }],
                   notes: "If Yes, secondary address block collapses. If No, same 10-field set as Primary Address appears."
                 },
@@ -111,11 +111,11 @@ const itr4FieldConfig = {
               id: "natureOfEmployment",
               label: "1.7 Nature of Employment",
               fields: [
-                { 
-                  id: "employmentNature", 
-                  label: "Nature of Employment", 
-                  type: "dropdown", 
-                  required: "conditional", 
+                {
+                  id: "employmentNature",
+                  label: "Nature of Employment",
+                  type: "dropdown",
+                  required: "conditional",
                   notes: "Applicable only when taxpayer also has salary income (Part B2)",
                   options: [
                     { value: "Central Govt", label: "Central Govt" },
@@ -124,7 +124,7 @@ const itr4FieldConfig = {
                     { value: "Pensioners", label: "Pensioners (CG/SG/PSU/Others)" },
                     { value: "Others", label: "Others" },
                     { value: "NA", label: "NA (Not Applicable)" }
-                  ] 
+                  ]
                 }
               ]
             },
@@ -132,27 +132,27 @@ const itr4FieldConfig = {
               id: "residentialStatus",
               label: "1.8 Residential Status",
               fields: [
-                { 
-                  id: "resStatus", 
-                  label: "Residential Status", 
-                  type: "dropdown", 
-                  required: true, 
+                {
+                  id: "resStatus",
+                  label: "Residential Status",
+                  type: "dropdown",
+                  required: true,
                   options: [
                     { value: "RES", label: "RES – Resident" },
                     { value: "NRI", label: "NRI – Non Resident" },
                     { value: "NOR", label: "NOR – Resident but not Ordinarily Resident" }
-                  ] 
+                  ]
                 },
-                { 
-                  id: "taxStatus", 
-                  label: "Tax Status", 
-                  type: "dropdown", 
-                  required: true, 
+                {
+                  id: "taxStatus",
+                  label: "Tax Status",
+                  type: "dropdown",
+                  required: true,
                   options: [
                     { value: "I", label: "I – Individual" },
                     { value: "H", label: "H – HUF" },
                     { value: "F", label: "F – Firm (Other than LLP)" }
-                  ] 
+                  ]
                 }
               ]
             },
@@ -160,11 +160,11 @@ const itr4FieldConfig = {
               id: "filingStatus",
               label: "1.9 Filing Status",
               fields: [
-                { 
-                  id: "filedUnderSection", 
-                  label: "Filed u/s (Section)", 
-                  type: "dropdown", 
-                  required: true, 
+                {
+                  id: "filedUnderSection",
+                  label: "Filed u/s (Section)",
+                  type: "dropdown",
+                  required: true,
                   options: [
                     { value: "139(1)", label: "139(1)-On or before due date" },
                     { value: "139(4)", label: "139(4)-After due date" },
@@ -177,14 +177,14 @@ const itr4FieldConfig = {
                     { value: "153A", label: "153A" },
                     { value: "153C", label: "153C" },
                     { value: "139(9)", label: "139(9)-Defective" }
-                  ] 
+                  ]
                 },
-                { 
-                  id: "noticeInResponseTo", 
-                  label: "Filed in response to notice u/s", 
-                  type: "dropdown", 
-                  required: "conditional", 
-                  options: ["139(9)", "142(1)", "148", "153A", "153C"] 
+                {
+                  id: "noticeInResponseTo",
+                  label: "Filed in response to notice u/s",
+                  type: "dropdown",
+                  required: "conditional",
+                  options: ["139(9)", "142(1)", "148", "153A", "153C"]
                 },
                 { id: "dueDate139_1", label: "Due Date u/s 139(1)", type: "date", required: "auto", prefilled: "31/08/2026", readOnly: true },
                 { id: "originalReceiptNumber", label: "Receipt Number (if revised/defective)", type: "text", required: "conditional", validation: "Show when 139(5) / 139(9) selected" },
@@ -205,12 +205,12 @@ const itr4FieldConfig = {
                 { id: "optedOutEarlierAY", label: "AY in which opted out", type: "dropdown", required: "conditional" },
                 { id: "form10IEOptOutFilingDate", label: "Date of filing of Form 10IE (opt-out)", type: "date", required: "conditional" },
                 { id: "form10IEOptOutAckNumber", label: "Acknowledgement number (opt-out)", type: "text", required: "conditional" },
-                { 
-                  id: "currentAYRegimeOption", 
-                  label: "Option for current AY", 
-                  type: "dropdown", 
-                  required: true, 
-                  options: ["Opting in now", "Continue to opt", "Opt out", "Not opting", "Not eligible to opt in"] 
+                {
+                  id: "currentAYRegimeOption",
+                  label: "Option for current AY",
+                  type: "dropdown",
+                  required: true,
+                  options: ["Opting in now", "Continue to opt", "Opt out", "Not opting", "Not eligible to opt in"]
                 },
                 { id: "form10IECurrentFilingDate", label: "Date of filing of Form 10IE (current AY)", type: "date", required: "conditional", validation: "Required if Opting in now / Opt out" },
                 { id: "form10IECurrentAckNumber", label: "Acknowledgement number (current AY)", type: "text", required: "conditional" }
@@ -237,12 +237,12 @@ const itr4FieldConfig = {
                 { id: "optOutNewRegimeCurrentAYPathB", label: "Opt out of New Regime for current AY? (Yes/No) [Path B(ii)]", type: "dropdown", required: "conditional" },
                 { id: "form10IEADate2627ChooseOldLate", label: "Date of Form 10IEA for AY 2026-27 (choosing old regime) [Late]", type: "date", required: "conditional" },
                 { id: "form10IEAAck2627ChooseOldLate", label: "Acknowledgement of Form 10IEA for AY 2026-27 [Late]", type: "text", required: "conditional" },
-                { 
-                  id: "finalRegimeSelectionCurrentAY", 
-                  label: "(A23b) Option for current AY (final selection)", 
-                  type: "dropdown", 
-                  required: true, 
-                  options: ["Opting in now", "Continue to opt", "Opt out", "Not opting", "Old", "New"] 
+                {
+                  id: "finalRegimeSelectionCurrentAY",
+                  label: "(A23b) Option for current AY (final selection)",
+                  type: "dropdown",
+                  required: true,
+                  options: ["Opting in now", "Continue to opt", "Opt out", "Not opting", "Old", "New"]
                 },
                 { id: "form10IEAFinalFilingDate", label: "Date of filing Form 10IEA (applicable cases)", type: "date", required: "conditional" },
                 { id: "form10IEAFinalAckNumber", label: "Acknowledgement number of Form 10IEA", type: "text", required: "conditional" },
@@ -271,12 +271,12 @@ const itr4FieldConfig = {
                 { id: "representativeName", label: "Name of representative assessee", type: "text", required: "conditional" },
                 { id: "representativeEmail", label: "Email ID of representative assessee", type: "email", required: "conditional" },
                 { id: "representativeContact", label: "Contact No. of representative assessee", type: "tel", required: "conditional" },
-                { 
-                  id: "representativeCapacity", 
-                  label: "Capacity of representative", 
-                  type: "dropdown", 
-                  required: "conditional", 
-                  options: ["Self", "Legal Heir", "Guardian", "Manager", "Partner", "Karta", "Others"] 
+                {
+                  id: "representativeCapacity",
+                  label: "Capacity of representative",
+                  type: "dropdown",
+                  required: "conditional",
+                  options: ["Self", "Legal Heir", "Guardian", "Manager", "Partner", "Karta", "Others"]
                 },
                 { id: "representativeAddress", label: "Address of representative", type: "text", required: "conditional" },
                 { id: "representativePAN", label: "PAN of representative", type: "text", required: "conditional", validation: "Format: 10 alphanumeric chars" },
@@ -289,7 +289,7 @@ const itr4FieldConfig = {
     },
     partBGrossTotalIncome: {
       id: "partBGrossTotalIncome",
-    //   label: "SECTION 2 & 3 — Gross Total Income & House Property Details", 
+      //   label: "SECTION 2 & 3 — Gross Total Income & House Property Details", 
       subsections: {
         incomeHeadsBPAndSalary: {
           id: "incomeHeadsBPAndSalary",
@@ -312,23 +312,23 @@ const itr4FieldConfig = {
                 { id: "retirementBenefitNotified89A", ref: "i(d)", label: "Income from retirement benefit account — Notified Country u/s 89A (USA/UK/Canada)", type: "amount", required: false, notes: "3 sub-rows/breakdowns: USA / UK / Canada" },
                 { id: "retirementBenefitNonNotified89A", ref: "i(e)", label: "Income from retirement benefit — Non-Notified Country u/s 89A", type: "amount", required: false },
                 { id: "grossSalaryTotal", ref: "2(i)", label: "Gross Salary (a+b+c+d+e)", type: "amount", required: "auto", readOnly: true },
-                { 
-                  id: "exemptAllowancesSec10", 
-                  ref: "2(ii)", 
-                  label: "Allowances exempt u/s 10", 
-                  type: "subTable", 
-                  required: false, 
+                {
+                  id: "exemptAllowancesSec10",
+                  ref: "2(ii)",
+                  label: "Allowances exempt u/s 10",
+                  type: "subTable",
+                  required: false,
                   notes: "Up to 4 rows containing Nature Dropdown + Amount",
                   columns: [
-                    { 
-                      id: "nature", 
-                      label: "Nature of Exemption", 
+                    {
+                      id: "nature",
+                      label: "Nature of Exemption",
                       type: "dropdown",
                       options: [
-                        "Sec 10(5) LTA", "10(6) Embassy", "10(7) Overseas", "10(10) Gratuity", 
-                        "10(10A) Commuted Pension", "10(10AA) Leave Encashment", "10(10B) Compensation", 
-                        "10(10C) VRS", "10(10CC) Tax by employer", "10(14)(i)", "10(14)(ii)", 
-                        "10(16) Scholarship", "10(17) MP/MLA", "10(17A) Award", "10(18) Gallantry / Defense Disability", 
+                        "Sec 10(5) LTA", "10(6) Embassy", "10(7) Overseas", "10(10) Gratuity",
+                        "10(10A) Commuted Pension", "10(10AA) Leave Encashment", "10(10B) Compensation",
+                        "10(10C) VRS", "10(10CC) Tax by employer", "10(14)(i)", "10(14)(ii)",
+                        "10(16) Scholarship", "10(17) MP/MLA", "10(17A) Award", "10(18) Gallantry / Defense Disability",
                         "10(19) AF Pension", "10(26)", "10(26AAA)", "10(12C) Agniveer", "Any Other"
                       ]
                     },
@@ -497,16 +497,16 @@ const itr4FieldConfig = {
               id: "incomeFromOtherSources",
               label: "2.6 B4 — Income from Other Sources",
               fields: [
-                { 
-                  id: "osRow1Nature", 
-                  label: "Row 1: Nature of Income", 
-                  type: "dropdown", 
-                  required: false, 
+                {
+                  id: "osRow1Nature",
+                  label: "Row 1: Nature of Income",
+                  type: "dropdown",
+                  required: false,
                   options: [
-                    "Interest from Savings Bank", "Interest from Deposits", "Interest from IT Refund", 
-                    "Family Pension", "Dividend", "Income from retirement benefit account (notified country)", 
+                    "Interest from Savings Bank", "Interest from Deposits", "Interest from IT Refund",
+                    "Family Pension", "Dividend", "Income from retirement benefit account (notified country)",
                     "Income from retirement benefit account (non-notified country)", "Winnings from lotteries etc.", "Any Other"
-                  ] 
+                  ]
                 },
                 { id: "osRow1Description", label: "Row 1: Description (if 'Any Other' selected)", type: "text", required: "conditional" },
                 { id: "osRow1Amount", label: "Row 1: Amount", type: "amount", required: false },
@@ -558,7 +558,7 @@ const itr4FieldConfig = {
     },
     scheduleBPPresumptiveIncome: {
       id: "scheduleBPPresumptiveIncome",
-    //   label: "SECTION 4 & 5 — Schedule BP: Presumptive Business & Profession", 
+      //   label: "SECTION 4 & 5 — Schedule BP: Presumptive Business & Profession", 
       subsections: {
         presumptiveSchemesCore: {
           id: "presumptiveSchemesCore",
@@ -759,7 +759,7 @@ const itr4FieldConfig = {
     },
     scheduleDeductionsVIAAndPayments: {
       id: "scheduleDeductionsVIAAndPayments",
-    //   label: "SECTION 6 & 8 — Deductions & Tax Payments Schedules", 
+      //   label: "SECTION 6 & 8 — Deductions & Tax Payments Schedules", 
       subsections: {
         chapterVIAAndPaymentsDirectives: {
           id: "chapterVIAAndPaymentsDirectives",
@@ -769,11 +769,11 @@ const itr4FieldConfig = {
               id: "partBDeductionsPayments",
               label: "6.1 Part B Deductions — Payments & Savings Tables",
               fields: [
-                { 
+                {
                   id: "deductionRowsTable",
-                  label: "Chapter VI-A Core Savings Schedules", 
-                  type: "table", 
-                  required: false, 
+                  label: "Chapter VI-A Core Savings Schedules",
+                  type: "table",
+                  required: false,
                   notes: "Available ONLY in Old Tax Regime. Globally disabled/hidden under standard New Tax Regime rules.",
                   columns: [
                     { id: "code", label: "Code", type: "text", readOnly: true },
@@ -992,7 +992,7 @@ const itr4FieldConfig = {
     },
     taxComputationAndVerification: {
       id: "taxComputationAndVerification",
-    //   label: "SECTION 7, 9, 10, 11, 12 & 13 — Computations, Verifications & Disclosures",
+      //   label: "SECTION 7, 9, 10, 11, 12 & 13 — Computations, Verifications & Disclosures",
       subsections: {
         taxCalculationsAndBanking: {
           id: "taxCalculationsAndBanking",
@@ -1227,7 +1227,7 @@ function mapSubsectionsToSections(subsections) {
   return allSections;
 }
 
-export const individual4ConfigMapping = {
+export const itr4ConfigMapping = {
   details: {
     permanent: {
       title: itr4FieldConfig.mainSections.partAGeneralInformation.label,

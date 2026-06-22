@@ -21,11 +21,11 @@ import { personalDetailsSchema, incomeSourcesSchema, taxSavingSchema } from '@/v
 
 const CountUp = ({ value }) => {
     const [displayValue, setDisplayValue] = useState(value);
-    
+
     useEffect(() => {
         setDisplayValue(value);
     }, [value]);
-    
+
     return (
         <motion.span
             key={value}
@@ -42,7 +42,7 @@ export default function TaxSummaryStep({ filingType }) {
     const router = useRouter();
     const state = useItrStore();
     const { calculateSummary, getPayload, setField, selectedRegime } = state;
-    
+
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSlabModalOpen, setIsSlabModalOpen] = useState(false);
     const [isComparisonModalOpen, setIsComparisonModalOpen] = useState(false);
@@ -59,14 +59,14 @@ export default function TaxSummaryStep({ filingType }) {
         setIsConfirmModalOpen(false);
     };
 
-    const summary = calculateSummary();  
+    const summary = calculateSummary(filingType);
 
     const summaryData = [
         { label: "Gross Income", value: summary.grossIncome },
-        { label: "Your Tax Saving", value: summary.totalDeductions },
-        { label: "Taxable Income", value: summary.taxableIncome },
+        { label: "Your Tax Saving", value: summary.totalDeductions + summary.standardDeduction },
+        { label: "Taxable Income", value: summary.activeTaxableIncome },
         { label: "Total Tax", value: summary.estimatedTax },
-        { label: "Tax Already Paid", value: Number(state.taxesPaid) || 0 },
+        { label: "Tax Already Paid", value: summary.taxesPaid },
         { label: summary.isRefund ? "Tax Refund" : "Tax Due", value: summary.refundOrDue, isGreen: !summary.isRefund },
     ];
 
@@ -143,10 +143,10 @@ export default function TaxSummaryStep({ filingType }) {
                             const maxAmount = summary.grossIncome > 0 ? summary.grossIncome : 1;
                             let percentage = (item.value / maxAmount) * 100;
                             const hasValue = item.value > 0;
-                            
+
                             if (hasValue && percentage < 2) percentage = 2;
                             percentage = Math.min(100, Math.max(0, percentage));
-                            
+
                             return (
                                 <div key={index} className="flex items-center w-full gap-5">
                                     <div className="flex justify-end items-baseline gap-1 min-w-[280px]">
@@ -160,7 +160,7 @@ export default function TaxSummaryStep({ filingType }) {
 
                                     <div className="flex-1 h-3 bg-[#F3F4F6] rounded-full overflow-hidden">
                                         {hasValue && (
-                                            <motion.div 
+                                            <motion.div
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${percentage}%` }}
                                                 transition={{ duration: 0.5, ease: "easeOut" }}
@@ -194,10 +194,10 @@ export default function TaxSummaryStep({ filingType }) {
                         <div className='flex flex-col justify-center gap-10 pt-2'>
                             <div className="flex items-center gap-4">
                                 <span className="font-Poppins font-normal text-base leading-6 tracking-normal">Your ITR Type: </span>
-                                <span className="text-white font-medium font-Poppins text-[16px] rounded py-1 px-4 bg-[#3867D6] whitespace-nowrap">{filingType || summary.itrType || 'ITR'}</span> 
+                                <span className="text-white font-medium font-Poppins text-[16px] rounded py-1 px-4 bg-[#3867D6] whitespace-nowrap">{filingType || summary.itrType || 'ITR'}</span>
                             </div>
                             <p className="font-Poppins text-[#8E8E93] font-normal text-[14px] leading-5 tracking-normal max-w-[280px]">{summary.itrReason || 'Income from salary or interest'}</p>
-                        </div>
+                        </div> 
                     </div>
                 </div>
 
@@ -211,7 +211,6 @@ export default function TaxSummaryStep({ filingType }) {
                                 <span className="font-Poppins font-normal text-base leading-6 tracking-normal">Your TAX Regime:  </span>
                                 <span className="text-white font-medium font-Poppins text-[16px] rounded py-1 px-4 bg-[#9030DD]">{selectedRegime === 'new' ? 'New Regime' : 'Old Regime'}</span>
                             </div>
-                            <p className="font-Poppins max-w-[300px] text-[#8E8E93] font-normal text-base leading-6 tracking-normal">{selectedRegime === 'new' ? 'New Regime selected; both regimes are equally beneficial' : 'Old Regime selected; customized for your deductions'}</p>
                             <div onClick={() => setIsComparisonModalOpen(true)} className="font-Poppins font-semibold text-base leading-6 tracking-normal flex gap-3 text-[#3867D6] cursor-pointer">
                                 Compare/Switch Regime <MdKeyboardArrowRight size={24} />
                             </div>
@@ -220,143 +219,9 @@ export default function TaxSummaryStep({ filingType }) {
                 </div>
             </div>
 
-            <div className="w-full rounded-[28px] bg-gradient-to-r from-[#C8D7FF] to-[#E9D1FE] p-[1px]">
-                <div className="w-full bg-white rounded-[28px] p-[20px] flex flex-col gap-10">
-                    <div className="flex gap-4">
-                        <div className="w-[44px] h-[44px] rounded-full bg-[#F0F4FF] flex items-center justify-center text-[#3867D6] flex-shrink-0">
-                            <MdOutlineComment size={24} />
-                        </div>
-                        <div className="flex flex-col gap-4">
-                            <h3 className="text-[#1E1E1E] font-bold text-[18px] font-poppins">Review your detailed tax calculation</h3>
-                            <p className="text-[#8E8E93] text-[15px] font-poppins">See how your tax is calculated based on your income, deductions, and chosen regime..</p>
-                        </div>
-                    </div>
 
-                    <div className="flex flex-col gap-12 px-10">
-                        <div className="flex items-center justify-between w-full">
-                            <div className="flex gap-4 items-start w-[450px] flex-shrink-0">
-                                <div className="w-[44px] h-[44px] rounded-full bg-[#000000]/20 flex items-center justify-center text-[#000000] flex-shrink-0">
-                                    <IoBookmarkOutline size={24} />
-                                </div>
-                                <div className="flex flex-col">
-                                    <div className='flex flex-col gap-3'>
-                                        <span className="font-Poppins font-regular text-base leading-6 tracking-normal">Total Tax</span>
-                                        <p className="text-[15px] text-[#8E8E93] mt-2 font-poppins leading-relaxed">
-                                            Sum of all applicable Taxes and Charges-
-                                            Total Tax = (Slab Rate Tax + Fixed Rate Tax - Tax Reliefs) + Other Charges and Fees
-                                        </p>
-                                    </div>
-                                    <span
-                                        className="text-[#3867D6] text-[13px] font-regular font-Poppins cursor-pointer underline font-poppins mt-2"
-                                        onClick={() => setIsSlabModalOpen(true)}
-                                    >
-                                        Slab Rate Tax
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-4 flex-1 justify-end ml-10">
-                                <div className="flex-1 h-3 bg-[#F3F4F6] rounded-full overflow-hidden">
-                                    {summary.estimatedTax > 0 && (
-                                        <motion.div 
-                                            initial={{ width: 0 }}
-                                            animate={{ width: `${Math.min(100, Math.max(2, (summary.estimatedTax / (summary.grossIncome || 1)) * 100))}%` }}
-                                            transition={{ duration: 0.5, ease: "easeOut" }}
-                                            className="h-full rounded-full bg-[#818CF8]"
-                                        />
-                                    )}
-                                </div>
-                                <div className="flex justify-end items-center gap-3 min-w-[150px]">
-                                    <span className="font-Poppins font-semibold text-base leading-6 tracking-normal">₹ <CountUp value={summary.estimatedTax} /></span>
-                                    <MdKeyboardArrowDown size={24} className="text-black text-2xl cursor-pointer" />
-                                </div>
-                            </div>
-                        </div>
 
-                        <div className="flex items-center justify-between w-full">
-                            <div className="flex gap-4 items-start w-[450px] flex-shrink-0">
-                                <div className="w-[44px] h-[44px] rounded-full bg-[#000000]/20 flex items-center justify-center text-[#000000] flex-shrink-0">
-                                    <FiTag size={24} />
-                                </div>
-                                <div className="flex flex-col">
-                                    <div className='flex flex-col gap-3'>
-                                        <span className="font-Poppins font-regular text-base leading-6 tracking-normal">Tax Already Paid</span>
-                                        <p className="text-[15px] text-[#8E8E93] mt-2 font-poppins leading-relaxed">
-                                            TDS, TCS, Advance Tax Payments etc.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-4 flex-1 justify-end ml-10">
-                                <div className="flex-1 h-3 bg-[#F3F4F6] rounded-full overflow-hidden">
-                                    {(Number(state.taxesPaid) || 0) > 0 && (
-                                        <motion.div 
-                                            initial={{ width: 0 }}
-                                            animate={{ width: `${Math.min(100, Math.max(2, ((Number(state.taxesPaid) || 0) / (summary.grossIncome || 1)) * 100))}%` }}
-                                            transition={{ duration: 0.5, ease: "easeOut" }}
-                                            className="h-full rounded-full bg-[#818CF8]"
-                                        />
-                                    )}
-                                </div>
-                                <div className="flex justify-end items-center gap-3 min-w-[150px]">
-                                    <span className="font-Poppins font-semibold text-base leading-6 tracking-normal">₹ <CountUp value={Number(state.taxesPaid) || 0} /></span>
-                                    <MdKeyboardArrowDown size={24} className="text-black text-2xl cursor-pointer" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center justify-between w-full">
-                            <div className="flex gap-4 items-start w-[450px] flex-shrink-0">
-                                <div className="w-[44px] h-[44px] rounded-full bg-[#000000]/20 flex items-center justify-center text-[#000000] flex-shrink-0">
-                                    <FiRefreshCw size={24} />
-                                </div>
-                                <div className="flex flex-col">
-                                    <div className='flex flex-col gap-3'>
-                                        <span className="font-Poppins font-regular text-base leading-6 tracking-normal">{summary.isRefund ? 'Refund Available' : 'Tax Due'} </span>
-                                        <p className="text-[15px] text-[#8E8E93] mt-2 font-poppins leading-relaxed">
-                                            (Taxes Paid - Tax Liability).
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-4 flex-1 justify-end ml-10">
-                                <div className="flex-1 h-3 bg-[#F3F4F6] rounded-full overflow-hidden">
-                                    {summary.refundOrDue > 0 && (
-                                        <motion.div 
-                                            initial={{ width: 0 }}
-                                            animate={{ width: `${Math.min(100, Math.max(2, (summary.refundOrDue / (summary.grossIncome || 1)) * 100))}%` }}
-                                            transition={{ duration: 0.5, ease: "easeOut" }}
-                                            className={`h-full rounded-full ${!summary.isRefund ? 'bg-[#34C759]' : 'bg-[#818CF8]'}`}
-                                        />
-                                    )}
-                                </div>
-                                <div className="flex justify-end items-center gap-3 min-w-[150px]">
-                                    <span className={`font-Poppins font-semibold text-base leading-6 tracking-normal ${!summary.isRefund ? 'text-[#34C759]' : 'text-black'}`}>₹ <CountUp value={summary.refundOrDue} /></span>
-                                    <MdKeyboardArrowDown size={24} className="text-black text-2xl cursor-pointer" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-center gap-6 px-4 mt-4">
-                        <div className="text-black">
-                            <Image src="/Vector1.png" alt="" width={22} height={22} />
-                        </div>
-                        <p className="font-Poppins font-normal text-base leading-6 tracking-normal">Detailed computation report available here in Tax Summary post checkout</p>
-                    </div>
-
-                    <div className="flex justify-between items-center mt-3 mr-8 ml-4">
-                        <div className="flex items-center gap-2 text-[#3867D6] cursor-pointer">
-                            <div className="w-5 h-5 rounded-full bg-[#3867D6] flex items-center justify-center text-white text-xs">?</div>
-                            <span className="font-Poppins font-normal text-base leading-6 tracking-normal">Have any doubts regarding tax calculation?</span>
-                        </div>
-                        <div className="font-Poppins font-normal text-base leading-6 tracking-normal flex gap-3 text-[#3867D6]">
-                            Ask here <MdKeyboardArrowRight size={24} />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <FormSection
+            {/* <FormSection
                 className="gap-0 p-2 border border-[#E5E5EA]"
                 icon={MdOutlineError}
                 title="Want to double check your important data points?"
@@ -368,7 +233,7 @@ export default function TaxSummaryStep({ filingType }) {
                         Double Check Data
                     </Button>
                 }
-            />
+            /> */}
 
             <SlabRateModal
                 isOpen={isSlabModalOpen}

@@ -32,39 +32,17 @@ export default function ItrStepRedirectPage() {
 
   const getRedirectPath = (filingType, targetStep) => {
     const lowerFilingType = (filingType || 'Individual').toLowerCase();
-
-    if (lowerFilingType === 'individual') {
-      switch (targetStep) {
-        case 'personal-info':
-        case 'details':
-        case 'pan-details':
-          return '/dashboard/pan-details';
-        case 'income':
-        case 'income-sources':
-          return '/dashboard/income-sources';
-        case 'deductions':
-        case 'tax-saving':
-          return '/dashboard/tax-saving';
-        case 'taxes':
-          return '/dashboard/tax-summary';
-        case 'tax-summary':
-          return '/dashboard/tax-summary';
-        default:
-          return `/dashboard/individual/${targetStep}`;
-      }
-    } else {
-      let stepRoute = targetStep;
-      if (targetStep === 'personal-info' || targetStep === 'pan-details') {
-        stepRoute = 'details';
-      }
-
-      let typeSlug = lowerFilingType;
-      if (typeSlug === 'company private') typeSlug = 'company-private';
-      if (typeSlug === 'aop/boi') typeSlug = 'aop-boi';
-      if (typeSlug === 'cooperative society') typeSlug = 'cooperative-society';
-
-      return `/dashboard/${typeSlug}/${stepRoute}`;
+    let stepRoute = targetStep;
+    if (targetStep === 'personal-info' || targetStep === 'pan-details') {
+      stepRoute = 'details'; 
     }
+
+    let typeSlug = lowerFilingType;
+    if (typeSlug === 'company private') typeSlug = 'company-private';
+    if (typeSlug === 'aop/boi') typeSlug = 'aop-boi';
+    if (typeSlug === 'cooperative society') typeSlug = 'cooperative-society';
+
+    return `/dashboard/${typeSlug}/${stepRoute}`;
   };
 
   if (error) {

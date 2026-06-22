@@ -2,15 +2,19 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { useItrStore } from '@/store/itrStore';
 
 const Stepper1 = ({ currentStep = 1, onStepClick, errorSteps = [], customSteps }) => {
   const router = useRouter();
+  const filingType = useItrStore((state) => state.selectedFilingType || state.entityType || 'Individual');
+  const lowerFilingType = filingType.toLowerCase();
 
   const steps = customSteps || [
-    { id: 1, label: "Personal Info", route: "/dashboard/filing-form" },
-    { id: 2, label: "Income Sources", route: "/dashboard/income-sources" },
-    { id: 3, label: "Tax Saving", route: "/dashboard/tax-saving" },
-    { id: 4, label: "Tax Summary", route: "/dashboard/tax-summary" },
+    { id: 1, label: "Details", route: `/dashboard/${lowerFilingType}/details` },
+    { id: 2, label: "Income Sources", route: `/dashboard/${lowerFilingType}/income` },
+    { id: 3, label: "Deductions", route: `/dashboard/${lowerFilingType}/deductions` },
+    { id: 4, label: "Taxes Paid", route: `/dashboard/${lowerFilingType}/taxes` },
+    { id: 5, label: "Filing", route: `/dashboard/${lowerFilingType}/filing` },
   ];
 
   const handleStepClick = (route) => {

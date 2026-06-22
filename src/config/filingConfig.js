@@ -1,23 +1,9 @@
 export const filingTypeConfig = {
-  'Individual': {
-    id: 'individual',
-    name: 'Individual',
-    baseRoute: '/dashboard/pan-details',
-    detailsRoute: '/dashboard/pan-details',
-    steps: [
-      { id: 1, label: 'Personal Info', route: 'personal-info' },
-      { id: 2, label: 'Income Sources', route: 'income' },
-      { id: 3, label: 'Deductions', route: 'deductions' },
-      { id: 4, label: 'Taxes Paid', route: 'taxes' },
-      { id: 5, label: 'Filing', route: 'filing' },
-    ],
-    subTabs: {}
-  },
-  'Individual2': {
-    id: 'individual2',
-    name: 'Individual2',
-    baseRoute: '/dashboard/individual2',
-    detailsRoute: '/dashboard/individual2/details',
+  'Individual1': {
+    id: 'Individual1',
+    name: 'Individual1',
+    baseRoute: '/dashboard/Individual1',
+    detailsRoute: '/dashboard/Individual1/details',
     steps: [
       { id: 1, label: 'Details', route: 'details' },
       { id: 2, label: 'Income Sources', route: 'income' },
@@ -28,33 +14,81 @@ export const filingTypeConfig = {
     ],
     subTabs: {
       details: [
-        { id: 'permanent', label: 'General Information & Status' },
-        // { id: 'karta', label: 'Residential Status & Stay Period' },  
-        // { id: 'members', label: 'Address & Contact Details' },
-        { id: 'additional', label: 'Regime, Filing & Disclosures' },
+        { id: 'personal-identity', label: 'Personal Identity & Employment' },
+        { id: 'contact-communications', label: 'Contact & Communications' },
+        { id: 'address-specifications', label: 'Address Specifications' },
       ],
       income: [
-        { id: 'salary', label: 'Salary/Pension Income' },
-        { id: 'house_property', label: 'House Property Income' },
-        { id: 'capital_gains', label: 'Capital Gains (STCG/LTCG/VDA)' },
-        { id: 'other', label: 'Other Sources Income' },
+        { id: 'salary-pension-income', label: 'Salary / Pension Income' },
+        { id: 'house-property-income', label: 'House Property Income' },
+        { id: 'hra-calculation-schedule', label: 'HRA Calculation Schedule' },
+        { id: 'standalone-loan-interest-schedule', label: 'Loan Interest u/s 24(b)' },
+        { id: 'other-sources-income', label: 'Other Sources Income' },
       ],
       deductions: [
-        { id: 'chapter6a', label: 'Chapter VI-A Deductions' },
-        { id: 'more', label: 'Special Deductions & Exempt Incomes' },
+        { id: 'savings-and-pension-deductions', label: 'Savings & Pension (80C / 80CCC)' },
+        { id: 'medical-health-deductions', label: 'Medical & Health (80D)' },
+        { id: 'loan-interest-deductions', label: 'Loan Interest (80E / 80EE / 80EEA / 80EEB)' },
+        { id: 'charitable-donations-schedule', label: 'Donations (80G / 80GGA)' },
+        { id: 'scientific-political-disability-deductions', label: 'Scientific, Political & Disability (80GGA / 80GGC / 80U / 80DD)' },
       ],
       taxes: [
-        { id: 'tds', label: 'Tax Deducted/Collected at Source' },
-        { id: 'advance_tax', label: 'Advance & Self-Assessment Tax' },
+        { id: 'tds-schedules-ledger', label: 'TDS Schedules (Form 16 / 16A / 16C)' },
+        { id: 'tcs-and-challan-schedules', label: 'TCS & Advance Tax Challans' },
       ],
       filing: [
-        { id: 'bank', label: 'Bank Accounts' },
-        // { id: 'efiling', label: 'Verification & Submit' }, 
+        { id: 'voluntary-filing-criteria', label: 'Voluntary Filing Criteria (7th Proviso)' },
+        { id: 'representative-metadata', label: 'Representative Assessee' },
+        { id: 'statutory-filing-details', label: 'Statutory Filing Details' },
+        { id: 'updated-return-schedule-itru', label: 'Updated Return (ITR-U)' },
+        { id: 'taxation-reconciliation-ledger', label: 'Tax Reconciliation Ledger' },
+        { id: 'exempt-income-reporting', label: 'Exempt Income Reporting' },
+        { id: 'banking-payment-channels', label: 'Bank Account Details' },
+        { id: 'legal-signatures-verification', label: 'Verification & Signature' },
+        { id: 'itru-computation-matrix', label: 'ITR-U Computation Matrix' },
+        // { id: 'efiling', label: 'E-Filing' } 
       ]
     }
-  }, 
+  },
+  'Individual2': {
+    id: 'Individual2',
+    name: 'Individual2',
+    baseRoute: '/dashboard/Individual2',
+    detailsRoute: '/dashboard/Individual2/details',
+    steps: [
+      { id: 1, label: 'Details', route: 'details' },
+      { id: 2, label: 'Income Sources', route: 'income' },
+      { id: 3, label: 'Deductions', route: 'deductions' },
+      { id: 4, label: 'Taxes Paid', route: 'taxes' },
+      { id: 5, label: 'Filing', route: 'filing' },
+      { id: 6, label: 'Tax Summary', route: 'tax-summary' },
+    ],
+    subTabs: {
+      details: [
+        { id: 'part-a-gen', label: 'Part A: General Information' },
+        { id: 'filing-status-blocks', label: 'Filing Status & Conditional Disclosures' },
+      ],
+      income: [
+        { id: 'schedule-s-salary', label: 'Schedule S: Income from Salary' },
+        { id: 'schedule-hp-house-property', label: 'Schedule HP: Income from House Property' },
+        { id: 'schedule-cg-capital-gains', label: 'Schedule CG: Capital Gains' },
+        { id: 'schedule-os-other-sources', label: 'Schedule OS: Income from Other Sources' },
+        { id: 'special-exempt-clubbed', label: 'Exempt Income, Clubbing & Special Schedules' },
+      ],
+      deductions: [
+        { id: 'schedule-via-deductions', label: 'Schedule VI-A: Deductions (Chapter VI-A)' },
+      ],
+      taxes: [
+        { id: 'tax-payments-schedules', label: 'Tax Payments & Credits Verification' },
+      ],
+      filing: [
+        { id: 'filing-verification-step', label: 'Filing, Verification & Bank Accounts Setup' },
+        // { id: 'efiling', label: 'E-Filing' }
+      ]
+    }
+  },
 
-  'Individual4': { 
+  'Individual4': {
     id: 'Individual4',
     name: 'Individual4',
     baseRoute: '/dashboard/Individual4',
@@ -89,51 +123,43 @@ export const filingTypeConfig = {
       ],
       filing: [
         { id: 'bank', label: 'Bank Accounts & Global Controls' },
+        // { id: 'efiling', label: 'E-Filing' }
       ]
     }
   },
   'Individual3': {
-    id: 'individual3',
+    id: 'Individual3',
     name: 'Individual3',
-    baseRoute: '/dashboard/individual3',
-    detailsRoute: '/dashboard/individual3/details',
+    baseRoute: '/dashboard/Individual3',
+    detailsRoute: '/dashboard/Individual3/details',
     steps: [
       { id: 1, label: 'Details', route: 'details' },
-      { id: 2, label: 'Income', route: 'income' },
-      { id: 3, label: 'Financials', route: 'financials' },
-      { id: 4, label: 'Deductions', route: 'deductions' },
-      { id: 5, label: 'Taxes Paid', route: 'taxes' },
-      { id: 6, label: 'Filing', route: 'filing' },
-      { id: 7, label: 'Tax Summary', route: 'tax-summary' },
+      { id: 2, label: 'Income Sources', route: 'income' },
+      { id: 3, label: 'Deductions', route: 'deductions' },
+      { id: 4, label: 'Taxes Paid', route: 'taxes' },
+      { id: 5, label: 'Filing', route: 'filing' },
+      { id: 6, label: 'Tax Summary', route: 'tax-summary' },
     ],
     subTabs: {
       details: [
-        { id: 'permanent', label: 'General Information & Address' },
-        { id: 'karta', label: 'Residency & Regime Selection' },
-        { id: 'members', label: 'Filing Status & Representatives' },
-        { id: 'additional', label: 'Auditors & Business Activities' },
+        { id: 'general_info', label: 'Part A: General Information' },
+        { id: 'nature_of_business_subsection', label: 'SECTION 2 — Nature of Business' },
       ],
       income: [
-        { id: 'business', label: 'Business Computation (Schedule BP)' },
-        { id: 'house_property', label: 'House Property (Schedule HP)' },
-        { id: 'other', label: 'Salary/Pension (Schedule S)' },
-      ],
-      financials: [
-        { id: 'balance_sheet', label: 'Balance Sheet' },
-        { id: 'profit_loss', label: 'Profit & Loss and Trading Accounts' },
+        { id: 'business_profession_regular', label: 'Business / Profession Regular Accounts' },
+        { id: 'business_profession_presumptive', label: 'Business / Profession Presumptive' },
+        { id: 'salary_house_property_schedules', label: 'Salary, House Property & BP' },
       ],
       deductions: [
-        { id: 'chapter6a', label: 'Chapter VI-A' },
-        { id: 'exempt_income', label: 'Exempt Income' },
+        { id: 'schedule_dep_scientific_research', label: 'Depreciation & Scientific Research' },
+        { id: 'chapter_via_and_10a', label: 'Chapter VI-A & 10A Deductions' },
       ],
       taxes: [
-        { id: 'tds', label: 'TDS Details' },
-        { id: 'tcs', label: 'TCS Details' },
-        { id: 'advance_tax', label: 'Advance Tax' },
+        { id: 'tax_payments_schedules', label: 'TDS, TCS & Advance Tax Paid' },
       ],
       filing: [
-        { id: 'bank', label: 'Bank Accounts' },
-        // { id: 'efiling', label: 'E-Filing' }, 
+        { id: 'bank_details_schedules', label: 'Bank Accounts & Filing' },
+        // { id: 'efiling', label: 'E-Filing' } 
       ]
     }
   },

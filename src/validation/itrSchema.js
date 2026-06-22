@@ -67,7 +67,7 @@ export const taxSavingSchema = Yup.object().shape({
 
 // Combined schema for final submission validation if needed
 export const itrSchema = Yup.object().shape({
-  ...personalDetailsSchema.fields,
+  // ...personalDetailsSchema.fields, 
   ...incomeSourcesSchema.fields,
   ...taxSavingSchema.fields,
 });

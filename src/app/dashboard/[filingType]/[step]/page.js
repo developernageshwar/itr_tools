@@ -154,66 +154,31 @@ export default function FilingFlowPage() {
 
   return (
     <div className="w-full min-h-screen bg-[#F8F9FC]">
-      {/* Top Main Navigation (Reusable Stepper) */}
-      <div className="w-full flex justify-center pt-8 pb-4 px-4">
-        <div className="max-w-[1440px] w-full px-6">
-          {isIndividualType ? (
+      {isIndividualType ? (
+        <div className="w-full flex justify-center pt-8 pb-1 px-4">
+          <div className="max-w-[1440px] w-full px-6">
             <div className="flex flex-col lg:flex-row gap-10 items-start">
-              {/* Spacer matching the LEFT Sidebar Area */}
-              <div className="w-full lg:w-[320px] hidden lg:block flex-shrink-0" />
-              {/* Stepper aligned with RIGHT Content Area */}
-              <div className="flex-1 w-full flex justify-start min-w-0 overflow-x-auto scrollbar-hide">
-                <Stepper1
-                  currentStep={currentStepId}
-                  customSteps={steps}
-                  errorSteps={errorSteps}
-                  onStepClick={handleStepClick}
-                />
+              
+              {/* LEFT Column (Stepper + SubTabs + Content) */}
+              <div className="flex-1 w-full flex flex-col min-w-0">
+                {/* Stepper */}
+                <div className="w-full flex justify-start pb-12 overflow-x-auto scrollbar-hide">
+                  <Stepper1
+                    currentStep={currentStepId}
+                    customSteps={steps}
+                    errorSteps={errorSteps}
+                    onStepClick={handleStepClick}
+                  />
+                </div>
+                
+                {/* Content Area */}
+                <div className="w-full flex flex-col gap-6">
+                  {renderSubTabs()}
+                  {renderStepComponent()}
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="max-w-[1000px] mx-auto w-full flex justify-center">
-              <Stepper1
-                currentStep={currentStepId}
-                customSteps={steps}
-                errorSteps={errorSteps}
-                onStepClick={handleStepClick}
-              />
-            </div>
-          )}
-        </div>
-      </div>
 
-      {/* Sub Tabs Navigation (For non-Individual types) */}
-      {!isIndividualType && currentSubTabs.length > 0 && (
-        <div className="w-full flex justify-center">
-          <div className="flex gap-10 max-w-[1000px] w-full px-4 overflow-x-auto">
-            {currentSubTabs.map((tab) => (
-              <div
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`
-                  py-4 cursor-pointer font-poppins font-medium transition-all whitespace-nowrap  
-                  text-base
-                  ${effectiveActiveTab === tab.id
-                    ? "text-brand-blue border-b-[3px] border-brand-blue"
-                    : "text-light-gray hover:text-gray-600 border-b-[3px] border-transparent"
-                  }
-                `}
-              >
-                {tab.label}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Form Content Area */}
-      <div className="w-full flex justify-center py-10 pb-1 px-4">
-        <div className="max-w-[1440px] w-full px-6">
-          {isIndividualType ? (
-            <div className="flex flex-col lg:flex-row gap-10 items-start">
-              {/* LEFT Sidebar Area */}
+              {/* RIGHT Sidebar Area */}
               <div className="w-full lg:w-[320px] flex flex-col gap-6 lg:sticky lg:top-10">
                 <SupportCard
                   title="Contact Support"
@@ -232,22 +197,62 @@ export default function FilingFlowPage() {
                 </Button>
               </div>
 
-              {/* RIGHT Content Area */}
-              <div className="flex-1 w-full flex flex-col gap-6 min-w-0">
-                {renderSubTabs()}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Top Main Navigation (Reusable Stepper) */}
+          <div className="w-full flex justify-center pt-8 pb-4 px-4">
+            <div className="max-w-[1440px] w-full px-6">
+              <div className="max-w-[1000px] mx-auto w-full flex justify-center">
+                <Stepper1
+                  currentStep={currentStepId}
+                  customSteps={steps}
+                  errorSteps={errorSteps}
+                  onStepClick={handleStepClick}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Sub Tabs Navigation (For non-Individual types) */}
+          {currentSubTabs.length > 0 && (
+            <div className="w-full flex justify-center">
+              <div className="flex gap-10 max-w-[1000px] w-full px-4 overflow-x-auto">
+                {currentSubTabs.map((tab) => (
+                  <div
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`
+                      py-4 cursor-pointer font-poppins font-medium transition-all whitespace-nowrap  
+                      text-base
+                      ${effectiveActiveTab === tab.id
+                        ? "text-brand-blue border-b-[3px] border-brand-blue"
+                        : "text-light-gray hover:text-gray-600 border-b-[3px] border-transparent"
+                      }
+                    `}
+                  >
+                    {tab.label}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Form Content Area */}
+          <div className="w-full flex justify-center py-10 pb-1 px-4">
+            <div className="max-w-[1440px] w-full px-6">
+              <div className="max-w-[1000px] mx-auto w-full">
                 {renderStepComponent()}
               </div>
             </div>
-          ) : (
-            <div className="max-w-[1000px] mx-auto w-full">
-              {renderStepComponent()}
-            </div>
-          )}
-        </div>
-      </div>
+          </div>
+        </>
+      )}
 
       {/* Footer */}
-      <div className="px-4 pb-8 flex justify-center w-full">
+      <div className="px-4 pb-8 flex justify-center w-full mt-10">
         <div className="w-full max-w-[1440px] px-6">
           <Footer2 />
         </div>

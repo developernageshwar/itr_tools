@@ -1,1035 +1,1006 @@
-/**
- * itr3FieldConfig - ITR-3 UI Field Configuration Object
- * Assessment Year 2025–26
- * * Hierarchy Mapping: Main Section -> Subsection -> Field Section -> Fields[]
- */
-const itr3FieldConfig = {
-  // ==========================================
-  // MAIN SECTION 1: PROFILE AND GENERAL INFO
-  // ==========================================
-  profileAndGeneralInfo: {
-    label: "Part A: General Information & Disclosures",
-    subsections: {
-      personalAndIdentity: {
-        label: "Personal Profile, Contact & Identity",
-        fieldSections: {
-          personalIdentity: {
-            label: "Personal Identity",
-            fields: [
-              { name: "firstName", label: "First Name", type: "Text", required: true, validation: { pattern: "Alpha only", max: 75 } },
-              { name: "middleName", label: "Middle Name", type: "Text", required: false, validation: { pattern: "Alpha only" } },
-              { name: "lastName", label: "Last Name", type: "Text", required: true, validation: { pattern: "Alpha only" } },
-              { name: "pan", label: "PAN", type: "Text", required: true, validation: { pattern: "AAAAA0000A", length: 10 } },
-              { name: "status", label: "Status", type: "Dropdown", required: true, options: [{ value: "I", label: "Individual" }, { value: "H", label: "HUF" }] },
-              { name: "dob", label: "Date of Birth / Formation", type: "Date", required: true, notes: "DOB for Individual, Formation date for HUF" },
-              { name: "dateOfCommencementBusiness", label: "Date of Commencement of Business", type: "Date", required: true, notes: "ITR-3 Specific field" },
-              { name: "aadhaarNumber", label: "Aadhaar Number", type: "Text", required: "Conditional", validation: { length: 12 }, notes: "Individual only; required if allotted" },
-              { name: "aadhaarEnrolmentId", label: "Aadhaar Enrolment ID", type: "Text", required: "Conditional", validation: { length: 28 }, notes: "Required if Aadhaar not allotted" },
-              { name: "passportNumber", label: "Passport Number", type: "Text", required: false, notes: "Individual only" },
-              { name: "isFpi", label: "Whether FPI?", type: "Dropdown", required: false, options: ["Yes", "No"] },
-              { name: "sebiRegistrationNumber", label: "SEBI Registration Number", type: "Text", required: "Conditional", visibilityTrigger: { field: "isFpi", value: "Yes" } }
-            ]
-          },
-          addressDetails: {
-            label: "1.2 Address Configurations (Primary & Secondary)",
-            fields: [
-              { name: "flatDoorBlockNo", label: "Flat / Door / Block No.", type: "Text", required: true },
-              { name: "buildingPremisesName", label: "Name of Premises / Building / Village", type: "Text", required: false },
-              { name: "roadStreetPostOffice", label: "Road / Street / Post Office", type: "Text", required: false },
-              { name: "areaLocality", label: "Area / Locality", type: "Text", required: false },
-              { name: "townCityDistrict", label: "Town / City / District", type: "Text", required: true },
-              { name: "state", label: "State", type: "Dropdown", required: true, notes: "Includes 37 states/UTs + Foreign" },
-              { name: "country", label: "Country / Region", type: "Dropdown", required: true, defaultValue: "91-INDIA" },
-              { name: "pinCode", label: "PIN Code", type: "Text", required: "Conditional", validation: { length: 6 }, notes: "Mandatory for Indian addresses" },
-              { name: "noZipCode", label: "No ZIP Code", type: "Checkbox", required: false, notes: "Tick for foreign addresses without ZIP" },
-              { name: "zipCode", label: "ZIP Code", type: "Text", required: "Conditional", notes: "Foreign addresses" },
-              { name: "isSecondaryAddressSame", label: "Is the secondary address same as primary address?", type: "Dropdown", required: true, options: ["Yes", "No"], notes: "If Yes, collapse secondary block" }
-            ]
-          },
-          contactDetails: {
-            label: "1.3 Contact Metadata",
-            fields: [
-              { name: "emailPrimary", label: "Email Address 1 (Self)", type: "Email", required: true },
-              { name: "emailSecondary", label: "Email Address 2", type: "Email", required: false },
-              { name: "mobilePrimary", label: "Mobile No. 1", type: "Tel", required: true },
-              { name: "stdIsdCode", label: "STD/ISD Code", type: "Text", required: false },
-              { name: "phoneOfficeResidence", label: "Residential/Office Phone Number", type: "Tel", required: false },
-              { name: "mobileSecondary", label: "Mobile No. 2", type: "Tel", required: false }
-            ]
-          },
-          residentialStatus: {
-            label: "Residential Status & Jurisdictions",
-            fields: [
-              { name: "residentialStatus", label: "Residential Status in India", type: "Dropdown", required: true, options: ["RES - Resident", "NRI - Non Resident", "NOR - Resident but not Ordinarily Resident"] },
-              { name: "residentialConditions", label: "Conditions for Residential Status", type: "Dropdown", required: "Conditional", options: ["182-day rule", "60-day rule", "Citizen 120-day rule", "6(1A) 15-lakh rule", "NOR conditions", "NRI conditions"] },
-              { name: "jurisdictionOfResidence", label: "Jurisdiction of Residence Grid", type: "Table", required: "Conditional", maxRows: 2, columns: ["Country Dropdown", "TIN Text"] },
-              { name: "totalStayPreviousYear", label: "Total period of stay in India during previous year (days)", type: "Number", required: "Conditional" },
-              { name: "totalStayPrecedingFourYears", label: "Total period of stay in India during 4 preceding years (days)", type: "Number", required: "Conditional" },
-              { name: "hasPeInIndia", label: "In case of non-resident: permanent establishment (PE) in India?", type: "Radio", required: "Conditional", notes: "NR only" },
-              { name: "claimBenefit115H", label: "Do you want to claim benefit u/s 115H (Resident)?", type: "Radio", required: false },
-              { name: "hasSepInIndia", label: "Significant Economic Presence (SEP) in India?", type: "Dropdown", required: "Conditional", notes: "NR only" },
-              { name: "sepAggregatePayments", label: "SEP — Aggregate of payments during PY", type: "Amount", required: "Conditional", visibilityTrigger: { field: "hasSepInIndia", value: "Yes" } },
-              { name: "sepUserCount", label: "SEP — Number of users in India", type: "Number", required: "Conditional", visibilityTrigger: { field: "hasSepInIndia", value: "Yes" } },
-              { name: "hasIfscUnitForeignEx", label: "Unit in IFSC deriving income in foreign exchange?", type: "Dropdown", required: false, options: ["Yes", "No"] }
-            ]
-          }
-        }
-      },
-      filingAndRegimeCompliance: {
-        label: "Filing Framework, 115BAC Regime Decision & Audits",
-        fieldSections: {
-          taxRegime115BAC: {
-            label: "1.5 Tax Regime Configuration Tree (Section 115BAC)",
-            fields: [
-              { name: "optedNewRegimeEarlier", label: "Have you ever opted for New Tax Regime in earlier years?", type: "Radio", required: true },
-              { name: "assessmentYearExercised", label: "Assessment Year in which option was exercised", type: "Dropdown", required: "Conditional" },
-              { name: "dateFilingForm10IE", label: "Date of filing Form 10IE", type: "Date", required: "Conditional" },
-              { name: "ackNumberForm10IE", label: "Acknowledgement number of Form 10IE", type: "Text", required: "Conditional" },
-              { name: "optedOutEarlier", label: "Have you ever opted OUT in earlier years?", type: "Dropdown", required: "Conditional", options: ["Yes", "No"] },
-              { name: "assessmentYearOptedOut", label: "AY in which opted out", type: "Dropdown", required: "Conditional" },
-              { name: "dateFilingForm10IEOptOut", label: "Date of filing Form 10IE (opt-out)", type: "Date", required: "Conditional" },
-              { name: "ackNumberForm10IEOptOut", label: "Acknowledgement number (opt-out)", type: "Text", required: "Conditional" },
-              { name: "optionCurrentAY", label: "Option for current AY", type: "Dropdown", required: true, options: ["Opting in now", "Continue to opt", "Opt out", "Not opting", "Not eligible"] },
-              { name: "dateFilingForm10IECurrent", label: "Date of filing Form 10IE (current AY)", type: "Date", required: "Conditional" },
-              { name: "ackNumberForm10IECurrent", label: "Acknowledgement number (current AY)", type: "Text", required: "Conditional" },
-              { name: "optOut115BAC6", label: "Have you exercised option u/s 115BAC(6) to opt out?", type: "Dropdown", required: true, options: ["No", "Yes within due date", "Yes but beyond due date"] },
-              { name: "dateFilingForm10IEA", label: "Date of filing Form 10-IEA", type: "Date", required: "Conditional" },
-              { name: "ackNumberForm10IEA", label: "Acknowledgement number of Form 10-IEA", type: "Text", required: "Conditional" },
-              { name: "methodOfOptingOut", label: "Method of opting out", type: "Dropdown", required: "Conditional", options: ["By filing 10IEA (having BP income)", "By exercising option in return (Form 10IEA not applicable)"] },
-              { name: "filed10IEAAy2425", label: "10IEA filed in AY 2024-25?", type: "Dropdown", required: "Conditional", options: ["Yes", "No"] },
-              { name: "subPathA_continueOptOut", label: "Sub-path (a)(i): Continue to opt out for current AY?", type: "Dropdown", required: "Conditional" },
-              { name: "subPathA_date10IEA", label: "Sub-path (a) — Date of Form 10-IEA for AY 2025-26", type: "Date", required: "Conditional" },
-              { name: "subPathA_ack10IEA", label: "Sub-path (a) — Ack. no. of Form 10-IEA for AY 2025-26", type: "Text", required: "Conditional" },
-              { name: "subPathB_optOutCurrent", label: "Sub-path (b)(i): Opt out for current AY?", type: "Dropdown", required: "Conditional" },
-              { name: "subPathB_date10IEA", label: "Sub-path (b) — Date of Form 10-IEA for AY 2025-26", type: "Date", required: "Conditional" },
-              { name: "subPathB_ack10IEA", label: "Sub-path (b) — Ack. no. of Form 10-IEA for AY 2025-26", type: "Text", required: "Conditional" },
-              { name: "subPathC_optOutCurrentNon10IEA", label: "Sub-path (c)(i): Opt out for current AY? (non-10IEA filers)", type: "Dropdown", required: "Conditional" },
-              { name: "subPathC_date10IEA", label: "Sub-path (c) — Date of Form 10-IEA for AY 2025-26", type: "Date", required: "Conditional" },
-              { name: "subPathC_ack10IEA", label: "Sub-path (c) — Ack. no. of Form 10-IEA for AY 2025-26", type: "Text", required: "Conditional" }
-            ]
-          },
-          filingMetadata: {
-            label: "1.6 Return Section Classification & Notices",
-            fields: [
-              { name: "filedSection", label: "Filed u/s (Section)", type: "Dropdown", required: true, options: ["139(1)", "139(4)", "139(5)", "92CD", "119(2)(b)", "139(8A)", "139(9)", "142(1)", "148", "153A", "153C"] },
-              { name: "filedInResponseToNotice", label: "Filed in response to notice u/s", type: "Dropdown", required: "Conditional", options: ["139(9)", "142(1)", "148", "153C", "153A"] },
-              { name: "revisedDefectiveReceiptNo", label: "If revised/defective — Receipt No.", type: "Text", required: "Conditional" },
-              { name: "dateFilingOriginalReturn", label: "Date of filing of Original Return", type: "Date", required: "Conditional" },
-              { name: "dinNoticeNumber", label: "Unique Number / DIN (for notice)", type: "Text", required: "Conditional" },
-              { name: "dateOfNoticeOrder", label: "Date of Notice / Order", type: "Date", required: "Conditional" },
-              { name: "dueDateFiling", label: "Due Date for filing return", type: "Date", required: true, autoCalculated: true }
-            ]
-          },
-          seventhProviso: {
-            label: "1.7 Seventh Proviso to Section 139(1) Thresholds",
-            fields: [
-              { name: "filingUnderSeventhProviso", label: "Filing under Seventh Proviso?", type: "Radio", required: true },
-              { name: "depositedAmountCurrentAcc", label: "Deposited > ₹1 Crore in current account(s)?", type: "Radio", required: "Conditional" },
-              { name: "spentForeignTravel", label: "Incurred > ₹2 lakh on foreign travel?", type: "Radio", required: "Conditional" },
-              { name: "spentElectricity", label: "Incurred > ₹1 lakh on electricity?", type: "Radio", required: "Conditional" },
-              { name: "salesTurnoverExceeds60Lakh", label: "Sales/turnover > ₹60 lakh?", type: "Radio", required: "Conditional" },
-              { name: "professionReceiptsExceeds10Lakh", label: "Gross receipts in profession > ₹10 lakh?", type: "Radio", required: "Conditional" },
-              { name: "tdsTcsThreshold", label: "TDS+TCS ≥ ₹25,000 (or ₹50,000 for senior citizen)?", type: "Radio", required: "Conditional" },
-              { name: "savingsBankDepositsThreshold", label: "Savings bank deposits ≥ ₹50 lakh?", type: "Radio", required: "Conditional" }
-            ]
-          },
-          representativeAssessee: {
-            label: "1.8 Representative Assessee Sub-Form",
-            fields: [
-              { name: "isRepresentativeAssessee", label: "Filed by representative assessee?", type: "Dropdown", required: true, options: ["Yes", "No"] },
-              { name: "nameOfRepresentative", label: "Name of Representative", type: "Text", required: "Conditional" },
-              { name: "capacityOfRepresentative", label: "Capacity of Representative", type: "Dropdown", required: "Conditional", options: ["Legal Heir", "Manager", "Guardian", "Other"] },
-              { name: "addressOfRepresentative", label: "Address of Representative", type: "Text", required: "Conditional" },
-              { name: "panOfRepresentative", label: "PAN of Representative", type: "Text", required: "Conditional", validation: { pattern: "PAN" } },
-              { name: "aadhaarOfRepresentative", label: "Aadhaar Number of Representative", type: "Text", required: "Conditional" }
-            ]
-          },
-          specialDisclosures: {
-            label: "1.9 Corporate & Investment Tables (Director, Partner, Unlisted Equity)",
-            fields: [
-              { name: "isDirector", label: "Director in a Company?", type: "Radio", required: false },
-              { name: "directorTable", label: "Director Metadata Layout Grid", type: "Table", maxRows: 3, columns: ["Name", "Type", "PAN", "Listed-Unlisted", "DIN"], required: "Conditional" },
-              { name: "isPartner", label: "Partner in a Firm?", type: "Dropdown", required: false },
-              { name: "partnerTable", label: "Partnership Details Grid", type: "Table", maxRows: 2, columns: ["Name of Firm", "PAN"], required: "Conditional" },
-              { name: "heldUnlistedEquity", label: "Held Unlisted Equity Shares?", type: "Dropdown", required: false },
-              { name: "unlistedEquityTable", label: "Unlisted Equity Transaction Tracking Grid", type: "Table", maxRows: 3, columns: ["Company", "Type", "PAN", "Opening Balance Shares", "Opening Balance Cost", "Acquisition Date", "Acquisition Face Value", "Acquisition Issue Price", "Acquisition Purchase Price", "Transfer Shares", "Transfer Consideration", "Closing Balance Shares", "Closing Balance Cost"], required: "Conditional" }
-            ]
-          },
-          statutoryBenefits: {
-            label: "1.10 Section 115H, Portuguese Civil Code, LEI",
-            fields: [
-              { name: "governedPortugueseCivilCode", label: "Governed by Portuguese Civil Code (Sec 5A)?", type: "Dropdown", required: true, options: ["Yes", "No"], notes: "If Yes, Schedule 5A becomes mandatory" },
-              { name: "leiNumber", label: "LEI Number", type: "Text", required: "Conditional", notes: "Mandatory if refund ≥ ₹50 Crore" },
-              { name: "leiValidUptoDate", label: "LEI Valid Upto Date", type: "Date", required: "Conditional" }
-            ]
-          },
-          auditInformation: {
-            label: "1.11 Audit Core Information Rules (ITR-3 Specific Matrix)",
-            fields: [
-              { name: "liableMaintainAccounts44AA", label: "a1. Liable to maintain accounts u/s 44AA?", type: "Dropdown", required: true, options: ["Yes", "No"] },
-              { name: "declaringIncomePresumptiveOnly", label: "a2. Declaring income only u/s 44AE/44B/44BB/44AD/44ADA/44BBA?", type: "Dropdown", required: true, options: ["Yes", "No"] },
-              { name: "turnoverBetween1Cr10Cr", label: "a2i. If No at a2 — Total sales/turnover between ₹1 Cr and ₹10 Cr?", type: "Dropdown", required: "Conditional", options: ["Yes", "No"] },
-              { name: "cashReceiptsThreshold", label: "a2ii. If Yes at a2i — Cash receipts ≤ 5% of total receipts?", type: "Radio", required: "Conditional" },
-              { name: "cashPaymentsThreshold", label: "a2iii. If Yes at a2i — Cash payments ≤ 5% of total payments?", type: "Radio", required: "Conditional" },
-              { name: "liableAudit44AB", label: "b. Liable for audit u/s 44AB?", type: "Dropdown", required: true, options: ["Yes", "No"] },
-              { name: "auditConditionsMultiSelect", label: "Which condition? (44AB Multi-select)", type: "CheckboxGroup", required: "Conditional", options: ["44AD", "44ADA", "44AE", "44BB"] },
-              { name: "accountsAuditedByAccountant", label: "c. If b = Yes — Accounts audited by accountant?", type: "Radio", required: "Conditional" },
-              { name: "dateFurnishingAuditReport", label: "c-a. Date of furnishing audit report", type: "Date", required: "AuditOnly" },
-              { name: "nameAuditorSigning", label: "c-b. Name of auditor signing tax audit report", type: "Text", required: "AuditOnly" },
-              { name: "membershipNoAuditor", label: "c-c. Membership No. of auditor", type: "Text", required: "AuditOnly" },
-              { name: "nameAuditFirm", label: "c-d. Name of audit firm (proprietorship/firm)", type: "Text", required: "AuditOnly" },
-              { name: "firmRegistrationNumber", label: "c-e. Proprietorship/Firm Registration Number", type: "Text", required: "AuditOnly" },
-              { name: "panAuditFirm", label: "c-f. PAN of proprietorship/firm", type: "Text", required: "AuditOnly", validation: { pattern: "PAN" } },
-              { name: "aadhaarProprietorship", label: "c-g. Aadhaar of proprietorship", type: "Text", required: "Conditional" },
-              { name: "dateAuditReport", label: "c-h. Date of audit report", type: "Date", required: "AuditOnly" },
-              { name: "ackNumberAuditReport", label: "c-i. Acknowledgement number of audit report", type: "Text", required: "AuditOnly" },
-              { name: "udin", label: "c-j. UDIN", type: "Text", required: "AuditOnly", validation: { length: 18 } },
-              { name: "liableAudit92E", label: "d(i). Liable for audit u/s 92E?", type: "Dropdown", required: false, options: ["Yes", "No"], notes: "Transfer Pricing Trigger" },
-              { name: "accountsAudited92E", label: "d(ii). If d(i) = Yes — Accounts audited u/s 92E?", type: "Dropdown", required: "Conditional", options: ["Yes", "No"] }
-            ]
-          }
-        }
-      }
-    }
-  },
 
-  // ==========================================
-  // MAIN SECTION 2: BUSINESS ACCOUNTS AND SCHEDULES
-  // ==========================================
-  businessAccountsAndSchedules: {
-    label: "Part A: Business Nature, Balance Sheet, Manufacturing, Trading & P&L",
-    subsections: {
-      natureOfBusiness: {
-        label: "Section 2: Nature of Business Matrix",
-        fieldSections: {
-          businessClassification: {
-            label: "Activity Registry (Up to 3 Entries)",
+const itr3FieldConfig = [
+  {
+    id: 1,
+    label: 'Details',
+    route: 'details',
+    subsections: [
+      {
+        id: 'general_info',
+        label: 'Part A: General Information',
+        fieldSections: [
+          {
+            id: 'personal_identity',
+            label: '1.1 Personal Identity',
             fields: [
-              { name: "businessSerialNo", label: "Sl. No.", type: "Auto", required: true, autoCalculated: true },
-              { name: "businessCode", label: "Code", type: "Dropdown", required: true, notes: "100+ industrial codes options" },
-              { name: "tradeNameProprietorship", label: "Trade Name of Proprietorship", type: "Text", required: false },
-              { name: "businessDescription", label: "Description", type: "Text", required: true, autoCalculated: true }
-            ]
-          }
-        }
-      },
-      balanceSheet: {
-        label: "Section 3: Part A-BS (Balance Sheet Accounts)",
-        fieldSections: {
-          sourcesOfFunds: {
-            label: "3.1 Sources of Funds Grid",
-            fields: [
-              { name: "proprietorsCapital", ref: "a", label: "Proprietor's Capital", type: "Amount", required: false },
-              { name: "revaluationReserve", ref: "bi", label: "Revaluation Reserve", type: "Amount", required: false },
-              { name: "capitalReserve", ref: "bii", label: "Capital Reserve", type: "Amount", required: false },
-              { name: "statutoryReserve", ref: "biii", label: "Statutory Reserve", type: "Amount", required: false },
-              { name: "anyOtherReserve", ref: "biv", label: "Any Other Reserve", type: "Amount", required: false },
-              { name: "totalReserves", ref: "bv", label: "Total Reserves (bi+bii+biii+biv)", type: "Amount", required: true, autoCalculated: true },
-              { name: "totalProprietorsFund", ref: "1c", label: "Total Proprietor's Fund (a+bv)", type: "Amount", required: true, autoCalculated: true },
-              { name: "foreignCurrencyLoansSecured", ref: "ai", label: "Foreign Currency Loans (Secured)", type: "Amount", required: false },
-              { name: "rupeeLoansBanks", ref: "iiA", label: "Rupee Loans — From Banks", type: "Amount", required: false },
-              { name: "rupeeLoansOthers", ref: "iiB", label: "Rupee Loans — From Others", type: "Amount", required: false },
-              { name: "totalRupeeLoans", ref: "iiC", label: "Total Rupee Loans (iiA+iiB)", type: "Amount", required: true, autoCalculated: true },
-              { name: "totalSecuredLoans", ref: "aiii", label: "Total Secured Loans (ai+iiC)", type: "Amount", required: true, autoCalculated: true },
-              { name: "unsecuredLoansBanks", ref: "bi", label: "Unsecured Loans from Banks", type: "Amount", required: false },
-              { name: "unsecuredLoansOthers", ref: "bii", label: "Unsecured Loans from Others", type: "Amount", required: false },
-              { name: "totalUnsecuredLoans", ref: "biii", label: "Total Unsecured Loans", type: "Amount", required: true, autoCalculated: true },
-              { name: "totalLoanFunds", ref: "2c", label: "Total Loan Funds (aiii+biii)", type: "Amount", required: true, autoCalculated: true },
-              { name: "deferredTaxLiability", ref: "3", label: "Deferred Tax Liability", type: "Amount", required: false },
-              { name: "advancesPersons40A2b", ref: "4i", label: "Advances from Persons u/s 40A(2)(b)", type: "Amount", required: false },
-              { name: "advancesOthers", ref: "4ii", label: "Advances from Others", type: "Amount", required: false },
-              { name: "totalAdvances", ref: "4iii", label: "Total Advances (i+ii)", type: "Amount", required: true, autoCalculated: true },
-              { name: "totalSources", ref: "5", label: "TOTAL SOURCES (1c+2c+3+4iii)", type: "Amount", required: true, autoCalculated: true }
+              { name: 'firstName', label: 'First Name', type: 'text', required: true, validation: { type: 'alpha', maxChars: 75 } },
+              { name: 'middleName', label: 'Middle Name', type: 'text', required: false },
+              { name: 'lastName', label: 'Last Name', type: 'text', required: true },
+              { name: 'pan', label: 'PAN', type: 'text', required: true, validation: { pattern: '^[A-Z]{5}[0-9]{4}[A-Z]{1}$' } },
+              { name: 'status', label: 'Status', type: 'dropdown', required: true, options: [{ value: 'I', label: 'I – Individual' }, { value: 'H', label: 'H – HUF' }] },
+              { name: 'dobOrFormation', label: 'Date of Birth / Formation', type: 'date', required: true, notes: 'DOB for Individual, Formation date for HUF' },
+              { name: 'dateOfCommencementBusiness', label: 'Date of Commencement of Business', type: 'date', required: true, notes: 'Specific to ITR-3' },
+              { name: 'aadhaarNumber', label: 'Aadhaar Number', type: 'text', required: 'conditional', validation: { length: 12 }, condition: 'status === "I"' },
+              { name: 'aadhaarEnrolmentId', label: 'Aadhaar Enrolment ID', type: 'text', required: 'conditional', validation: { length: 28 }, condition: 'status === "I" && !aadhaarNumber' },
+              { name: 'passportNumber', label: 'Passport Number', type: 'text', required: false, condition: 'status === "I"' },
+              { name: 'isFpi', label: 'Whether FPI?', type: 'dropdown', required: false, options: [{ value: 'Yes', label: 'Yes' }, { value: 'No', label: 'No' }] },
+              { name: 'sebiRegistrationNumber', label: 'SEBI Registration Number', type: 'text', required: 'conditional', condition: 'isFpi === "Yes"' }
             ]
           },
-          applicationOfFunds: {
-            label: "3.2 Application of Funds Grid & No-Account Provisions",
+          {
+            id: 'address',
+            label: '1.2 Address',
             fields: [
-              { name: "grossBlockFixedAssets", ref: "1a", label: "Gross Block of Fixed Assets", type: "Amount", required: false },
-              { name: "depreciationBS", ref: "1b", label: "Depreciation", type: "Amount", required: false },
-              { name: "netBlock", ref: "1c", label: "Net Block (1a–1b)", type: "Amount", required: true, autoCalculated: true },
-              { name: "capitalWorkInProgress", ref: "1d", label: "Capital Work-in-Progress", type: "Amount", required: false },
-              { name: "totalFixedAssets", ref: "1e", label: "Total Fixed Assets (1c+1d)", type: "Amount", required: true, autoCalculated: true },
-              { name: "longTermInvestmentsQuoted", ref: "ai", label: "Long-term Investments — Govt & Other Securities (Quoted)", type: "Amount", required: false },
-              { name: "longTermInvestmentsUnquoted", ref: "aii", label: "Long-term Investments — Govt & Other Securities (Unquoted)", type: "Amount", required: false },
-              { name: "totalLongTermInvestments", ref: "aiii", label: "Total Long-term Investments", type: "Amount", required: true, autoCalculated: true },
-              { name: "shortTermEquityShares", ref: "bi", label: "Short-term — Equity Shares incl. share application money", type: "Amount", required: false },
-              { name: "shortTermPreferenceShares", ref: "bii", label: "Short-term — Preference Shares", type: "Amount", required: false },
-              { name: "shortTermDebentures", ref: "biii", label: "Short-term — Debentures", type: "Amount", required: false },
-              { name: "totalShortTermInvestments", ref: "biv", label: "Total Short-term Investments", type: "Amount", required: true, autoCalculated: true },
-              { name: "totalInvestments", ref: "2c", label: "Total Investments (aiii+biv)", type: "Amount", required: true, autoCalculated: true },
-              { name: "inventoriesConsumables", ref: "iA", label: "Inventories — Stores/Consumables", type: "Amount", required: false },
-              { name: "inventoriesRawMaterials", ref: "iB", label: "Inventories — Raw Materials", type: "Amount", required: false },
-              { name: "inventoriesStockInProcess", ref: "iC", label: "Inventories — Stock-in-Process", type: "Amount", required: false },
-              { name: "inventoriesFinishedTradedGoods", ref: "iD", label: "Inventories — Finished/Traded Goods", type: "Amount", required: false },
-              { name: "totalInventories", ref: "iE", label: "Total Inventories", type: "Amount", required: true, autoCalculated: true },
-              { name: "sundryDebtors", ref: "aii", label: "Sundry Debtors", type: "Amount", required: false },
-              { name: "cashInHand", ref: "iiiA", label: "Cash-in-Hand", type: "Amount", required: false },
-              { name: "balanceWithBank", ref: "iiiB", label: "Balance with Bank", type: "Amount", required: false },
-              { name: "totalCashBank", ref: "iiiC", label: "Total Cash & Bank", type: "Amount", required: true, autoCalculated: true },
-              { name: "otherCurrentAssets", ref: "aiv", label: "Other Current Assets", type: "Amount", required: false },
-              { name: "totalCurrentAssets", ref: "av", label: "Total Current Assets", type: "Amount", required: true, autoCalculated: true },
-              { name: "advancesRecoverableCashKind", ref: "bi", label: "Advances recoverable in cash or kind", type: "Amount", required: false },
-              { name: "depositsLoansAdvancesCorporates", ref: "bii", label: "Deposits, loans & advances to corporates etc.", type: "Amount", required: false },
-              { name: "balanceRevenueAuthorities", ref: "biii", label: "Balance with Revenue Authorities", type: "Amount", required: false },
-              { name: "totalLoansAdvances", ref: "biv", label: "Total Loans & Advances", type: "Amount", required: true, autoCalculated: true },
-              { name: "totalCurrentAssetsLoansAdvances", ref: "3c", label: "Total Current Assets + Loans & Advances", type: "Amount", required: true, autoCalculated: true },
-              { name: "sundryCreditors", ref: "iA", label: "Sundry Creditors", type: "Amount", required: false },
-              { name: "liabilityLeasedAssets", ref: "iB", label: "Liability for Leased Assets", type: "Amount", required: false },
-              { name: "interestAccruedAbove", ref: "iC", label: "Interest Accrued on above", type: "Amount", required: false },
-              { name: "interestAccruedNotDueLoans", ref: "iD", label: "Interest Accrued but not due on loans", type: "Amount", required: false },
-              { name: "totalCurrentLiabilities", ref: "iE", label: "Total Current Liabilities", type: "Amount", required: true, autoCalculated: true },
-              { name: "provisionIncomeTax", ref: "iiA", label: "Provision for Income Tax", type: "Amount", required: false },
-              { name: "provisionEmployeeBenefits", ref: "iiB", label: "Provision for Leave Encash/Superannuation/Gratuity", type: "Amount", required: false },
-              { name: "otherProvisionsBS", ref: "iiC", label: "Other Provisions", type: "Amount", required: false },
-              { name: "totalProvisionsBS", ref: "iiD", label: "Total Provisions", type: "Amount", required: true, autoCalculated: true },
-              { name: "totalCurrentLiabilitiesProvisions", ref: "diii", label: "Total Current Liabilities + Provisions", type: "Amount", required: true, autoCalculated: true },
-              { name: "netCurrentAssets", ref: "3e", label: "Net Current Assets (3c–diii)", type: "Amount", required: true, autoCalculated: true },
-              { name: "miscExpenditureNotWrittenOff", ref: "4a", label: "Miscellaneous Expenditure not written off", type: "Amount", required: false },
-              { name: "deferredTaxAsset", ref: "4b", label: "Deferred Tax Asset", type: "Amount", required: false },
-              { name: "profitAndLossAccumulatedBalance", ref: "4c", label: "Profit and Loss Account / Accumulated Balance", type: "Amount", required: false },
-              { name: "totalMiscDtaPl", ref: "4d", label: "Total Misc + DTA + P&L", type: "Amount", required: true, autoCalculated: true },
-              { name: "totalApplication", ref: "5", label: "TOTAL APPLICATION (1e+2c+3e+4d)", type: "Amount", required: true, autoCalculated: true },
-              // No account sub-group definitions
-              { name: "noAccountSundryDebtors", ref: "6a", label: "No Account Case — Total Sundry Debtors", type: "Amount", required: "Conditional" },
-              { name: "noAccountSundryCreditors", ref: "6b", label: "No Account Case — Total Sundry Creditors", type: "Amount", required: "Conditional" },
-              { name: "noAccountStockInTrade", ref: "6c", label: "No Account Case — Total Stock-in-Trade", type: "Amount", required: "Conditional" },
-              { name: "noAccountCashBalance", ref: "6d", label: "No Account Case — Cash Balance", type: "Amount", required: "Conditional" }
-            ]
-          }
-        }
-      },
-      manufacturingTradingPL: {
-        label: "Sections 4, 5, 6: Manufacturing, Trading & Core Profit & Loss Statements",
-        fieldSections: {
-          manufacturingAccount: {
-            label: "Part A-Manufacturing Account Operational Dr/Cr",
-            fields: [
-              { name: "openingStockRawMaterial", ref: "Ai", label: "Opening Stock of Raw Materials", type: "Amount", required: false },
-              { name: "openingStockWIP", ref: "Aii", label: "Opening Stock of Work-in-Progress", type: "Amount", required: false },
-              { name: "totalOpeningInventoryMfg", ref: "Aiii", label: "Total Opening Inventory (Ai+Aii)", type: "Amount", required: true, autoCalculated: true },
-              { name: "purchasesMfg", ref: "B", label: "Purchases (net of refunds & duty)", type: "Amount", required: false },
-              { name: "directWages", ref: "C", label: "Direct Wages", type: "Amount", required: false },
-              { name: "carriageInwardMfg", ref: "Di", label: "Carriage Inward", type: "Amount", required: false },
-              { name: "powerFuelDirect", ref: "Dii", label: "Power and Fuel (Direct)", type: "Amount", required: false },
-              { name: "otherDirectExpensesMfg", ref: "Diii", label: "Other Direct Expenses", type: "Amount", required: false },
-              { name: "totalDirectExpensesMfg", ref: "D", label: "Total Direct Expenses (Di+Dii+Diii)", type: "Amount", required: true, autoCalculated: true },
-              { name: "indirectWages", ref: "Ei", label: "Indirect Wages", type: "Amount", required: false },
-              { name: "factoryRentRates", ref: "Eii", label: "Factory Rent and Rates", type: "Amount", required: false },
-              { name: "factoryInsurance", ref: "Eiii", label: "Factory Insurance", type: "Amount", required: false },
-              { name: "factoryFuelPower", ref: "Eiv", label: "Factory Fuel and Power", type: "Amount", required: false },
-              { name: "factoryGeneralExpenses", ref: "Ev", label: "Factory General Expenses", type: "Amount", required: false },
-              { name: "depreciationFactoryMachinery", ref: "Evi", label: "Depreciation of Factory Machinery", type: "Amount", required: false },
-              { name: "totalFactoryOverheads", ref: "Evii", label: "Total Factory Overheads", type: "Amount", required: true, autoCalculated: true },
-              { name: "totalDebitsManufacturing", ref: "F", label: "Total Debits to Manufacturing Account", type: "Amount", required: true, autoCalculated: true },
-              { name: "closingStockRawMaterial", ref: "i", label: "Closing Stock of Raw Material", type: "Amount", required: false },
-              { name: "closingStockWIP", ref: "ii", label: "Closing Stock of Work-in-Progress", type: "Amount", required: false },
-              { name: "totalClosingStockMfg", ref: "iii", label: "Total Closing Stock", type: "Amount", required: true, autoCalculated: true },
-              { name: "costOfGoodsProduced", ref: "3", label: "Cost of Goods Produced → Trading Account (F–iii)", type: "Amount", required: true, autoCalculated: true }
+              { name: 'isSecondarySameAsPrimary', label: 'Is the secondary address same as primary address?', type: 'dropdown', required: true, options: [{ value: 'Yes', label: 'Yes' }, { value: 'No', label: 'No' }] },
+              { name: 'flatDoorBlockNo', label: 'Flat / Door / Block No.', type: 'text', required: true },
+              { name: 'buildingPremisesVillage', label: 'Name of Premises / Building / Village', type: 'text', required: false },
+              { name: 'roadStreetPostOffice', label: 'Road / Street / Post Office', type: 'text', required: false },
+              { name: 'areaLocality', label: 'Area / Locality', type: 'text', required: false },
+              { name: 'townCityDistrict', label: 'Town / City / District', type: 'text', required: true },
+              { name: 'state', label: 'State', type: 'dropdown', required: true, notes: 'All 37 states/UTs + Foreign' },
+              { name: 'country', label: 'Country / Region', type: 'dropdown', required: true, defaultValue: '91-INDIA' },
+              { name: 'pinCode', label: 'PIN Code', type: 'text', required: 'conditional', validation: { length: 6 }, condition: 'country === "91-INDIA"' },
+              { name: 'noZipCode', label: 'No ZIP Code', type: 'checkbox', required: false, condition: 'country !== "91-INDIA"' },
+              { name: 'zipCode', label: 'ZIP Code', type: 'text', required: 'conditional', condition: 'country !== "91-INDIA" && !noZipCode' }
             ]
           },
-          tradingAccountCredits: {
-            label: "Part A-Trading Account — Revenue & Credits",
+          {
+            id: 'contact_details',
+            label: '1.3 Contact Details',
             fields: [
-              { name: "saleOfGoods", ref: "Ai", label: "Sale of Goods (net of returns & duty)", type: "Amount", required: false },
-              { name: "saleOfServices", ref: "Aii", label: "Sale of Services", type: "Amount", required: false },
-              { name: "otherOperatingRevenuesGrid", ref: "Aiii", label: "Other Operating Revenues Repeat Block", type: "Table", columns: ["Nature", "Amount"], required: false },
-              { name: "totalRevenueBusiness", ref: "Aiv", label: "Total Revenue from Business (Ai+Aii+Aiii)", type: "Amount", required: true, autoCalculated: true },
-              { name: "grossReceiptsProfession", ref: "B", label: "Gross Receipts from Profession", type: "Amount", required: false },
-              { name: "unionExciseDutiesReceived", ref: "Ci", label: "Union Excise Duties received", type: "Amount", required: false },
-              { name: "serviceTaxReceived", ref: "Cii", label: "Service Tax received", type: "Amount", required: false },
-              { name: "vatSalesTaxReceived", ref: "Ciii", label: "VAT/Sales Tax received", type: "Amount", required: false },
-              { name: "cgstReceived", ref: "Civ", label: "CGST received", type: "Amount", required: false },
-              { name: "sgstReceived", ref: "Cv", label: "SGST received", type: "Amount", required: false },
-              { name: "igstReceived", ref: "Cvi", label: "IGST received", type: "Amount", required: false },
-              { name: "utgstReceived", ref: "Cvii", label: "UTGST received", type: "Amount", required: false },
-              { name: "anyOtherDutyTaxReceived", ref: "Cviii", label: "Any other duty/tax", type: "Amount", required: false },
-              { name: "totalTaxesDutiesReceived", ref: "Cix", label: "Total Taxes/Duties received", type: "Amount", required: true, autoCalculated: true },
-              { name: "totalRevenueOperations", ref: "4D", label: "Total Revenue from Operations (Aiv+B+Cix)", type: "Amount", required: true, autoCalculated: true },
-              { name: "closingStockFinishedGoods", ref: "5", label: "Closing Stock of Finished Goods", type: "Amount", required: false },
-              { name: "totalCreditsTrading", ref: "6", label: "Total Credits to Trading Account (4D+5)", type: "Amount", required: true, autoCalculated: true }
+              { name: 'emailSelf', label: 'Email Address 1 (Self)', type: 'email', required: true },
+              { name: 'emailSecondary', label: 'Email Address 2', type: 'email', required: false },
+              { name: 'mobileSelf', label: 'Mobile No. 1', type: 'tel', required: true },
+              { name: 'stdIsdCode', label: 'STD/ISD Code', type: 'text', required: false },
+              { name: 'phoneLandline', label: 'Residential/Office Phone Number', type: 'tel', required: false },
+              { name: 'mobileSecondary', label: 'Mobile No. 2', type: 'tel', required: false }
             ]
           },
-          tradingAccountDebits: {
-            label: "Part A-Trading Account — Expenses & Debits",
-            fields: [
-              { name: "openingStockFinishedGoods", ref: "7", label: "Opening Stock of Finished Goods", type: "Amount", required: false },
-              { name: "purchasesTrading", ref: "8", label: "Purchases (net of refunds & duty)", type: "Amount", required: false },
-              { name: "carriageInwardTrading", ref: "9i", label: "Carriage Inward", type: "Amount", required: false },
-              { name: "powerFuelTrading", ref: "9ii", label: "Power and Fuel (Trading)", type: "Amount", required: false },
-              { name: "otherDirectExpensesTradingGrid", ref: "9iii", label: "Other Direct Expenses Repeat Block", type: "Table", columns: ["Nature", "Amount"], required: false },
-              { name: "totalDirectExpensesTrading", ref: "9", label: "Total Direct Expenses", type: "Amount", required: true, autoCalculated: true },
-              { name: "customDutyPaid", ref: "10i", label: "Custom Duty", type: "Amount", required: false },
-              { name: "counterVailingDutyPaid", ref: "10ii", label: "Counter Veiling Duty", type: "Amount", required: false },
-              { name: "specialAdditionalDutyPaid", ref: "10iii", label: "Special Additional Duty", type: "Amount", required: false },
-              { name: "unionExciseDutyPaid", ref: "10iv", label: "Union Excise Duty (paid)", type: "Amount", required: false },
-              { name: "serviceTaxPaid", ref: "10v", label: "Service Tax (paid)", type: "Amount", required: false },
-              { name: "vatSalesTaxPaid", ref: "10vi", label: "VAT/Sales Tax (paid)", type: "Amount", required: false },
-              { name: "cgstPaid", ref: "10vii", label: "CGST (paid)", type: "Amount", required: false },
-              { name: "sgstPaid", ref: "10viii", label: "SGST (paid)", type: "Amount", required: false },
-              { name: "igstPaid", ref: "10ix", label: "IGST (paid)", type: "Amount", required: false },
-              { name: "utgstPaid", ref: "10x", label: "UTGST (paid)", type: "Amount", required: false },
-              { name: "anyOtherTaxPaid", ref: "10xi", label: "Any other tax paid", type: "Amount", required: false },
-              { name: "totalDutiesTaxesPaid", ref: "10xii", label: "Total Duties & Taxes paid", type: "Amount", required: true, autoCalculated: true },
-              { name: "costOfGoodsProducedFromMfg", ref: "11", label: "Cost of Goods Produced (from Manufacturing Account)", type: "Amount", required: true, autoCalculated: true },
-              { name: "grossProfitTrading", ref: "12", label: "Gross Profit → P&L (6–7–8–9–10xii–11)", type: "Amount", required: true, autoCalculated: true },
-              { name: "turnoverIntradayTrading", ref: "12a", label: "Turnover from Intraday Trading", type: "Amount", required: false },
-              { name: "incomeIntradayTrading", ref: "12b", label: "Income from Intraday Trading → P&L", type: "Amount", required: false }
-            ]
-          },
-          plCreditsIncome: {
-            label: "6.1 Profit & Loss — Credits & Income",
-            fields: [
-              { name: "grossProfitFromTrading", ref: "13", label: "Gross Profit from Trading Account", type: "Amount", required: true, autoCalculated: true },
-              { name: "otherIncomeRent", ref: "14i", label: "Other Income — Rent", type: "Amount", required: false },
-              { name: "otherIncomeCommission", ref: "14ii", label: "Other Income — Commission", type: "Amount", required: false },
-              { name: "otherIncomeDividend", ref: "14iii", label: "Other Income — Dividend Income", type: "Amount", required: false },
-              { name: "otherIncomeInterest", ref: "14iv", label: "Other Income — Interest Income", type: "Amount", required: false },
-              { name: "otherIncomeProfitSaleFixedAssets", ref: "14v", label: "Other Income — Profit on sale of fixed assets", type: "Amount", required: false },
-              { name: "otherIncomeProfitSaleSttInvestments", ref: "14vi", label: "Other Income — Profit on sale of STT investments", type: "Amount", required: false },
-              { name: "otherIncomeProfitSaleOtherInvestments", ref: "14vii", label: "Other Income — Profit on sale of other investments", type: "Amount", required: false },
-              { name: "otherIncomeGainLossForex", ref: "14viii", label: "Other Income — Gain/Loss on forex fluctuation u/s 43AA", type: "Amount", required: false },
-              { name: "otherIncomeProfitConversionAsset", ref: "14ix", label: "Other Income — Profit on conversion of inventory to capital asset u/s 28(via)", type: "Amount", required: false },
-              { name: "otherIncomeAgriculture", ref: "14x", label: "Other Income — Agriculture Income", type: "Amount", required: false },
-              { name: "otherIncomeLiabilitiesWrittenBackGrid", ref: "14xia", label: "Other Income — Liabilities written back Repeat Block (Max 3)", type: "Table", columns: ["Nature", "Amount"], required: false },
-              { name: "otherIncomeMiscGrid", ref: "14xib", label: "Other Income — Other incomes (not in turnover) Repeat Block (Max 3)", type: "Table", columns: ["Nature", "Amount"], required: false },
-              { name: "totalOtherIncome", ref: "14xii", label: "Total Other Income", type: "Amount", required: true, autoCalculated: true },
-              { name: "totalCreditsPL", ref: "15", label: "Total Credits to P&L (13+14xii)", type: "Amount", required: true, autoCalculated: true }
-            ]
-          },
-          plDebitsExpenses: {
-            label: "6.2 Profit & Loss — Debits & Expenses Structure",
-            fields: [
-              { name: "freightOutward", ref: "16", label: "Freight Outward", type: "Amount", required: false },
-              { name: "consumptionStoresSpareParts", ref: "17", label: "Consumption of Stores & Spare Parts", type: "Amount", required: false },
-              { name: "powerAndFuelPL", ref: "18", label: "Power and Fuel", type: "Amount", required: false },
-              { name: "rentPL", ref: "19", label: "Rent", type: "Amount", required: false },
-              { name: "repairsBuilding", ref: "20", label: "Repairs to Building", type: "Amount", required: false },
-              { name: "repairsMachinery", ref: "21", label: "Repairs to Machinery", type: "Amount", required: false },
-              { name: "salariesWages", ref: "22i", label: "Salaries and Wages", type: "Amount", required: false },
-              { name: "bonus", ref: "22ii", label: "Bonus", type: "Amount", required: false },
-              { name: "reimbursementMedicalExpenses", ref: "22iii", label: "Reimbursement of Medical Expenses", type: "Amount", required: false },
-              { name: "leaveEncashmentPL", ref: "22iv", label: "Leave Encashment", type: "Amount", required: false },
-              { name: "leaveTravelBenefits", ref: "22v", label: "Leave Travel Benefits", type: "Amount", required: false },
-              { name: "contributionApprovedSuperannuationFund", ref: "22vi", label: "Contribution to Approved Superannuation Fund", type: "Amount", required: false },
-              { name: "contributionRecognisedPF", ref: "22vii", label: "Contribution to Recognised PF", type: "Amount", required: false },
-              { name: "contributionRecognisedGratuityFund", ref: "22viii", label: "Contribution to Recognised Gratuity Fund", type: "Amount", required: false },
-              { name: "contributionAnyOtherFund", ref: "22ix", label: "Contribution to Any Other Fund", type: "Amount", required: false },
-              { name: "anyOtherBenefitEmployees", ref: "22x", label: "Any Other Benefit to Employees", type: "Amount", required: false },
-              { name: "totalCompensationEmployees", ref: "22xi", label: "Total Compensation to Employees (22i–22x)", type: "Amount", required: true, autoCalculated: true },
-              { name: "isCompensationNonResidentsIncluded", ref: "22xii-a", label: "Whether compensation to non-residents included?", type: "Dropdown", required: "Conditional", options: ["Yes", "No"] },
-              { name: "amountPaidNonResidents", ref: "22xii-b", label: "Amount paid to non-residents", type: "Amount", required: "Conditional" },
-              { name: "medicalInsurancePL", ref: "23i", label: "Medical Insurance", type: "Amount", required: false },
-              { name: "lifeInsurancePL", ref: "23ii", label: "Life Insurance", type: "Amount", required: false },
-              { name: "keymansInsurance", ref: "23iii", label: "Keyman's Insurance", type: "Amount", required: false },
-              { name: "otherInsurancePL", ref: "23iv", label: "Other Insurance", type: "Amount", required: false },
-              { name: "totalInsurancePL", ref: "23v", label: "Total Insurance", type: "Amount", required: true, autoCalculated: true },
-              { name: "workmenStaffWelfareExpenses", ref: "24", label: "Workmen and Staff Welfare Expenses", type: "Amount", required: false },
-              { name: "entertainment", ref: "25", label: "Entertainment", type: "Amount", required: false },
-              { name: "hospitality", ref: "26", label: "Hospitality", type: "Amount", required: false },
-              { name: "conferencePL", ref: "27", label: "Conference", type: "Amount", required: false },
-              { name: "salesPromotion", ref: "28", label: "Sales Promotion (excl. advertisement)", type: "Amount", required: false },
-              { name: "advertisement", ref: "29", label: "Advertisement", type: "Amount", required: false },
-              { name: "commissionNonResidentCompany", ref: "30i", label: "Commission — NR/Non-resident company", type: "Amount", required: false },
-              { name: "commissionOthers", ref: "30ii", label: "Commission — Others", type: "Amount", required: false },
-              { name: "totalCommissionPL", ref: "30iii", label: "Total Commission", type: "Amount", required: true, autoCalculated: true },
-              { name: "royaltyNonResidentCompany", ref: "31i", label: "Royalty — NR/Non-resident company", type: "Amount", required: false },
-              { name: "royaltyOthers", ref: "31ii", label: "Royalty — Others", type: "Amount", required: false },
-              { name: "totalRoyaltyPL", ref: "31iii", label: "Total Royalty", type: "Amount", required: true, autoCalculated: true },
-              { name: "professionalConsultancyTechServicesNR", ref: "32i", label: "Professional/Consultancy/Tech Services — NR", type: "Amount", required: false },
-              { name: "professionalConsultancyTechServicesOthers", ref: "32ii", label: "Professional/Consultancy/Tech Services — Others", type: "Amount", required: false },
-              { name: "totalProfessionalFees", ref: "32iii", label: "Total Professional Fees", type: "Amount", required: true, autoCalculated: true },
-              { name: "hotelBoardingLodging", ref: "33", label: "Hotel, Boarding and Lodging", type: "Amount", required: false },
-              { name: "travelingExpensesDomestic", ref: "34", label: "Traveling Expenses (other than foreign)", type: "Amount", required: false },
-              { name: "foreignTravellingExpenses", ref: "35", label: "Foreign Travelling Expenses", type: "Amount", required: false },
-              { name: "conveyanceExpenses", ref: "36", label: "Conveyance Expenses", type: "Amount", required: false },
-              { name: "telephoneExpenses", ref: "37", label: "Telephone Expenses", type: "Amount", required: false },
-              { name: "guestHouseExpenses", ref: "38", label: "Guest House Expenses", type: "Amount", required: false },
-              { name: "clubExpenses", ref: "39", label: "Club Expenses", type: "Amount", required: false },
-              { name: "festivalCelebrationExpenses", ref: "40", label: "Festival Celebration Expenses", type: "Amount", required: false },
-              { name: "scholarship", ref: "41", label: "Scholarship", type: "Amount", required: false },
-              { name: "gift", ref: "42", label: "Gift", type: "Amount", required: false },
-              { name: "donationPL", ref: "43", label: "Donation", type: "Amount", required: false },
-              { name: "unionExciseDutyRatesTaxes", ref: "44i", label: "Union Excise Duty (rates & taxes)", type: "Amount", required: false },
-              { name: "serviceTaxRatesTaxes", ref: "44ii", label: "Service Tax (rates & taxes)", type: "Amount", required: false },
-              { name: "vatSalesTaxPL", ref: "44iii", label: "VAT/Sales Tax", type: "Amount", required: false },
-              { name: "cessPL", ref: "44iv", label: "Cess", type: "Amount", required: false },
-              { name: "cgstPaidRatesTaxes", ref: "44v", label: "CGST", type: "Amount", required: false },
-              { name: "sgstPaidRatesTaxes", ref: "44vi", label: "SGST", type: "Amount", required: false },
-              { name: "igstPaidRatesTaxes", ref: "44vii", label: "IGST", type: "Amount", required: false },
-              { name: "utgstPaidRatesTaxes", ref: "44viii", label: "UTGST", type: "Amount", required: false },
-              { name: "anyOtherRateTaxDutyCess", ref: "44ix", label: "Any other rate/tax/duty/cess incl. STT/CTT", type: "Amount", required: false },
-              { name: "totalRatesTaxes", ref: "44x", label: "Total Rates & Taxes", type: "Amount", required: true, autoCalculated: true },
-              { name: "auditFee", ref: "45", label: "Audit Fee", type: "Amount", required: false },
-              { name: "otherExpensesGrid", ref: "46", label: "Other Expenses Repeat Block (Max 4)", type: "Table", columns: ["Nature", "Amount"], required: false },
-              { name: "badDebtsWithPanGrid", ref: "47i", label: "Bad Debts — with PAN/Aadhaar ≥ ₹1 lakh Repeat Block (Max 7)", type: "Table", columns: ["PAN/Aadhaar", "Amount"], required: false },
-              { name: "badDebtsWithoutPanGrid", ref: "47ii", label: "Bad Debts — without PAN/Aadhaar ≥ ₹1 lakh Repeat Block (Max 4)", type: "Table", columns: ["Name", "Full Address", "State Dropdown", "Country Dropdown", "Amount"], required: false },
-              { name: "badDebtsOthers", ref: "47iii", label: "Bad Debts — Others < ₹1 lakh", type: "Amount", required: false },
-              { name: "totalBadDebts", ref: "47iv", label: "Total Bad Debts (47i+47ii+47iii)", type: "Amount", required: true, autoCalculated: true },
-              { name: "provisionBadDoubtfulDebts", ref: "48", label: "Provision for Bad and Doubtful Debts", type: "Amount", required: false },
-              { name: "otherProvisionsPL", ref: "49", label: "Other Provisions", type: "Amount", required: false },
-              { name: "profitBeforeInterestDeprTaxes", ref: "50", label: "Profit before Interest, Depreciation & Taxes", type: "Amount", required: true, autoCalculated: true },
-              { name: "interestPaidNonResident", ref: "51i", label: "Interest — Paid to NR/Non-resident company", type: "Amount", required: false },
-              { name: "interestPaidOthers", ref: "51ii", label: "Interest — To Others", type: "Amount", required: false },
-              { name: "totalInterestPL", ref: "51iii", label: "Total Interest", type: "Amount", required: true, autoCalculated: true },
-              { name: "depreciationAmortizationPL", ref: "52", label: "Depreciation and Amortization", type: "Amount", required: false },
-              { name: "netProfitBeforeTaxes", ref: "53", label: "Net Profit before Taxes (50–51iii–52)", type: "Amount", required: true, autoCalculated: true },
-              { name: "provisionCurrentTaxPL", ref: "54", label: "Provision for Current Tax", type: "Amount", required: false },
-              { name: "provisionDeferredTaxPL", ref: "55", label: "Provision for Deferred Tax", type: "Amount", required: false },
-              { name: "profitAfterTaxPL", ref: "56", label: "Profit after Tax (53–54–55)", type: "Amount", required: true, autoCalculated: true },
-              { name: "balanceBroughtForwardPreviousYear", ref: "57", label: "Balance Brought Forward from Previous Year", type: "Amount", required: false }
-            ]
-          },
-          presumptiveIncomeNoAccount: {
-            label: "6.3 Presumptive Income / No Account Case Blocks",
-            fields: [
-              { name: "grossReceipts44AD", ref: "61i", label: "61. Gross Receipts (44AD)", type: "Amount", required: "Conditional" },
-              { name: "netProfitLoss44AD", ref: "61ii", label: "61. Net Profit or Loss (44AD)", type: "Amount", required: "Conditional" },
-              { name: "grossReceipts44ADA", ref: "62i", label: "62. Gross Receipts (44ADA — Professionals)", type: "Amount", required: "Conditional" },
-              { name: "netProfitLoss44ADA", ref: "62ii", label: "62. Net Profit or Loss (44ADA)", type: "Amount", required: "Conditional" },
-              { name: "goodsCarriageTable44AE", ref: "63", label: "63. Goods carriage table (44AE)", type: "Table", columns: ["Owner status", "Vehicle No.", "Months", "Amount per vehicle"], required: "Conditional" },
-              { name: "netProfit44AE", ref: "63ii", label: "63. Net Profit (44AE)", type: "Amount", required: "Conditional" },
-              { name: "incomeShipping44B", ref: "64", label: "64. Income from shipping (44B)", type: "Amount", required: "Conditional" },
-              { name: "noAccountSummaryBlock", ref: "65i-iv", label: "65. No-account case summary", type: "SubForm", fields: ["Total receipts", "Total expenses", "Net profit"], required: "Conditional" }
-            ]
-          }
-        }
-      },
-      auditOtherAndQuantativeDetails: {
-        label: "Sections 7 & 8: Part A-OI (Other Information) & Part A-QD (Quantitative Details)",
-        fieldSections: {
-          partA_OI: {
-            label: "7. Part A-OI: Audit Mandated Accounting Adjustments",
-            fields: [
-              { name: "methodOfAccounting", ref: "1", label: "Method of Accounting", type: "Dropdown", required: "AuditOnly", options: ["Mercantile", "Cash"] },
-              { name: "changeMethodOfAccounting", ref: "2", label: "Change in method of accounting?", type: "Dropdown", required: "AuditOnly", options: ["Yes", "No"] },
-              { name: "increaseProfitIcdsDeviations", ref: "3a", label: "Increase in profit due to ICDS deviations", type: "Amount", required: "AuditOnly", autoCalculated: true },
-              { name: "decreaseProfitIcdsDeviations", ref: "3b", label: "Decrease in profit due to ICDS deviations", type: "Amount", required: "AuditOnly", autoCalculated: true },
-              { name: "methodValuationRawMaterial", ref: "4a", label: "Method of valuation of Raw Material closing stock", type: "Dropdown", required: "AuditOnly", options: ["1-Cost or market rate", "2-At cost", "3-At market rate"] },
-              { name: "methodValuationFinishedGoods", ref: "4b", label: "Method of valuation of Finished Goods closing stock", type: "Dropdown", required: "AuditOnly", options: ["1-Cost or market rate", "2-At cost", "3-At market rate"] },
-              { name: "changeStockValuationMethod", ref: "4c", label: "Change in stock valuation method?", type: "Dropdown", required: "AuditOnly", options: ["Yes", "No"] },
-              { name: "increaseProfitDeviation145A", ref: "4d", label: "Increase in profit due to deviation u/s 145A", type: "Amount", required: "Conditional" },
-              { name: "decreaseProfitDeviation145A", ref: "4e", label: "Decrease in profit due to deviation u/s 145A", type: "Amount", required: "Conditional" },
-              { name: "amountsNotCreditedSec28", ref: "5a", label: "Amounts not credited — Items u/s 28", type: "Amount", required: false },
-              { name: "proformaCreditsGstRefunds", ref: "5b", label: "Proforma credits / GST refunds not credited", type: "Amount", required: false },
-              { name: "escalationClaimsAccepted", ref: "5c", label: "Escalation claims accepted", type: "Amount", required: false },
-              { name: "anyOtherItemOfIncomeOI", ref: "5d", label: "Any other item of income", type: "Amount", required: false },
-              { name: "capitalReceiptsOI", ref: "5e", label: "Capital receipts", type: "Amount", required: false },
-              { name: "totalItemsNotCredited", ref: "5f", label: "Total (5a+5b+5c+5d+5e)", type: "Amount", required: true, autoCalculated: true },
-              { name: "disallowableSec36Fields", ref: "6a-6r", label: "Disallowable u/s 36 (19 items)", type: "AmountVector", size: 19, required: "AuditOnly" },
-              { name: "totalDisallowableSec36", ref: "6s", label: "Total disallowable u/s 36", type: "Amount", required: true, autoCalculated: true },
-              { name: "disallowableSec37Fields", ref: "7a-7i", label: "Disallowable u/s 37 (9 items)", type: "AmountVector", size: 9, required: false },
-              { name: "totalDisallowableSec37", ref: "7j", label: "Total disallowable u/s 37", type: "Amount", required: true, autoCalculated: true },
-              { name: "disallowableSec40Fields", ref: "8Aa-8Ai", label: "Disallowable u/s 40 (9 items)", type: "AmountVector", size: 9, required: false },
-              { name: "totalDisallowableSec40", ref: "8Aj", label: "Total disallowable u/s 40", type: "Amount", required: true, autoCalculated: true },
-              { name: "amountDisallowedSec40PriorYearNowAllowable", ref: "8B", label: "Amount disallowed u/s 40 in prior years but now allowable", type: "Amount", required: false },
-              { name: "disallowableSec40AFields", ref: "9a-9e", label: "Disallowable u/s 40A (5 items)", type: "AmountVector", size: 5, required: false },
-              { name: "totalDisallowableSec40A", ref: "9f", label: "Total disallowable u/s 40A", type: "Amount", required: true, autoCalculated: true },
-              { name: "allowableSec43BPriorYearsFields", ref: "10a-10h", label: "Allowable u/s 43B in prior years (8 items)", type: "AmountVector", size: 8, required: false },
-              { name: "totalAllowableSec43B", ref: "10i", label: "Total allowable u/s 43B", type: "Amount", required: true, autoCalculated: true },
-              { name: "disallowableSec43BFields", ref: "11a-11h", label: "Disallowable u/s 43B (8 items)", type: "AmountVector", size: 8, required: false },
-              { name: "totalDisallowableSec43B", ref: "11i", label: "Total disallowable u/s 43B", type: "Amount", required: true, autoCalculated: true },
-              { name: "creditOutstandingTaxesFields", ref: "12a-12h", label: "Credit outstanding for taxes (8 items)", type: "AmountVector", size: 8, required: false },
-              { name: "totalCreditOutstandingTaxes", ref: "12i", label: "Total credit outstanding", type: "Amount", required: true, autoCalculated: true },
-              { name: "deemedProfitsSec33AB_ABA", ref: "13a_13b", label: "Deemed profits u/s 33AB / 33ABA", type: "AmountVector", size: 2, required: false },
-              { name: "profitChargeableSec41", ref: "14", label: "Any amount of profit chargeable u/s 41", type: "Amount", required: false },
-              { name: "priorPeriodIncomeExpenditureNet", ref: "15", label: "Prior period income/expenditure (net)", type: "Amount", required: false },
-              { name: "expenditureDisallowedSec14A", ref: "16", label: "Expenditure disallowed u/s 14A", type: "Amount", required: false },
-              { name: "exercisingOptionSec92CE2A", ref: "17", label: "Exercising option u/s 92CE(2A)?", type: "Dropdown", required: false, options: ["Yes", "No"] }
-            ]
-          },
-          quantitativeDetails: {
-            label: "8. Part A-QD: Inventory Quantity Ledger Tracking (Audit Only)",
-            fields: [
-              { name: "tradingConcernGrid", ref: "8.1", label: "8.1 Trading Concern Product Matrix", type: "Table", maxRows: 4, columns: ["Item Name Dropdown", "Unit of Measure Dropdown", "Opening Stock", "Purchase during the Year", "Sales during the Year", "Closing Stock", "Shortage / Excess"], required: "Conditional" },
-              { name: "mfgRawMaterialsGrid", ref: "8.2", label: "8.2 Manufacturing — Raw Materials Ledger", type: "Table", maxRows: 4, columns: ["Item Name Dropdown", "Unit", "Opening Stock", "Purchase", "Consumption", "Sales", "Closing Stock", "Yield", "% of Yield", "Shortage/Excess"], required: "Conditional" },
-              { name: "mfgFinishedProductsGrid", ref: "8.3", label: "8.3 Manufacturing — Finished / By-products Matrix", type: "Table", maxRows: 4, columns: ["Item Name Dropdown", "Unit", "Opening Stock", "Purchase", "Qty Manufactured", "Sales", "Closing Stock", "Shortage/Excess"], required: "Conditional" }
-            ]
-          }
-        }
-      }
-    }
-  },
-
-  // ==========================================
-  // MAIN SECTION 3: HEADS OF INCOME COMPUTATION
-  // ==========================================
-  headsOfIncomeComputation: {
-    label: "Schedules S, HP, and BP: Core Computations",
-    subsections: {
-      scheduleS_Salaries: {
-        label: "Section 9: Schedule S (Salary Income)",
-        fieldSections: {
-          employerRegistry: {
-            label: "Employer Particulars (Up to 2 Employers)",
-            fields: [
-              { name: "nameOfEmployer", label: "Name of Employer", type: "Text", required: true },
-              { name: "natureOfEmployer", label: "Nature of Employer", type: "Dropdown", required: true, options: ["Central Government", "State Government", "PSU", "CG-Pensioners", "SG-Pensioners", "PSU-Pensioners", "Others-Pensioners", "Others"] },
-              { name: "tanOfEmployer", label: "TAN of Employer", type: "Text", required: "Conditional", validation: { pattern: "TAN" } },
-              { name: "employerAddressSubForm", label: "Address Blocks", type: "SubForm", fields: ["Address", "Town", "State Dropdown", "Pincode"], required: true }
-            ]
-          },
-          salaryBreakupDrilldown: {
-            label: "Salary Breakdown Fields & Section 16 Deductions",
-            fields: [
-              { name: "salarySec17_1_Grid", ref: "1a", label: "Salary u/s 17(1) Sub-Table", type: "Table", maxRows: 3, columns: ["Nature Dropdown", "Description", "Amount"], required: true },
-              { name: "perquisitesSec17_2_Grid", ref: "1b", label: "Perquisites u/s 17(2) Sub-Table", type: "Table", maxRows: 3, columns: ["Nature Dropdown", "Description", "Amount"], required: false },
-              { name: "profitInLieuSalarySec17_3_Grid", ref: "1c", label: "Profit in lieu of salary u/s 17(3) Sub-Table", type: "Table", maxRows: 2, columns: ["Nature Dropdown", "Description", "Amount"], required: false },
-              { name: "retirementBenefit89A_NotifiedGrid", ref: "1d", label: "Retirement benefit account — Notified Country u/s 89A Table", type: "Table", maxRows: 3, columns: ["Country Dropdown", "Amount"], required: false },
-              { name: "retirementBenefit89A_NonNotified", ref: "1e", label: "Retirement benefit account — Non-Notified Country u/s 89A", type: "Amount", required: false },
-              { name: "incomeTaxableReliefClaimedEarlier", ref: "1f", label: "Income taxable this year on which 89A relief claimed earlier", type: "Amount", required: false },
-              { name: "grossSalaryPerEmployer", label: "Gross Salary per employer", type: "Amount", required: true, autoCalculated: true },
-              { name: "totalGrossSalaryAllEmployers", label: "Total Gross Salary (all employers combined)", type: "Amount", required: true, autoCalculated: true },
-              { name: "incomeForReliefSec89A", ref: "3a", label: "Income for relief u/s 89A", type: "Amount", required: true, autoCalculated: true },
-              { name: "allowancesExemptSec10Grid", ref: "3", label: "Allowances exempt u/s 10 Table (Max 4)", type: "Table", columns: ["Nature Dropdown", "Description", "Amount"], required: false },
-              { name: "hraSubForm", label: "HRA u/s 10(13A) Sub-Form", type: "SubForm", required: "Conditional", fields: ["Place of Work Dropdown", "HRA received", "Rent paid", "Salary", "Eligible HRA"] },
-              { name: "netSalary", ref: "4", label: "Net Salary (2–3a–3)", type: "Amount", required: true, autoCalculated: true },
-              { name: "standardDeduction16ia", ref: "5a", label: "Standard Deduction u/s 16(ia)", type: "Amount", required: true, autoCalculated: true },
-              { name: "entertainmentAllowance16ii", ref: "5b", label: "Entertainment Allowance u/s 16(ii)", type: "Amount", required: false },
-              { name: "professionalTax16iii", ref: "5c", label: "Professional Tax u/s 16(iii)", type: "Amount", required: false },
-              { name: "totalDeductionsSec16", ref: "5", label: "Total Deductions u/s 16", type: "Amount", required: true, autoCalculated: true },
-              { name: "incomeChargeableSalaries", ref: "6", label: "Income chargeable under Salaries (4–5)", type: "Amount", required: true, autoCalculated: true }
-            ]
-          }
-        }
-      },
-      scheduleHP_HouseProperty: {
-        label: "Section 10: Schedule HP (Income from House Property)",
-        fieldSections: {
-          propertyStructureAndCoownership: {
-            label: "Property Mapping & Co-owners (Supports 2 Properties)",
-            fields: [
-              { name: "propertyAddressSubForm", label: "Property Address Layout", type: "SubForm", fields: ["Address", "Town", "State Dropdown", "Country Dropdown", "PIN Code", "ZIP Code"], required: true },
-              { name: "propertyOwnerType", label: "Owner type", type: "Dropdown", required: true },
-              { name: "isPropertyCoOwned", label: "Co-owned?", type: "Dropdown", required: true, options: ["Yes", "No"] },
-              { name: "propertyOwnershipPercentage", label: "Percentage share", type: "Number", required: "Conditional" },
-              { name: "coOwnersGrid", label: "Co-owner Ledger Table", type: "Table", maxRows: 7, columns: ["Co-owner Name", "PAN/Aadhaar", "Percentage Share"], required: "Conditional" }
-            ]
-          },
-          tenantAndHPComputation: {
-            label: "Tenant Particulars & House Property Income Computation Engine",
-            fields: [
-              { name: "tenantsGrid", label: "Tenant Grid Allocation", type: "Table", maxRows: 3, columns: ["Tenant Name", "PAN", "Aadhaar", "PAN/TAN for TDS"], required: false },
-              { name: "typeOfHP", label: "Type of HP", type: "Dropdown", required: true, options: ["Self-Occupied", "Let Out", "Deemed Let Out"] },
-              { name: "grossRentReceived", label: "Gross rent received/receivable", type: "Amount", required: false },
-              { name: "unrealisedRent", label: "Unrealised rent", type: "Amount", required: false },
-              { name: "localTaxesPaid", label: "Local tax paid to local authority", type: "Amount", required: false },
-              { name: "annualValue", label: "Annual Value", type: "Amount", required: true, autoCalculated: true },
-              { name: "standardDeductionSec24a", label: "30% Standard Deduction u/s 24(a)", type: "Amount", required: true, autoCalculated: true },
-              { name: "interestBorrowedCapitalSec24b", label: "Interest payable on borrowed capital u/s 24(b)", type: "Amount", required: false },
-              { name: "loanTableSec24b", label: "Section 24(b) Loan Drilldown Table", type: "Table", maxRows: 4, columns: ["Loan Source Dropdown", "Bank Name", "Account No.", "Sanction Date", "Loan Amount", "Outstanding Principal", "Interest Paid"], required: false },
-              { name: "totalHPDeductions", label: "Total deductions", type: "Amount", required: true, autoCalculated: true },
-              { name: "arrearsRentReceived", label: "Arrears of rent received", type: "Amount", required: false },
-              { name: "netHPIncome", label: "Net HP income", type: "Amount", required: true, autoCalculated: true },
-              { name: "passThroughIncomeHP", label: "Pass-Through Income from HP (Schedule PTI)", type: "Amount", required: false },
-              { name: "totalHPIncomeFinal", label: "Total HP Income (Σ1k + 2)", type: "Amount", required: true, autoCalculated: true }
-            ]
-          }
-        }
-      },
-      scheduleBP_BusinessComputation: {
-        label: "Section 11: Schedule BP (Business and Profession Income)",
-        fieldSections: {
-          regularBusinessReconciliation: {
-            label: "11.1 Section A — Profit Reconciliation for Regular Business",
-            fields: [
-              { name: "netProfitBeforeTaxBP", ref: "1", label: "Net Profit before tax from P&L", type: "Amount", required: true, notes: "Flows from entry 53 or 61ii-65iv" },
-              { name: "speculativeProfitLossIncluded", ref: "2a", label: "Net profit/loss from speculative business included in 1", type: "Amount", required: false },
-              { name: "specifiedProfitLoss35ADIncluded", ref: "2b", label: "Net profit/loss from Specified Business u/s 35AD included in 1", type: "Amount", required: false },
-              { name: "incomeOtherHeadsCreditedPL", ref: "3a-3g", label: "Income/receipts credited to P&L under other heads vector", type: "SubForm", fields: ["Salary", "HP", "CG", "OS", "115BBF", "115BBG", "115BBH"], required: false },
-              { name: "profitCoveredPresumptiveSections", ref: "4a", label: "Profit covered by 44AD/44ADA/44AE/44B/44BB/44BBA/44BBC/44DA", type: "SubForm", fields: ["44AD", "44ADA", "44AE", "44B", "44BB", "44BBA", "44BBC", "44DA"], required: false },
-              { name: "profitActivitiesAgriculturalRules", ref: "4b", label: "Profit from activities under Rule 7/7A/7B(1)/7B(1A)/8", type: "SubForm", fields: ["Rule7", "Rule7A", "Rule7B_1", "Rule7B_1A", "Rule8"], required: false },
-              { name: "exemptIncomeShareFirmAop", ref: "5a-5d", label: "Exempt income sub-block", type: "SubForm", fields: ["Firm Share", "AOP Share", "Other Exempt"], required: false },
-              { name: "balanceReconciliation", ref: "6", label: "Balance (1–2a–2b–3–4a–4b–5d)", type: "Amount", required: true, autoCalculated: true },
-              { name: "expensesOtherHeadsDebitedPL", ref: "7a-7g", label: "Expenses debited to P&L under other heads / 115BBF / 115BBG / 115BBH", type: "Amount", required: false },
-              { name: "expensesExemptIncomeDisallowed14A", ref: "8a_8b", label: "Expenses for exempt income / disallowed u/s 14A", type: "Amount", required: false },
-              { name: "totalExpensesReconciliationAdditions", ref: "9", label: "Total Expenses additions", type: "Amount", required: true, autoCalculated: true },
-              { name: "adjustedProfitBP", ref: "10", label: "Adjusted Profit (6+9)", type: "Amount", required: true, autoCalculated: true },
-              { name: "depreciationDebitedPL", ref: "11", label: "Depreciation debited to P&L", type: "Amount", required: false },
-              { name: "depreciationAllowableScheduleDEP", ref: "12i-12iii", label: "Depreciation allowable (Schedule DEP + own computation)", type: "Amount", required: true, autoCalculated: true },
-              { name: "profitAfterDepreciationAdjustment", ref: "13", label: "Profit after depreciation adjustment", type: "Amount", required: true, autoCalculated: true },
-              { name: "additionsOI_Disallowances", ref: "14-25", label: "Additions (disallowable u/s 36/37/40/40A/43B + deemed income rows)", type: "Amount", required: true, autoCalculated: true },
-              { name: "totalAdditionsBP", ref: "26", label: "Total additions (14+…+25)", type: "Amount", required: true, autoCalculated: true },
-              { name: "deductionsAllowableBP", ref: "27-33", label: "Deductions (32(1)(iii) / 32AD / 35ESR / Prior 40 / Prior 43B / 35AC / Other / ICDS decrease)", type: "Amount", required: false },
-              { name: "netRegularBusinessIncome", ref: "34", label: "Net Income (13+26–33)", type: "Amount", required: true, autoCalculated: true },
-              { name: "presumptiveIncomeSchedulesBP", ref: "35i-35viii", label: "Presumptive income vector summary block", type: "SubForm", fields: ["44AD", "44ADA", "44AE", "44B", "44BB", "44BBA", "44BBA_Deemed"], required: true, autoCalculated: true }
-            ]
-          }
-        }
-      }
-    }
-  },
-
-  // ==========================================
-  // MAIN SECTION 4: GLOBAL TAX COMPUTATION & VERIFICATION
-  // ==========================================
-  globalTaxComputationAndVerification: {
-    label: "Schedules Deductions, Tax Payments, TTI & Updated Return Configuration",
-    subsections: {
-      deductionsAndSchedules: {
-        label: "Section 15, 16, 17: Deductions & Tax Ledgers",
-        fieldSections: {
-          chapterVIA_Deductions: {
-            label: "Chapter VI-A Statutory Deductions (Old Regime Only)",
-            fields: [
-              { name: "deductionSec10A", label: "Deduction u/s 10A", type: "Amount", required: "Conditional" },
-              { name: "deductionSec10AA", label: "Deduction u/s 10AA", type: "Amount", required: "Conditional", autoCalculated: true },
-              { name: "deductionSec10B", label: "Deduction u/s 10B", type: "Amount", required: "Conditional" },
-              { name: "deductionSec10BA", label: "Deduction u/s 10BA", type: "Amount", required: "Conditional" },
-              { name: "totalChapterVIADeductions", label: "Total Deductions", type: "Amount", required: true, autoCalculated: true }
-            ]
-          },
-          amtTaxComputation: {
-            label: "Alternate Minimum Tax (Schedule AMT Framework)",
-            fields: [
-              { name: "totalIncomePartB_TI", ref: "1", label: "Total Income from Part B-TI", type: "Amount", required: true, autoCalculated: true },
-              { name: "deductionClaimedChapterVIA_PartC", ref: "2a", label: "Deduction claimed u/s Chapter VI-A (Part C)", type: "Amount", required: true, autoCalculated: true },
-              { name: "deductionClaimedSec10AA_AMT", ref: "2b", label: "Deduction claimed u/s 10AA", type: "Amount", required: true, autoCalculated: true },
-              { name: "deductionClaimedSec35AD_MinusDepr", ref: "2c", label: "Deduction claimed u/s 35AD minus depreciation", type: "Amount", required: true, autoCalculated: true },
-              { name: "totalAdjustmentAMT", ref: "2d", label: "Total Adjustment", type: "Amount", required: true, autoCalculated: true },
-              { name: "adjustedTotalIncomeSec115JC", ref: "3", label: "Adjusted Total Income u/s 115JC(1) (1+2d)", type: "Amount", required: true, autoCalculated: true },
-              { name: "adjustedTotalIncomeIfscUnits", ref: "3a", label: "From IFSC units", type: "Amount", required: true, autoCalculated: true },
-              { name: "adjustedTotalIncomeOtherUnits", ref: "3b", label: "From other units (3–3a)", type: "Amount", required: true, autoCalculated: true },
-              { name: "amtTaxLiability", ref: "4", label: "AMT Tax (9% of 3a + 18.5% of 3b) if 3 > ₹20 lakh", type: "Amount", required: true, autoCalculated: true }
-            ]
-          },
-          exemptIncomeGrid: {
-            label: "Schedule EI: Exempt Income Elements",
-            fields: [
-              { name: "exemptInterestIncome", label: "1. Interest income", type: "Amount", required: false },
-              { name: "exemptDividendDomesticCompany", label: "2. Dividend from domestic company (≤ ₹10 lakh)", type: "Amount", required: false },
-              { name: "exemptLtcgStt", label: "3. LTCG from STT transactions", type: "Amount", required: false },
-              { name: "grossAgriculturalReceiptsEI", ref: "2(i)", label: "2(i) Gross Agricultural Receipts", type: "Amount", required: false },
-              { name: "expenditureOnAgricultureEI", ref: "2(ii)", label: "2(ii) Expenditure on agriculture", type: "Amount", required: false },
-              { name: "unabsorbedAgriculturalLossEI", ref: "2(iii)", label: "2(iii) Unabsorbed agricultural loss (8 AYs)", type: "Amount", required: false },
-              { name: "agricultureIncomePortionRules", ref: "2(iv)", label: "2(iv) Agriculture income portion from Rules 7/7A/7B/8", type: "Amount", required: true, autoCalculated: true },
-              { name: "netAgriculturalIncome", ref: "2(v)", label: "2(v) Net Agricultural Income", type: "Amount", required: true, autoCalculated: true },
-              { name: "agriculturalLandGridTable", label: "Agricultural Land Details (If Net Income > ₹5 lakh)", type: "Table", maxRows: 4, columns: ["District", "PIN", "Acres", "Owned-Leased Dropdown", "Irrigated-Rain-fed Dropdown"], required: "Conditional" },
-              { name: "shareProfitFirmAopBoi", ref: "5", label: "5. Share in profit of firm/AOP/BOI", type: "Amount", required: false },
-              { name: "otherExemptIncomeGridTable", ref: "3", label: "3. Other exempt income table (Max 4)", type: "Table", columns: ["Category Dropdown", "Description", "Amount"], required: false },
-              { name: "incomeNotChargeableDtaaGridTable", ref: "4", label: "4. Income claimed as not chargeable to tax per DTAA Table", type: "Table", columns: ["Country Dropdown", "Amount", "Nature", "DTAA Article", "Head of Income", "TRC Compliance Checkbox"], required: "Conditional", notes: "NR only table" },
-              { name: "ptiExemptIncomeFromSchedule", ref: "5", label: "5. PTI claimed as not chargeable to tax (from Schedule PTI)", type: "Amount", required: true, autoCalculated: true },
-              { name: "totalExemptIncomeFinal", ref: "6", label: "6. Total exempt income", type: "Amount", required: true, autoCalculated: true }
-            ]
-          },
-          foreignSourceIncomeSummary: {
-            label: "Schedules FSI & TR: Foreign Source Income & Relief Summaries",
-            fields: [
-              { name: "scheduleFSICountryBlocks", label: "Schedule FSI Multi-Block Registry (Max 4 Countries)", type: "Table", columns: ["Country Code Dropdown", "TIN", "Head: Salary", "Head: HP", "Head: Business or Profession", "Head: Capital Gains", "Head: Other Sources"], required: "Conditional", notes: "ITR-3 specific Business/Profession head included" },
-              { name: "scheduleTRSummaryRows", label: "Schedule TR Summary Breakdown (Max 4 Countries)", type: "Table", columns: ["Country Code Dropdown", "TIN", "Tax paid outside India", "Tax payable in India", "Tax Relief", "DTAA Article"], required: "Conditional" }
-            ]
-          },
-          tds2NonSalaryLedger: {
-            label: "17.2 Schedule TDS2 (Form 16A Non-Salary Processing Matrix)",
-            fields: [
-              { name: "tds2TaxCreditsTable", label: "TDS2 Ledger Matrix Grid (Max 4 Rows)", type: "Table", columns: ["Sl.No.", "TDS Credit Type Dropdown", "PAN/Aadhaar of Other Person", "TAN of Deductor", "Section under TDS Dropdown", "FY of TDS Dropdown", "TDS b/f Balance", "Deducted Own Hands Amount", "Deducted Spouse/Other Amount", "Claimed Own Amount", "Claimed Spouse Amount", "Gross Amount", "Head of Income Dropdown"], required: "Conditional" }
-            ]
-          },
-          tcsLedger: {
-            label: "Schedule TCS: Tax Collected at Source",
+          {
+            id: 'residential_status',
+            label: '1.4 Residential Status (Individual only)',
             fields: [
               {
-                name: "scheduleTCSCollected",
-                label: "Schedule TCS: Tax Collected at Source (Form 27D Sourced)",
-                type: "Table",
-                required: false,
-                columns: ["TAN of Collector", "Name of Collector", "Total TCS Collected", "TCS Credit Claimed Current Year"]
-              }
+                name: 'residentialStatus',
+                label: 'Residential Status in India',
+                type: 'dropdown',
+                required: true,
+                options: [
+                  { value: 'RES', label: 'RES – Resident' },
+                  { value: 'NRI', label: 'NRI – Non Resident' },
+                  { value: 'NOR', label: 'NOR – Resident but not Ordinarily Resident' }
+                ]
+              },
+              {
+                name: 'residentialStatusConditions',
+                label: 'Conditions for Residential Status',
+                type: 'dropdown',
+                required: 'conditional',
+                options: [
+                  { value: '182_day_rule', label: '182-day rule' },
+                  { value: '60_day_rule', label: '60-day rule' },
+                  { value: 'citizen_120_day_rule', label: 'Citizen 120-day rule' },
+                  { value: '115bac_15_lakh_rule', label: '6(1A) 15-lakh rule' },
+                  { value: 'nor_conditions', label: 'NOR conditions' },
+                  { value: 'nri_conditions', label: 'NRI conditions' }
+                ]
+              },
+              { name: 'jurisdictionOfResidence', label: 'Jurisdiction of Residence (up to 2 rows)', type: 'table', required: 'conditional', columns: ['Country Dropdown', 'TIN Text'] },
+              { name: 'stayInIndiaPreviousYear', label: 'Total stay in India during previous year (days)', type: 'number', required: 'conditional' },
+              { name: 'stayInIndiaPrecedingYears', label: 'Total stay in India during 4 preceding years (days)', type: 'number', required: 'conditional' },
+              { name: 'hasPermanentEstablishment', label: 'Permanent Establishment (PE) in India?', type: 'radio', required: 'conditional', options: ['Yes', 'No'], condition: 'residentialStatus === "NRI"' },
+              { name: 'hasSignificantEconomicPresence', label: 'Significant Economic Presence (SEP) in India?', type: 'dropdown', required: 'conditional', options: ['Yes', 'No'], condition: 'residentialStatus === "NRI"' },
+              { name: 'sepAggregatePayments', label: 'SEP — Aggregate of payments during PY (₹)', type: 'amount', required: 'conditional', condition: 'hasSignificantEconomicPresence === "Yes"' },
+              { name: 'sepNumberOfUsers', label: 'SEP — Number of users in India', type: 'number', required: 'conditional', condition: 'hasSignificantEconomicPresence === "Yes"' },
+              { name: 'hasIfscUnitForeignExchange', label: 'Unit in IFSC deriving income in foreign exchange?', type: 'dropdown', required: false, options: ['Yes', 'No'] }
             ]
           },
-          advanceTaxLedger: {
-            label: "Schedule IT: Advance Tax & Self-Assessment Tax Payments",
+          {
+            id: 'tax_regime_switching',
+            label: '1.5 Tax Regime — 115BAC switching logic',
+            fields: [
+              { name: 'everOptedNewRegimeEarlier', label: 'Have you ever opted for New Tax Regime in earlier years?', type: 'radio', required: true, options: ['Yes', 'No'] },
+              { name: 'ayOptionExercised', label: 'Assessment Year in which option was exercised', type: 'dropdown', required: 'conditional', condition: 'everOptedNewRegimeEarlier === "Yes"' },
+              { name: 'dateFilingForm10IE', label: 'Date of filing Form 10IE', type: 'date', required: 'conditional' },
+              { name: 'ackNumberForm10IE', label: 'Acknowledgement number of Form 10IE', type: 'text', required: 'conditional' },
+              { name: 'everOptedOutEarlier', label: 'Have you ever opted OUT in earlier years?', type: 'dropdown', required: 'conditional', options: ['Yes', 'No'] },
+              { name: 'ayOptedOut', label: 'AY in which opted out', type: 'dropdown', required: 'conditional' },
+              { name: 'dateFilingForm10IEOptOut', label: 'Date of filing Form 10IE (opt-out)', type: 'date', required: 'conditional' },
+              { name: 'ackNumberForm10IEOptOut', label: 'Acknowledgement number (opt-out)', type: 'text', required: 'conditional' },
+              {
+                name: 'optionCurrentAY',
+                label: 'Option for current AY',
+                type: 'dropdown',
+                required: true,
+                options: [
+                  { value: 'opting_in', label: 'Opting in now' },
+                  { value: 'continue_opt', label: 'Continue to opt' },
+                  { value: 'opt_out', label: 'Opt out' },
+                  { value: 'not_opting', label: 'Not opting' },
+                  { value: 'not_eligible', label: 'Not eligible' }
+                ]
+              },
+              { name: 'dateFilingForm10IECurrent', label: 'Date of filing Form 10IE (current AY)', type: 'date', required: 'conditional' },
+              { name: 'ackNumberForm10IECurrent', label: 'Acknowledgement number (current AY)', type: 'text', required: 'conditional' },
+              { name: 'exercisedOptionOptOut6', label: 'Have you exercised option u/s 115BAC(6) to opt out?', type: 'dropdown', required: true, options: ['No', 'Yes within due date', 'Yes but beyond due date'] },
+              { name: 'dateFilingForm10IEA', label: 'Date of filing Form 10-IEA', type: 'date', required: 'conditional' },
+              { name: 'ackNumberForm10IEA', label: 'Acknowledgement number of Form 10-IEA', type: 'text', required: 'conditional' },
+              { name: 'methodOfOptingOut', label: 'Method of opting out', type: 'dropdown', required: 'conditional', options: ['By filing 10IEA (having BP income)', 'By exercising option in return (Form 10IEA not applicable)'] },
+              { name: 'form10IeaFiledAY2425', label: '10IEA filed in AY 2024-25?', type: 'dropdown', required: 'conditional', options: ['Yes', 'No'] },
+              { name: 'subPathA_continueOptOut', label: 'Sub-path (a)(i): Continue to opt out for current AY?', type: 'dropdown', required: 'conditional', options: ['Yes', 'No'] },
+              { name: 'subPathA_dateForm10Iea', label: 'Sub-path (a) — Date of Form 10-IEA for AY 2025-26', type: 'date', required: 'conditional' },
+              { name: 'subPathA_ackForm10Iea', label: 'Sub-path (a) — Ack. no. of Form 10-IEA for AY 2025-26', type: 'text', required: 'conditional' },
+              { name: 'subPathB_optOutCurrent', label: 'Sub-path (b)(i): Opt out for current AY?', type: 'dropdown', required: 'conditional', options: ['Yes', 'No'] },
+              { name: 'subPathB_dateForm10Iea', label: 'Sub-path (b) — Date of Form 10-IEA for AY 2025-26', type: 'date', required: 'conditional' },
+              { name: 'subPathB_ackForm10Iea', label: 'Sub-path (b) — Ack. no. of Form 10-IEA for AY 2025-26', type: 'text', required: 'conditional' },
+              { name: 'subPathC_optOutCurrent', label: 'Sub-path (c)(i): Opt out for current AY? (non-10IEA filers)', type: 'dropdown', required: 'conditional', options: ['Yes', 'No'] },
+              { name: 'subPathC_dateForm10Iea', label: 'Sub-path (c) — Date of Form 10-IEA for AY 2025-26', type: 'date', required: 'conditional' },
+              { name: 'subPathC_ackForm10Iea', label: 'Sub-path (c) — Ack. no. of Form 10-IEA for AY 2025-26', type: 'text', required: 'conditional' }
+            ]
+          },
+          {
+            id: 'filing_metadata',
+            label: '1.6 Filing Type & Return Metadata',
             fields: [
               {
-                name: "scheduleITAdvanceSelfAssessment",
-                label: "Challan Deposits Matrix",
-                type: "Table",
-                required: false,
-                columns: ["BSR Code", "Date of Deposit", "Challan Serial Number", "Tax Paid Amount (₹)"]
+                name: 'filedUnderSection',
+                label: 'Filed u/s (Section)',
+                type: 'dropdown',
+                required: true,
+                options: [
+                  { value: '139_1', label: '139(1) On or before due date' },
+                  { value: '139_4', label: '139(4) Belated' },
+                  { value: '139_5', label: '139(5) Revised' },
+                  { value: '92CD', label: '92CD Modified' },
+                  { value: '119_2_b', label: '119(2)(b)' },
+                  { value: '139_8A', label: '139(8A) Updated' },
+                  { value: '139_9', label: '139(9) Defective' },
+                  { value: '142_1', label: '142(1)' },
+                  { value: '148', label: '148' },
+                  { value: '153A', label: '153A' },
+                  { value: '153C', label: '153C' }
+                ]
+              },
+              { name: 'filedInResponseNotice', label: 'Filed in response to notice u/s', type: 'dropdown', required: 'conditional', options: ['139(9)', '142(1)', '148', '153C', '153A'] },
+              { name: 'revisedDefectiveReceiptNo', label: 'If revised/defective — Receipt No.', type: 'text', required: 'conditional' },
+              { name: 'dateFilingOriginalReturn', label: 'Date of filing of Original Return', type: 'date', required: 'conditional' },
+              { name: 'uniqueNumberDinNotice', label: 'Unique Number / DIN (for notice)', type: 'text', required: 'conditional' },
+              { name: 'dateNoticeOrder', label: 'Date of Notice / Order', type: 'date', required: 'conditional' },
+              { name: 'dueDateFiling', label: 'Due Date for filing return', type: 'date', readOnly: true, computed: true }
+            ]
+          },
+          {
+            id: 'seventh_proviso',
+            label: '1.7 Seventh Proviso to Section 139(1)',
+            fields: [
+              { name: 'isFilingUnderSeventhProviso', label: 'Filing under Seventh Proviso?', type: 'radio', required: true, options: ['Yes', 'No'] },
+              { name: 'depositedAmountCurrentAccount', label: 'Deposited > ₹1 Crore in current account(s)?', type: 'radio', required: 'conditional', options: ['Yes', 'No'], condition: 'isFilingUnderSeventhProviso === "Yes"' },
+              { name: 'incurredForeignTravelExpense', label: 'Incurred > ₹2 lakh on foreign travel?', type: 'radio', required: 'conditional', options: ['Yes', 'No'], condition: 'isFilingUnderSeventhProviso === "Yes"' },
+              { name: 'incurredElectricityExpense', label: 'Incurred > ₹1 lakh on electricity?', type: 'radio', required: 'conditional', options: ['Yes', 'No'], condition: 'isFilingUnderSeventhProviso === "Yes"' },
+              { name: 'salesTurnoverExceeds60Lakh', label: 'Sales/turnover > ₹60 lakh?', type: 'radio', required: 'conditional', options: ['Yes', 'No'] },
+              { name: 'grossReceiptsProfessionExceeds10Lakh', label: 'Gross receipts in profession > ₹10 lakh?', type: 'radio', required: 'conditional', options: ['Yes', 'No'] },
+              { name: 'tdsTcsExceedsThreshold', label: 'TDS+TCS ≥ ₹25,000 (or ₹50,000 for senior citizen)?', type: 'radio', required: 'conditional', options: ['Yes', 'No'] },
+              { name: 'savingsBankDepositsExceeds50Lakh', label: 'Savings bank deposits ≥ ₹50 lakh?', type: 'radio', required: 'conditional', options: ['Yes', 'No'] }
+            ]
+          },
+          {
+            id: 'representative_assessee',
+            label: '1.8 Representative Assessee',
+            fields: [
+              { name: 'isFiledByRepresentative', label: 'Filed by representative assessee?', type: 'dropdown', required: true, options: ['Yes', 'No'] },
+              { name: 'representativeName', label: 'Name of Representative', type: 'text', required: 'conditional', condition: 'isFiledByRepresentative === "Yes"' },
+              { name: 'representativeCapacity', label: 'Capacity of Representative', type: 'dropdown', required: 'conditional', options: ['Legal Heir', 'Manager', 'Guardian', 'Other'], condition: 'isFiledByRepresentative === "Yes"' },
+              { name: 'representativeAddress', label: 'Address of Representative', type: 'text', required: 'conditional', condition: 'isFiledByRepresentative === "Yes"' },
+              { name: 'representativePan', label: 'PAN of Representative', type: 'text', required: 'conditional', validation: { type: 'PAN' }, condition: 'isFiledByRepresentative === "Yes"' },
+              { name: 'representativeAadhaar', label: 'Aadhaar Number of Representative', type: 'text', required: 'conditional', condition: 'isFiledByRepresentative === "Yes"' }
+            ]
+          },
+          {
+            id: 'corporate_disclosures',
+            label: '1.9 Directorship, Partnership & Unlisted Equity Shares',
+            fields: [
+              { name: 'isDirectorInCompany', label: 'Director in a Company?', type: 'dropdown', required: false, options: ['Yes', 'No'], tableColumns: ['Name', 'Type', 'PAN', 'Listed-Unlisted', 'DIN'], maxRows: 3 },
+              { name: 'isPartnerInFirm', label: 'Partner in a Firm?', type: 'dropdown', required: false, options: ['Yes', 'No'], tableColumns: ['Name of Firm', 'PAN'], maxRows: 2 },
+              { name: 'heldUnlistedEquityShares', label: 'Held Unlisted Equity Shares?', type: 'dropdown', required: false, options: ['Yes', 'No'], tableColumns: ['Company', 'Type', 'PAN', 'Opening balance (shares+cost)', 'Acquisitions (date, face value, issue price, purchase price)', 'Transfers (shares, consideration)', 'Closing balance'], maxRows: 3 }
+            ]
+          },
+          {
+            id: 'special_benefits_lei',
+            label: '1.10 Benefit u/s 115H, Portuguese Civil Code, FPI, LEI',
+            fields: [
+              { name: 'claimBenefit115H', label: 'Do you want to claim benefit u/s 115H (Resident)?', type: 'radio', required: false, options: ['Yes', 'No'] },
+              { name: 'governedByPortugueseCivilCode', label: 'Governed by Portuguese Civil Code (Sec 5A)?', type: 'dropdown', required: true, options: ['Yes', 'No'], notes: 'If Yes → Schedule 5A mandatory' },
+              { name: 'leiNumber', label: 'LEI Number', type: 'text', required: 'conditional', notes: 'Mandatory if refund ≥ ₹50 Crore' },
+              { name: 'leiValidUptoDate', label: 'LEI Valid Upto Date', type: 'date', required: 'conditional' }
+            ]
+          },
+          {
+            id: 'audit_info',
+            label: '1.11 Audit Information',
+            fields: [
+              { name: 'liableToMaintainAccounts44AA', label: 'a1. Liable to maintain accounts u/s 44AA?', type: 'dropdown', required: true, options: ['Yes', 'No'] },
+              { name: 'isDeclaringIncomeOnlyPresumptive', label: 'a2. Declaring income only u/s 44AE/44B/44BB/44AD/44ADA/44BBA?', type: 'dropdown', required: true, options: ['Yes', 'No'] },
+              { name: 'turnoverBetween1CrAnd10Cr', label: 'a2i. If No at a2 — Total sales/turnover between ₹1 Cr and ₹10 Cr?', type: 'dropdown', required: 'conditional', options: ['Yes', 'No'] },
+              { name: 'cashReceiptsLess5Percent', label: 'a2ii. If Yes at a2i — Cash receipts ≤ 5% of total receipts?', type: 'radio', required: 'conditional', options: ['Yes', 'No'] },
+              { name: 'cashPaymentsLess5Percent', label: 'a2iii. If Yes at a2i — Cash payments ≤ 5% of total payments?', type: 'radio', required: 'conditional', options: ['Yes', 'No'] },
+              { name: 'liableForAudit44AB', label: 'b. Liable for audit u/s 44AB?', type: 'dropdown', required: true, options: ['Yes', 'No'] },
+              { name: 'auditConditionsMultiSelect', label: 'Which condition u/s 44AB applies?', type: 'checkbox_group', required: 'conditional', options: ['44AD', '44ADA', '44AE', '44BB'], condition: 'liableForAudit44AB === "Yes"' },
+              { name: 'accountsAuditedByAccountant', label: 'c. Accounts audited by accountant?', type: 'radio', required: 'conditional', options: ['Yes', 'No'], condition: 'liableForAudit44AB === "Yes"' },
+              { name: 'dateFurnishingAuditReport', label: 'c-a. Date of furnishing audit report', type: 'date', required: 'conditional' },
+              { name: 'nameAuditorSigning', label: 'c-b. Name of auditor signing tax audit report', type: 'text', required: 'conditional' },
+              { name: 'membershipNoAuditor', label: 'c-c. Membership No. of auditor', type: 'text', required: 'conditional' },
+              { name: 'nameAuditFirm', label: 'c-d. Name of audit firm (proprietorship/firm)', type: 'text', required: 'conditional' },
+              { name: 'firmRegistrationNumber', label: 'c-e. Proprietorship/Firm Registration Number', type: 'text', required: 'conditional' },
+              { name: 'panAuditFirm', label: 'c-f. PAN of proprietorship/firm', type: 'text', required: 'conditional', validation: { type: 'PAN' } },
+              { name: 'aadhaarProprietorship', label: 'c-g. Aadhaar of proprietorship', type: 'text', required: 'conditional' },
+              { name: 'dateAuditReport', label: 'c-h. Date of audit report', type: 'date', required: 'conditional' },
+              { name: 'ackNumberAuditReport', label: 'c-i. Acknowledgement number of audit report', type: 'text', required: 'conditional' },
+              { name: 'udin', label: 'c-j. UDIN', type: 'text', required: 'conditional', validation: { type: 'alphanumeric', length: 18 } },
+              { name: 'liableForAudit92E', label: 'd(i). Liable for audit u/s 92E?', type: 'dropdown', required: false, options: ['Yes', 'No'] },
+              { name: 'accountsAudited92E', label: 'd(ii). If d(i) = Yes — Accounts audited u/s 92E?', type: 'dropdown', required: 'conditional', options: ['Yes', 'No'] }
+            ]
+          }
+        ]
+      },
+      {
+        id: 'nature_of_business_subsection',
+        label: 'SECTION 2 — Nature of Business',
+        fieldSections: [
+          {
+            id: 'business_nature_entries',
+            label: 'Nature of Business (Up to 3 Entries)',
+            fields: [
+              {
+                name: 'natureOfBusinessTable',
+                label: 'Business Classification Table',
+                type: 'table',
+                maxRows: 3,
+                columns: [
+                  { name: 'slNo', label: 'Sl. No.', type: 'auto' },
+                  { name: 'code', label: 'Code', type: 'dropdown', required: true, notes: '100+ business codes list' },
+                  { name: 'tradeName', label: 'Trade Name of Proprietorship', type: 'text', required: false },
+                  { name: 'description', label: 'Description', type: 'auto', notes: 'Auto-populated from code' }
+                ]
               }
             ]
           }
-        }
-      },
-      partB_TTI_AndUpdatedReturn: {
-        label: "Section 18 & 21: Bank Verification, Final Computation (TTI) & ITR-U Layouts",
-        fieldSections: {
-          bankAccountsGrid: {
-            label: "18.3 Bank Account Routing Matrix & Refund Selectors",
-            fields: [
-              { name: "hasBankAccountInIndia", label: "Bank Account in India?", type: "Dropdown", required: true, options: ["Yes", "No"] },
-              { name: "totalActiveAccountsCount", label: "Total savings + current accounts (excl. dormant)", type: "Number", required: true },
-              { name: "primaryBankRow", label: "(a) Primary Account Setup Layout", type: "SubForm", fields: ["IFSC Lookup", "Bank Name", "Account No."], required: true },
-              { name: "otherBankAccountsTable", label: "(b) Other Bank Accounts Grid Allocation", type: "Table", columns: ["IFSC Lookup", "Bank Name", "Account No.", "Account Type Dropdown", "Select for refund Checkbox"], required: true },
-              { name: "foreignBankAccountRefundGrid", label: "Foreign bank account for NR refund layout", type: "Table", columns: ["SWIFT Code", "Bank Name", "Country Dropdown", "IBAN"], required: "Conditional" },
-              { name: "hasForeignAssetsResidentDeclaration", label: "Foreign assets declaration (res. 14)", type: "Radio", required: true, notes: "Resident only; triggers Schedule FA" },
-              { name: "trpDetailsBlock", label: "TRP Registry Fields", type: "SubForm", fields: ["TRP ID", "TRP Name", "Counter Signature", "Reimbursement amount"], required: false }
-            ]
-          },
-          updatedReturnMetadata: {
-            label: "21. Part A 139(8A) Updated Return Metadata (ITR-U Entry Point)",
-            fields: [
-              { name: "updatedPan", label: "(A1) PAN", type: "Text", required: true, autoCalculated: true },
-              { name: "updatedName", label: "(A2) Name", type: "Text", required: true, autoCalculated: true },
-              { name: "updatedAadhaarNumber", label: "(A3) Aadhaar Number", type: "Text", required: "Conditional" },
-              { name: "updatedAadhaarEnrolmentId", label: "(A3a) Aadhaar Enrolment ID", type: "Text", required: "Conditional" },
-              { name: "updatedAssessmentYear", label: "(A4) Assessment Year", type: "Dropdown", required: true, options: ["AY 2025-26", "Prior AYs up to 48 months"] },
-              { name: "returnPreviouslyFiled", label: "(A5) Return previously filed?", type: "Dropdown", required: true, options: ["Yes", "No"] },
-              { name: "previouslyFiledUnderSection", label: "(A6) If Yes, filed u/s", type: "Dropdown", required: "Conditional", options: ["139(1)", "139(4)", "139(5)"] },
-              { name: "previousReturnReceiptDetails", label: "(A7) Previous Return Core Identifiers", type: "SubForm", fields: ["ITR Type Dropdown", "Ack. No.", "Date"], required: "Conditional" },
-              { name: "isEligibleUpdatedReturn", label: "(A8) Eligible for updated return?", type: "Dropdown", required: true, options: ["Yes", "No"] },
-              { name: "updatedItrForm", label: "(A9) ITR form", type: "Dropdown", required: true, defaultValue: "ITR3", disabled: true },
-              { name: "reasonsForUpdating", label: "(A10) Reasons for updating", type: "Dropdown", required: true, notes: "Multi-select up to 2 items; 7 options available" },
-              { name: "filingPeriodItrU", label: "(A11) Filing period", type: "Dropdown", required: true, options: ["Up to 12 months", "12–24 months", "24–36 months", "36–48 months"] },
-              { name: "isReducingCflDeprTaxCredit", label: "(A12) Reducing CFL/depreciation/tax credit?", type: "Radio", required: true },
-              { name: "ayRowsAffectedItrU", label: "(A12b) AY rows affected", type: "Table", columns: ["Assessment Year", "Rows Affected"], required: "Conditional" }
-            ]
-          },
-          updatedReturnComputation: {
-            label: "21. Part B-ATI: Updated Tax Calculation Summary Engine",
-            fields: [
-              { name: "additionalIncomePerHeadGrid", label: "1A-a to 1A-f Additional income per head matrix", type: "SubForm", fields: ["Salary", "HP", "BP", "CG", "OS", "Total Additional Income"], required: true, autoCalculated: true },
-              { name: "totalIncomeLastValidReturn", label: "1B. Total Income as per last valid return", type: "Amount", required: true, autoCalculated: true },
-              { name: "totalIncomePartB_TI_Current", label: "2. Total Income per Part B-TI", type: "Amount", required: true, autoCalculated: true },
-              { name: "amountPayablePartB_TTI_Current", label: "3. Amount Payable from Part B-TTI", type: "Amount", required: true, autoCalculated: true },
-              { name: "amountRefundablePartB_TTI_Current", label: "4. Amount Refundable from Part B-TTI", type: "Amount", required: true, autoCalculated: true },
-              { name: "amountPayableLastValidReturn", label: "5. Amount payable per last valid return", type: "Amount", required: true, autoCalculated: true },
-              { name: "refundTrackingLastValidReturn", label: "6i / 6ii Refund tracking block", type: "SubForm", fields: ["Refund claimed", "Total refund issued incl 244A interest"], required: true, autoCalculated: true },
-              { name: "feeSec234F_ItrU", label: "7. Fee u/s 234F", type: "Amount", required: true, autoCalculated: true },
-              { name: "regularAssessmentTaxItrU", label: "8. Regular Assessment Tax", type: "Amount", required: false },
-              { name: "aggregateLiabilityItrU", label: "9i / 9ii Aggregate liability evaluation block", type: "Amount", required: true, autoCalculated: true },
-              { name: "additionalIncomeTaxPercentage", label: "10. Additional income-tax calculation row", type: "Amount", required: true, autoCalculated: true, notes: "Calculated @ 25%/50%/60%/70% of (9-7)" },
-              { name: "netAmountPayableItrU", label: "11. Net Amount Payable (9+10)", type: "Amount", required: true, autoCalculated: true },
-              { name: "taxPaidSec140B", label: "12. Tax Paid u/s 140B (from payment table A)", type: "Amount", required: true, autoCalculated: true },
-              { name: "taxDueFinalItrU", label: "13. Tax Due (11–12)", type: "Amount", required: true, autoCalculated: true },
-              { name: "taxPaymentsSec140BTable", label: "14A. Tax payments u/s 140B Challan Table (Max 3 Rows)", type: "Table", columns: ["BSR Code", "Date of Deposit", "Challan Serial Number", "Amount"], required: "Conditional" },
-              { name: "additionalTaxPaymentsTable", label: "14B. Prior Tax Clearances Unclaimed Grid (Max 2 Rows)", type: "Table", columns: ["Challan Reference", "Amount"], required: "Conditional", notes: "Advance Tax / SAT / Regular Assessment Tax not claimed earlier" },
-              { name: "reliefClaimsSec89_90_91_ItrU", label: "15. Relief claims section", type: "Amount", required: false }
-            ]
-          }
-        }
+        ]
       }
-    }
+    ]
+  },
+  {
+    id: 2,
+    label: 'Income Sources',
+    route: 'income',
+    subsections: [
+      {
+        id: 'business_profession_regular',
+        label: 'Business / Profession Regular Accounts',
+        fieldSections: [
+          {
+            id: 'balance_sheet_sources',
+            label: '3.1 Balance Sheet - Sources of Funds',
+            fields: [
+              { name: 'proprietorsCapital', ref: 'a', label: "Proprietor's Capital", type: 'amount', required: false },
+              { name: 'revaluationReserve', ref: 'bi', label: 'Revaluation Reserve', type: 'amount', required: false },
+              { name: 'capitalReserve', ref: 'bii', label: 'Capital Reserve', type: 'amount', required: false },
+              { name: 'statutoryReserve', ref: 'biii', label: 'Statutory Reserve', type: 'amount', required: false },
+              { name: 'anyOtherReserve', ref: 'biv', label: 'Any Other Reserve', type: 'amount', required: false },
+              { name: 'totalReserves', ref: 'bv', label: 'Total Reserves (bi+bii+biii+biv)', type: 'amount', readOnly: true, computed: true },
+              { name: 'totalProprietorsFund', ref: '1c', label: "Total Proprietor's Fund (a+bv)", type: 'amount', readOnly: true, computed: true },
+              { name: 'foreignCurrencyLoansSecured', ref: 'ai', label: 'Foreign Currency Loans (Secured)', type: 'amount', required: false },
+              { name: 'rupeeLoansBanks', ref: 'iiA', label: 'Rupee Loans — From Banks', type: 'amount', required: false },
+              { name: 'rupeeLoansOthers', ref: 'iiB', label: 'Rupee Loans — From Others', type: 'amount', required: false },
+              { name: 'totalRupeeLoans', ref: 'iiC', label: 'Total Rupee Loans (iiA+iiB)', type: 'amount', readOnly: true, computed: true },
+              { name: 'totalSecuredLoans', ref: 'aiii', label: 'Total Secured Loans (ai+iiC)', type: 'amount', readOnly: true, computed: true },
+              { name: 'unsecuredLoansBanks', ref: 'bi', label: 'Unsecured Loans from Banks', type: 'amount', required: false },
+              { name: 'unsecuredLoansOthers', ref: 'bii', label: 'Unsecured Loans from Others', type: 'amount', required: false },
+              { name: 'totalUnsecuredLoans', ref: 'biii', label: 'Total Unsecured Loans', type: 'amount', readOnly: true, computed: true },
+              { name: 'totalLoanFunds', ref: '2c', label: 'Total Loan Funds (aiii+biii)', type: 'amount', readOnly: true, computed: true },
+              { name: 'deferredTaxLiability', ref: '3', label: 'Deferred Tax Liability', type: 'amount', required: false },
+              { name: 'advancesPersons40A2b', ref: '4i', label: 'Advances from Persons u/s 40A(2)(b)', type: 'amount', required: false },
+              { name: 'advancesOthers', ref: '4ii', label: 'Advances from Others', type: 'amount', required: false },
+              { name: 'totalAdvances', ref: '4iii', label: 'Total Advances (i+ii)', type: 'amount', readOnly: true, computed: true },
+              { name: 'totalSources', ref: '5', label: 'TOTAL SOURCES (1c+2c+3+4iii)', type: 'amount', readOnly: true, computed: true }
+            ]
+          },
+          {
+            id: 'balance_sheet_application',
+            label: '3.2 Balance Sheet - Application of Funds & No Account Cases',
+            fields: [
+              { name: 'grossBlockFixedAssets', ref: '1a', label: 'Gross Block of Fixed Assets', type: 'amount', required: false },
+              { name: 'depreciation', ref: '1b', label: 'Depreciation', type: 'amount', required: false },
+              { name: 'netBlock', ref: '1c', label: 'Net Block (1a–1b)', type: 'amount', readOnly: true, computed: true },
+              { name: 'capitalWorkInProgress', ref: '1d', label: 'Capital Work-in-Progress', type: 'amount', required: false },
+              { name: 'totalFixedAssets', ref: '1e', label: 'Total Fixed Assets (1c+1d)', type: 'amount', readOnly: true, computed: true },
+              { name: 'longTermInvestmentsQuoted', ref: 'ai', label: 'Long-term Investments — Govt & Other Securities (Quoted)', type: 'amount', required: false },
+              { name: 'longTermInvestmentsUnquoted', ref: 'aii', label: 'Long-term Investments — Govt & Other Securities (Unquoted)', type: 'amount', required: false },
+              { name: 'totalLongTermInvestments', ref: 'aiii', label: 'Total Long-term Investments', type: 'amount', readOnly: true, computed: true },
+              { name: 'shortTermEquityShares', ref: 'bi', label: 'Short-term — Equity Shares incl. share application money', type: 'amount', required: false },
+              { name: 'shortTermPreferenceShares', ref: 'bii', label: 'Short-term — Preference Shares', type: 'amount', required: false },
+              { name: 'shortTermDebentures', ref: 'biii', label: 'Short-term — Debentures', type: 'amount', required: false },
+              { name: 'totalShortTermInvestments', ref: 'biv', label: 'Total Short-term Investments', type: 'amount', readOnly: true, computed: true },
+              { name: 'totalInvestments', ref: '2c', label: 'Total Investments (aiii+biv)', type: 'amount', readOnly: true, computed: true },
+              { name: 'inventoriesStores', ref: 'iA', label: 'Inventories — Stores/Consumables', type: 'amount', required: false },
+              { name: 'inventoriesRawMaterials', ref: 'iB', label: 'Inventories — Raw Materials', type: 'amount', required: false },
+              { name: 'inventoriesStockInProcess', ref: 'iC', label: 'Inventories — Stock-in-Process', type: 'amount', required: false },
+              { name: 'inventoriesFinishedGoods', ref: 'iD', label: 'Inventories — Finished/Traded Goods', type: 'amount', required: false },
+              { name: 'totalInventories', ref: 'iE', label: 'Total Inventories', type: 'amount', readOnly: true, computed: true },
+              { name: 'sundryDebtors', ref: 'aii', label: 'Sundry Debtors', type: 'amount', required: false },
+              { name: 'cashInHand', ref: 'iiiA', label: 'Cash-in-Hand', type: 'amount', required: false },
+              { name: 'balanceWithBank', ref: 'iiiB', label: 'Balance with Bank', type: 'amount', required: false },
+              { name: 'totalCashBank', ref: 'iiiC', label: 'Total Cash & Bank', type: 'amount', readOnly: true, computed: true },
+              { name: 'otherCurrentAssets', ref: 'aiv', label: 'Other Current Assets', type: 'amount', required: false },
+              { name: 'totalCurrentAssets', ref: 'av', label: 'Total Current Assets', type: 'amount', readOnly: true, computed: true },
+              { name: 'advancesRecoverableCashKind', ref: 'bi', label: 'Advances recoverable in cash or kind', type: 'amount', required: false },
+              { name: 'depositsLoansAdvancesCorporates', ref: 'bii', label: 'Deposits, loans & advances to corporates etc.', type: 'amount', required: false },
+              { name: 'balanceRevenueAuthorities', ref: 'biii', label: 'Balance with Revenue Authorities', type: 'amount', required: false },
+              { name: 'totalLoansAdvances', ref: 'biv', label: 'Total Loans & Advances', type: 'amount', readOnly: true, computed: true },
+              { name: 'totalCurrentAssetsLoansAdvances', ref: '3c', label: 'Total Current Assets + Loans & Advances', type: 'amount', readOnly: true, computed: true },
+              { name: 'sundryCreditors', ref: 'iA', label: 'Sundry Creditors', type: 'amount', required: false },
+              { name: 'liabilityLeasedAssets', ref: 'iB', label: 'Liability for Leased Assets', type: 'amount', required: false },
+              { name: 'interestAccruedAbove', ref: 'iC', label: 'Interest Accrued on above', type: 'amount', required: false },
+              { name: 'interestAccruedNotDueLoans', ref: 'iD', label: 'Interest Accrued but not due on loans', type: 'amount', required: false },
+              { name: 'totalCurrentLiabilities', ref: 'iE', label: 'Total Current Liabilities', type: 'amount', readOnly: true, computed: true },
+              { name: 'provisionIncomeTax', ref: 'iiA', label: 'Provision for Income Tax', type: 'amount', required: false },
+              { name: 'provisionLeaveEncashSuperannuation', ref: 'iiB', label: 'Provision for Leave Encash/Superannuation/Gratuity', type: 'amount', required: false },
+              { name: 'otherProvisions', ref: 'iiC', label: 'Other Provisions', type: 'amount', required: false },
+              { name: 'totalProvisions', ref: 'iiD', label: 'Total Provisions', type: 'amount', readOnly: true, computed: true },
+              { name: 'totalCurrentLiabilitiesProvisions', ref: 'diii', label: 'Total Current Liabilities + Provisions', type: 'amount', readOnly: true, computed: true },
+              { name: 'netCurrentAssets', ref: '3e', label: 'Net Current Assets (3c–diii)', type: 'amount', readOnly: true, computed: true },
+              { name: 'miscExpenditureNotWrittenOff', ref: '4a', label: 'Miscellaneous Expenditure not written off', type: 'amount', required: false },
+              { name: 'deferredTaxAsset', ref: '4b', label: 'Deferred Tax Asset', type: 'amount', required: false },
+              { name: 'accumulatedPlBalance', ref: '4c', label: 'Profit and Loss Account / Accumulated Balance', type: 'amount', required: false },
+              { name: 'totalMiscDtaPl', ref: '4d', label: 'Total Misc + DTA + P&L', type: 'amount', readOnly: true, computed: true },
+              { name: 'totalApplication', ref: '5', label: 'TOTAL APPLICATION (1e+2c+3e+4d)', type: 'amount', readOnly: true, computed: true },
+              { name: 'noAccountSundryDebtors', ref: '6a', label: 'No Account Case — Total Sundry Debtors', type: 'amount', required: 'conditional' },
+              { name: 'noAccountSundryCreditors', ref: '6b', label: 'No Account Case — Total Sundry Creditors', type: 'amount', required: 'conditional' },
+              { name: 'noAccountStockInTrade', ref: '6c', label: 'No Account Case — Total Stock-in-Trade', type: 'amount', required: 'conditional' },
+              { name: 'noAccountCashBalance', ref: '6d', label: 'No Account Case — Cash Balance', type: 'amount', required: 'conditional' }
+            ]
+          },
+          {
+            id: 'manufacturing_account',
+            label: 'SECTION 4 — Part A-Manufacturing Account',
+            fields: [
+              { name: 'openingStockRawMaterials', ref: 'Ai', label: 'Opening Stock of Raw Materials', type: 'amount', required: false },
+              { name: 'openingStockWip', ref: 'Aii', label: 'Opening Stock of Work-in-Progress', type: 'amount', required: false },
+              { name: 'totalOpeningInventoryMfg', ref: 'Aiii', label: 'Total Opening Inventory (Ai+Aii)', type: 'amount', readOnly: true, computed: true },
+              { name: 'purchasesMfg', ref: 'B', label: 'Purchases (net of refunds & duty)', type: 'amount', required: false },
+              { name: 'directWages', ref: 'C', label: 'Direct Wages', type: 'amount', required: false },
+              { name: 'carriageInwardMfg', ref: 'Di', label: 'Carriage Inward', type: 'amount', required: false },
+              { name: 'powerFuelDirect', ref: 'Dii', label: 'Power and Fuel (Direct)', type: 'amount', required: false },
+              { name: 'otherDirectExpensesMfg', ref: 'Diii', label: 'Other Direct Expenses', type: 'amount', required: false },
+              { name: 'totalDirectExpensesMfg', ref: 'D', label: 'Total Direct Expenses (Di+Dii+Diii)', type: 'amount', readOnly: true, computed: true },
+              { name: 'indirectWages', ref: 'Ei', label: 'Indirect Wages', type: 'amount', required: false },
+              { name: 'factoryRentRates', ref: 'Eii', label: 'Factory Rent and Rates', type: 'amount', required: false },
+              { name: 'factoryInsurance', ref: 'Eiii', label: 'Factory Insurance', type: 'amount', required: false },
+              { name: 'factoryFuelPower', ref: 'Eiv', label: 'Factory Fuel and Power', type: 'amount', required: false },
+              { name: 'factoryGeneralExpenses', ref: 'Ev', label: 'Factory General Expenses', type: 'amount', required: false },
+              { name: 'depreciationFactoryMachinery', ref: 'Evi', label: 'Depreciation of Factory Machinery', type: 'amount', required: false },
+              { name: 'totalFactoryOverheads', ref: 'Evii', label: 'Total Factory Overheads', type: 'amount', readOnly: true, computed: true },
+              { name: 'totalDebitsManufacturing', ref: 'F', label: 'Total Debits to Manufacturing Account', type: 'amount', readOnly: true, computed: true },
+              { name: 'closingStockRawMaterial', ref: 'i', label: 'Closing Stock of Raw Material', type: 'amount', required: false },
+              { name: 'closingStockWip', ref: 'ii', label: 'Closing Stock of Work-in-Progress', type: 'amount', required: false },
+              { name: 'totalClosingStockMfg', ref: 'iii', label: 'Total Closing Stock', type: 'amount', readOnly: true, computed: true },
+              { name: 'costOfGoodsProduced', ref: '3', label: 'Cost of Goods Produced → Trading Account (F–iii)', type: 'amount', readOnly: true, computed: true }
+            ]
+          },
+          {
+            id: 'trading_account',
+            label: 'SECTION 5 — Part A-Trading Account',
+            fields: [
+              { name: 'saleOfGoods', ref: 'Ai', label: 'Sale of Goods (net of returns & duty)', type: 'amount', required: false },
+              { name: 'saleOfServices', ref: 'Aii', label: 'Sale of Services', type: 'amount', required: false },
+              { name: 'otherOperatingRevenues', ref: 'Aiii', label: 'Other Operating Revenues — Sl. 1–2 (Nature + Amount)', type: 'table', required: false, columns: ['Nature', 'Amount'] },
+              { name: 'totalRevenueBusiness', ref: 'Aiv', label: 'Total Revenue from Business (Ai+Aii+Aiii)', type: 'amount', readOnly: true, computed: true },
+              { name: 'grossReceiptsProfession', ref: 'B', label: 'Gross Receipts from Profession', type: 'amount', required: false },
+              { name: 'unionExciseDutiesReceived', ref: 'Ci', label: 'Union Excise Duties received', type: 'amount', required: false },
+              { name: 'serviceTaxReceived', ref: 'Cii', label: 'Service Tax received', type: 'amount', required: false },
+              { name: 'vatSalesTaxReceived', ref: 'Ciii', label: 'VAT/Sales Tax received', type: 'amount', required: false },
+              { name: 'cgstReceived', ref: 'Civ', label: 'CGST received', type: 'amount', required: false },
+              { name: 'sgstReceived', ref: 'Cv', label: 'SGST received', type: 'amount', required: false },
+              { name: 'igstReceived', ref: 'Cvi', label: 'IGST received', type: 'amount', required: false },
+              { name: 'utgstReceived', ref: 'Cvii', label: 'UTGST received', type: 'amount', required: false },
+              { name: 'anyOtherDutyTaxReceived', ref: 'Cviii', label: 'Any other duty/tax', type: 'amount', required: false },
+              { name: 'totalTaxesDutiesReceived', ref: 'Cix', label: 'Total Taxes/Duties received', type: 'amount', readOnly: true, computed: true },
+              { name: 'totalRevenueOperations', ref: '4D', label: 'Total Revenue from Operations (Aiv+B+Cix)', type: 'amount', readOnly: true, computed: true },
+              { name: 'closingStockFinishedGoods', ref: '5', label: 'Closing Stock of Finished Goods', type: 'amount', required: false },
+              { name: 'totalCreditsTrading', ref: '6', label: 'Total Credits to Trading Account (4D+5)', type: 'amount', readOnly: true, computed: true },
+              { name: 'openingStockFinishedGoods', ref: '7', label: 'Opening Stock of Finished Goods', type: 'amount', required: false },
+              { name: 'purchasesTrading', ref: '8', label: 'Purchases (net of refunds & duty)', type: 'amount', required: false },
+              { name: 'carriageInwardTrading', ref: '9i', label: 'Carriage Inward', type: 'amount', required: false },
+              { name: 'powerFuelTrading', ref: '9ii', label: 'Power and Fuel (Trading)', type: 'amount', required: false },
+              { name: 'otherDirectExpensesTrading', ref: '9iii', label: 'Other Direct Expenses (Sl. 1–2, Nature + Amount)', type: 'table', required: false, columns: ['Nature', 'Amount'] },
+              { name: 'totalDirectExpensesTrading', ref: '9', label: 'Total Direct Expenses', type: 'amount', readOnly: true, computed: true },
+              { name: 'customDutyPaid', ref: '10i', label: 'Custom Duty', type: 'amount', required: false },
+              { name: 'counterVailingDutyPaid', ref: '10ii', label: 'Counter Veiling Duty', type: 'amount', required: false },
+              { name: 'specialAdditionalDutyPaid', ref: '10iii', label: 'Special Additional Duty', type: 'amount', required: false },
+              { name: 'unionExciseDutyPaid', ref: '10iv', label: 'Union Excise Duty (paid)', type: 'amount', required: false },
+              { name: 'serviceTaxPaid', ref: '10v', label: 'Service Tax (paid)', type: 'amount', required: false },
+              { name: 'vatSalesTaxPaid', ref: '10vi', label: 'VAT/Sales Tax (paid)', type: 'amount', required: false },
+              { name: 'cgstPaid', ref: '10vii', label: 'CGST (paid)', type: 'amount', required: false },
+              { name: 'sgstPaid', ref: '10viii', label: 'SGST (paid)', type: 'amount', required: false },
+              { name: 'igstPaid', ref: '10ix', label: 'IGST (paid)', type: 'amount', required: false },
+              { name: 'utgstPaid', ref: '10x', label: 'UTGST (paid)', type: 'amount', required: false },
+              { name: 'anyOtherTaxPaid', ref: '10xi', label: 'Any other tax paid', type: 'amount', required: false },
+              { name: 'totalDutiesTaxesPaid', ref: '10xii', label: 'Total Duties & Taxes paid', type: 'amount', readOnly: true, computed: true },
+              { name: 'costOfGoodsProducedFromMfg', ref: '11', label: 'Cost of Goods Produced (from Manufacturing Account)', type: 'amount', readOnly: true, computed: true },
+              { name: 'grossProfit', ref: '12', label: 'Gross Profit → P&L (6–7–8–9–10xii–11)', type: 'amount', readOnly: true, computed: true },
+              { name: 'turnoverIntradayTrading', ref: '12a', label: 'Turnover from Intraday Trading', type: 'amount', required: false },
+              { name: 'incomeIntradayTrading', ref: '12b', label: 'Income from Intraday Trading → P&L', type: 'amount', required: false }
+            ]
+          },
+          {
+            id: 'pnl_credits',
+            label: '6.1 Profit & Loss - Income / Credits side',
+            fields: [
+              { name: 'grossProfitPl', ref: '13', label: 'Gross Profit from Trading Account', type: 'amount', readOnly: true, computed: true },
+              { name: 'otherIncomeRent', ref: '14i', label: 'Other Income — Rent', type: 'amount', required: false },
+              { name: 'otherIncomeCommission', ref: '14ii', label: 'Other Income — Commission', type: 'amount', required: false },
+              { name: 'otherIncomeDividend', ref: '14iii', label: 'Other Income — Dividend Income', type: 'amount', required: false },
+              { name: 'otherIncomeInterest', ref: '14iv', label: 'Other Income — Interest Income', type: 'amount', required: false },
+              { name: 'otherIncomeProfitSaleFixedAssets', ref: '14v', label: 'Other Income — Profit on sale of fixed assets', type: 'amount', required: false },
+              { name: 'otherIncomeProfitSaleSttInvestments', ref: '14vi', label: 'Other Income — Profit on sale of STT investments', type: 'amount', required: false },
+              { name: 'otherIncomeProfitSaleOtherInvestments', ref: '14vii', label: 'Other Income — Profit on sale of other investments', type: 'amount', required: false },
+              { name: 'otherIncomeGainLossForex43AA', ref: '14viii', label: 'Other Income — Gain/Loss on forex fluctuation u/s 43AA', type: 'amount', required: false },
+              { name: 'otherIncomeConversionInventoryCapital28via', ref: '14ix', label: 'Other Income — Profit on conversion of inventory to capital asset u/s 28(via)', type: 'amount', required: false },
+              { name: 'otherIncomeAgriculture', ref: '14x', label: 'Other Income — Agriculture Income', type: 'amount', required: false },
+              { name: 'otherIncomeLiabilitiesWrittenBack', ref: '14xia', label: 'Other Income — Liabilities written back (Sl. 1–3, Nature + Amount)', type: 'table', required: false, columns: ['Nature', 'Amount'] },
+              { name: 'otherIncomeOtherIncomes', ref: '14xib', label: 'Other Income — Other incomes (not in turnover) (Sl. 1–3, Nature + Amount)', type: 'table', required: false, columns: ['Nature', 'Amount'] },
+              { name: 'totalOtherIncome', ref: '14xii', label: 'Total Other Income', type: 'amount', readOnly: true, computed: true },
+              { name: 'totalCreditsPl', ref: '15', label: 'Total Credits to P&L (13+14xii)', type: 'amount', readOnly: true, computed: true }
+            ]
+          },
+          {
+            id: 'pnl_debits_expenses',
+            label: '6.2 Profit & Loss - Expenses / Debits side',
+            fields: [
+              { name: 'freightOutward', ref: '16', label: 'Freight Outward', type: 'amount', required: false },
+              { name: 'consumptionStoresSpareParts', ref: '17', label: 'Consumption of Stores & Spare Parts', type: 'amount', required: false },
+              { name: 'powerAndFuelPl', ref: '18', label: 'Power and Fuel', type: 'amount', required: false },
+              { name: 'rentPl', ref: '19', label: 'Rent', type: 'amount', required: false },
+              { name: 'repairsBuilding', ref: '20', label: 'Repairs to Building', type: 'amount', required: false },
+              { name: 'repairsMachinery', ref: '21', label: 'Repairs to Machinery', type: 'amount', required: false },
+              { name: 'salariesAndWagesPl', ref: '22i', label: 'Salaries and Wages', type: 'amount', required: false },
+              { name: 'bonusPl', ref: '22ii', label: 'Bonus', type: 'amount', required: false },
+              { name: 'reimbursementMedicalExpenses', ref: '22iii', label: 'Reimbursement of Medical Expenses', type: 'amount', required: false },
+              { name: 'leaveEncashmentPl', ref: '22iv', label: 'Leave Encashment', type: 'amount', required: false },
+              { name: 'leaveTravelBenefits', ref: '22v', label: 'Leave Travel Benefits', type: 'amount', required: false },
+              { name: 'contributionApprovedSuperannuationFund', ref: '22vi', label: 'Contribution to Approved Superannuation Fund', type: 'amount', required: false },
+              { name: 'contributionRecognisedPf', ref: '22vii', label: 'Contribution to Recognised PF', type: 'amount', required: false },
+              { name: 'contributionRecognisedGratuityFund', ref: '22viii', label: 'Contribution to Recognised Gratuity Fund', type: 'amount', required: false },
+              { name: 'contributionAnyOtherFund', ref: '22ix', label: 'Contribution to Any Other Fund', type: 'amount', required: false },
+              { name: 'anyOtherBenefitEmployees', ref: '22x', label: 'Any Other Benefit to Employees', type: 'amount', required: false },
+              { name: 'totalCompensationEmployees', ref: '22xi', label: 'Total Compensation to Employees (22i–22x)', type: 'amount', readOnly: true, computed: true },
+              { name: 'isCompensationNonResidentsIncluded', ref: '22xii-a', label: 'Whether compensation to non-residents included?', type: 'dropdown', required: 'conditional', options: ['Yes', 'No'] },
+              { name: 'amountPaidNonResidents', ref: '22xii-b', label: 'Amount paid to non-residents', type: 'amount', required: 'conditional', condition: 'isCompensationNonResidentsIncluded === "Yes"' },
+              { name: 'medicalInsurancePl', ref: '23i', label: 'Medical Insurance', type: 'amount', required: false },
+              { name: 'lifeInsurancePl', ref: '23ii', label: 'Life Insurance', type: 'amount', required: false },
+              { name: 'keymansInsurance', ref: '23iii', label: "Keyman's Insurance", type: 'amount', required: false },
+              { name: 'otherInsurance', ref: '23iv', label: 'Other Insurance', type: 'amount', required: false },
+              { name: 'totalInsurance', ref: '23v', label: 'Total Insurance', type: 'amount', readOnly: true, computed: true },
+              { name: 'workmenStaffWelfareExpenses', ref: '24', label: 'Workmen and Staff Welfare Expenses', type: 'amount', required: false },
+              { name: 'entertainmentPl', ref: '25', label: 'Entertainment', type: 'amount', required: false },
+              { name: 'hospitalityPl', ref: '26', label: 'Hospitality', type: 'amount', required: false },
+              { name: 'conferencePl', ref: '27', label: 'Conference', type: 'amount', required: false },
+              { name: 'salesPromotion', ref: '28', label: 'Sales Promotion (excl. advertisement)', type: 'amount', required: false },
+              { name: 'advertisementPl', ref: '29', label: 'Advertisement', type: 'amount', required: false },
+              { name: 'commissionNonResident', ref: '30i', label: 'Commission — NR/Non-resident company', type: 'amount', required: false },
+              { name: 'commissionOthers', ref: '30ii', label: 'Commission — Others', type: 'amount', required: false },
+              { name: 'totalCommission', ref: '30iii', label: 'Total Commission', type: 'amount', readOnly: true, computed: true },
+              { name: 'royaltyNonResident', ref: '31i', label: 'Royalty — NR/Non-resident company', type: 'amount', required: false },
+              { name: 'royaltyOthers', ref: '31ii', label: 'Royalty — Others', type: 'amount', required: false },
+              { name: 'totalRoyalty', ref: '31iii', label: 'Total Royalty', type: 'amount', readOnly: true, computed: true },
+              { name: 'professionalTechServicesNr', ref: '32i', label: 'Professional/Consultancy/Tech Services — NR', type: 'amount', required: false },
+              { name: 'professionalTechServicesOthers', ref: '32ii', label: 'Professional/Consultancy/Tech Services — Others', type: 'amount', required: false },
+              { name: 'totalProfessionalFees', ref: '32iii', label: 'Total Professional Fees', type: 'amount', readOnly: true, computed: true },
+              { name: 'hotelBoardingLodging', ref: '33', label: 'Hotel, Boarding and Lodging', type: 'amount', required: false },
+              { name: 'travellingExpensesDomestic', ref: '34', label: 'Traveling Expenses (other than foreign)', type: 'amount', required: false },
+              { name: 'foreignTravellingExpenses', ref: '35', label: 'Foreign Travelling Expenses', type: 'amount', required: false },
+              { name: 'conveyanceExpenses', ref: '36', label: 'Conveyance Expenses', type: 'amount', required: false },
+              { name: 'telephoneExpenses', ref: '37', label: 'Telephone Expenses', type: 'amount', required: false },
+              { name: 'guestHouseExpenses', ref: '38', label: 'Guest House Expenses', type: 'amount', required: false },
+              { name: 'clubExpenses', ref: '39', label: 'Club Expenses', type: 'amount', required: false },
+              { name: 'festivalCelebrationExpenses', ref: '40', label: 'Festival Celebration Expenses', type: 'amount', required: false },
+              { name: 'scholarshipPl', ref: '41', label: 'Scholarship', type: 'amount', required: false },
+              { name: 'giftPl', ref: '42', label: 'Gift', type: 'amount', required: false },
+              { name: 'donationPl', ref: '43', label: 'Donation', type: 'amount', required: false },
+              { name: 'unionExciseDutyRatesTaxes', ref: '44i', label: 'Union Excise Duty (rates & taxes)', type: 'amount', required: false },
+              { name: 'serviceTaxRatesTaxes', ref: '44ii', label: 'Service Tax (rates & taxes)', type: 'amount', required: false },
+              { name: 'vatSalesTaxPl', ref: '44iii', label: 'VAT/Sales Tax', type: 'amount', required: false },
+              { name: 'cessPl', ref: '44iv', label: 'Cess', type: 'amount', required: false },
+              { name: 'cgstPl', ref: '44v', label: 'CGST', type: 'amount', required: false },
+              { name: 'sgstPl', ref: '44vi', label: 'SGST', type: 'amount', required: false },
+              { name: 'igstPl', ref: '44vii', label: 'IGST', type: 'amount', required: false },
+              { name: 'utgstPl', ref: '44viii', label: 'UTGST', type: 'amount', required: false },
+              { name: 'anyOtherRateTaxDutyCess', ref: '44ix', label: 'Any other rate/tax/duty/cess incl. STT/CTT', type: 'amount', required: false },
+              { name: 'totalRatesTaxes', ref: '44x', label: 'Total Rates & Taxes', type: 'amount', readOnly: true, computed: true },
+              { name: 'auditFee', ref: '45', label: 'Audit Fee', type: 'amount', required: false },
+              { name: 'otherExpensesPl', ref: '46', label: 'Other Expenses (Sl. 1–4, Nature + Amount)', type: 'table', required: false, columns: ['Nature', 'Amount'] },
+              { name: 'badDebtsWithPan', ref: '47i', label: 'Bad Debts — with PAN/Aadhaar ≥ ₹1 lakh (Sl. 1–7)', type: 'table', required: false, columns: ['Sl.No.', 'PAN/Aadhaar', 'Amount'] },
+              { name: 'badDebtsWithoutPan', ref: '47ii', label: 'Bad Debts — without PAN/Aadhaar ≥ ₹1 lakh (Sl. 1–4)', type: 'table', required: false, columns: ['Name', 'Full Address (State Dropdown, Country Dropdown)', 'Amount'] },
+              { name: 'badDebtsOthers', ref: '47iii', label: 'Bad Debts — Others < ₹1 lakh', type: 'amount', required: false },
+              { name: 'totalBadDebts', ref: '47iv', label: 'Total Bad Debts (47i+47ii+47iii)', type: 'amount', readOnly: true, computed: true },
+              { name: 'provisionBadDoubtfulDebts', ref: '48', label: 'Provision for Bad and Doubtful Debts', type: 'amount', required: false },
+              { name: 'otherProvisionsPl', ref: '49', label: 'Other Provisions', type: 'amount', required: false },
+              { name: 'profitBeforeInterestDeprTax', ref: '50', label: 'Profit before Interest, Depreciation & Taxes (Row 50)', type: 'amount', readOnly: true, computed: true },
+              { name: 'interestPaidNr', ref: '51i', label: 'Interest — Paid to NR/Non-resident company', type: 'amount', required: false },
+              { name: 'interestPaidOthers', ref: '51ii', label: 'Interest — To Others', type: 'amount', required: false },
+              { name: 'totalInterestPl', ref: '51iii', label: 'Total Interest', type: 'amount', readOnly: true, computed: true },
+              { name: 'depreciationAmortization', ref: '52', label: 'Depreciation and Amortization', type: 'amount', required: false },
+              { name: 'netProfitBeforeTaxes', ref: '53', label: 'Net Profit before Taxes (50–51iii–52)', type: 'amount', readOnly: true, computed: true },
+              { name: 'provisionCurrentTax', ref: '54', label: 'Provision for Current Tax', type: 'amount', required: false },
+              { name: 'provisionDeferredTax', ref: '55', label: 'Provision for Deferred Tax', type: 'amount', required: false },
+              { name: 'profitAfterTax', ref: '56', label: 'Profit after Tax (53–54–55)', type: 'amount', readOnly: true, computed: true },
+              { name: 'balanceBfFromPreviousYear', ref: '57', label: 'Balance Brought Forward from Previous Year', type: 'amount', required: false }
+            ]
+          }
+        ]
+      },
+      {
+        id: 'business_profession_presumptive',
+        label: 'Business / Profession Presumptive & Other Information',
+        fieldSections: [
+          {
+            id: 'presumptive_income_entries',
+            label: '6.3 Presumptive Income Entries — No Account Case',
+            fields: [
+              { name: 'grossReceipts44AD', ref: '61i', label: '61. Gross Receipts (44AD)', type: 'amount', required: 'conditional' },
+              { name: 'netProfit44AD', ref: '61ii', label: '61. Net Profit or Loss (44AD)', type: 'amount', required: 'conditional' },
+              { name: 'grossReceipts44ADA', ref: '62i', label: '62. Gross Receipts (44ADA — Professionals)', type: 'amount', required: 'conditional' },
+              { name: 'netProfit44ADA', ref: '62ii', label: '62. Net Profit or Loss (44ADA)', type: 'amount', required: 'conditional' },
+              { name: 'goodsCarriage44AETable', ref: '63', label: '63. Goods carriage (44AE Table Row)', type: 'table', required: 'conditional', columns: ['Owner', 'Vehicle No.', 'Months', 'Amount per vehicle'] },
+              { name: 'netProfit44AE', ref: '63ii', label: '63. Net Profit (44AE)', type: 'amount', required: 'conditional' },
+              { name: 'incomeShipping44B', ref: '64', label: '64. Income from shipping (44B)', type: 'amount', required: 'conditional' },
+              { name: 'noAccountCaseTotalReceiptsExp', ref: '65i-iv', label: '65. No-account case: Total receipts, total expenses, net profit', type: 'amount', required: 'conditional' }
+            ]
+          },
+          {
+            id: 'part_a_oi',
+            label: 'SECTION 7 — Part A-OI: Other Information',
+            fields: [
+              { name: 'methodOfAccounting', item: '1', label: 'Method of Accounting', type: 'dropdown', required: 'conditional', options: ['Mercantile', 'Cash'] },
+              { name: 'changeInMethodAccounting', item: '2', label: 'Change in method of accounting?', type: 'dropdown', required: 'conditional', options: ['Yes', 'No'] },
+              { name: 'increaseProfitIcdsDeviations', item: '3a', label: 'Increase in profit due to ICDS deviations', type: 'amount', readOnly: true, computed: true },
+              { name: 'decreaseProfitIcdsDeviations', item: '3b', label: 'Decrease in profit due to ICDS deviations', type: 'amount', readOnly: true, computed: true },
+              { name: 'methodValuationRawMaterialStock', item: '4a', label: 'Method of valuation of Raw Material closing stock', type: 'dropdown', required: 'conditional', options: ['1-Cost or market rate', '2-At cost', '3-At market rate'] },
+              { name: 'methodValuationFinishedGoodsStock', item: '4b', label: 'Method of valuation of Finished Goods closing stock', type: 'dropdown', required: 'conditional', options: ['1-Cost or market rate', '2-At cost', '3-At market rate'] },
+              { name: 'changeStockValuationMethod', item: '4c', label: 'Change in stock valuation method?', type: 'dropdown', required: 'conditional', options: ['Yes', 'No'] },
+              { name: 'increaseProfitDeviation145A', item: '4d', label: 'Increase in profit due to deviation u/s 145A', type: 'amount', required: 'conditional' },
+              { name: 'decreaseProfitDeviation145A', item: '4e', label: 'Decrease in profit due to deviation u/s 145A', type: 'amount', required: 'conditional' },
+              { name: 'amountsNotCredited28', item: '5a', label: 'Amounts not credited — Items u/s 28', type: 'amount', required: false },
+              { name: 'proformaCreditsGstRefunds', item: '5b', label: 'Proforma credits / GST refunds not credited', type: 'amount', required: false },
+              { name: 'escalationClaimsAccepted', item: '5c', label: 'Escalation claims accepted', type: 'amount', required: false },
+              { name: 'anyOtherItemIncomeOi', item: '5d', label: 'Any other item of income', type: 'amount', required: false },
+              { name: 'capitalReceiptsOi', item: '5e', label: 'Capital receipts', type: 'amount', required: false },
+              { name: 'totalSection5Oi', item: '5f', label: 'Total (5a+5b+5c+5d+5e)', type: 'amount', readOnly: true, computed: true },
+              { name: 'disallowable36SubItems', item: '6a-6r', label: 'Disallowable u/s 36 (19 sub-items a–r)', type: 'amount_multiply_19', required: 'conditional' },
+              { name: 'totalDisallowable36', item: '6s', label: 'Total disallowable u/s 36', type: 'amount', readOnly: true, computed: true },
+              { name: 'disallowable37SubItems', item: '7a-7i', label: 'Disallowable u/s 37 (9 sub-items)', type: 'amount_multiply_9', required: false },
+              { name: 'totalDisallowable37', item: '7j', label: 'Total disallowable u/s 37', type: 'amount', readOnly: true, computed: true },
+              { name: 'disallowable40SubItems', item: '8Aa-8Ai', label: 'Disallowable u/s 40 (9 sub-items)', type: 'amount_multiply_9', required: false },
+              { name: 'totalDisallowable40', item: '8Aj', label: 'Total disallowable u/s 40', type: 'amount', readOnly: true, computed: true },
+              { name: 'amountDisallowed40PriorYearsNowAllowable', item: '8B', label: 'Amount disallowed u/s 40 in prior years but now allowable', type: 'amount', required: false },
+              { name: 'disallowable40ASubItems', item: '9a-9e', label: 'Disallowable u/s 40A (5 sub-items)', type: 'amount_multiply_5', required: false },
+              { name: 'totalDisallowable40A', item: '9f', label: 'Total disallowable u/s 40A', type: 'amount', readOnly: true, computed: true },
+              { name: 'allowable43BPriorYearsSubItems', item: '10a-10h', label: 'Allowable u/s 43B in prior years (8 sub-items)', type: 'amount_multiply_8', required: false },
+              { name: 'totalAllowable43B', item: '10i', label: 'Total allowable u/s 43B', type: 'amount', readOnly: true, computed: true },
+              { name: 'disallowable43BSubItems', item: '11a-11h', label: 'Disallowable u/s 43B (8 sub-items)', type: 'amount_multiply_8', required: false },
+              { name: 'totalDisallowable43B', item: '11i', label: 'Total disallowable u/s 43B', type: 'amount', readOnly: true, computed: true },
+              { name: 'creditOutstandingTaxesSubItems', item: '12a-12h', label: 'Credit outstanding for taxes (8 sub-items: Excise/Service Tax/VAT/GST)', type: 'amount_multiply_8', required: false },
+              { name: 'totalCreditOutstanding Taxes', item: '12i', label: 'Total credit outstanding', type: 'amount', readOnly: true, computed: true },
+              { name: 'deemedProfits33AB_33ABA', item: '13a_13b', label: 'Deemed profits u/s 33AB / 33ABA', type: 'amount_multiply_2', required: false },
+              { name: 'profitChargeable41', item: '14', label: 'Any amount of profit chargeable u/s 41', type: 'amount', required: false },
+              { name: 'priorPeriodIncomeExpenditureNet', item: '15', label: 'Prior period income/expenditure (net)', type: 'amount', required: false },
+              { name: 'expenditureDisallowed14A', item: '16', label: 'Expenditure disallowed u/s 14A', type: 'amount', required: false },
+              { name: 'exercisingOption92CE2A', item: '17', label: 'Exercising option u/s 92CE(2A)?', type: 'dropdown', required: false, options: ['Yes', 'No'] }
+            ]
+          },
+          {
+            id: 'part_a_qd',
+            label: 'SECTION 8 — Part A-QD: Quantitative Details (Audit only)',
+            fields: [
+              { name: 'tradingConcernTable', label: '8.1 Trading Concern', type: 'table', maxRows: 4, columns: ['Item Name (commodity type dropdown)', 'Unit of Measure (101-Gms to 999-Residual)', 'Opening Stock', 'Purchase during the Year', 'Sales during the Year', 'Closing Stock', 'Shortage / Excess'] },
+              { name: 'mfgRawMaterialsTable', label: '8.2 Manufacturing — Raw Materials', type: 'table', maxRows: 4, columns: ['Item Name', 'Unit', 'Opening Stock', 'Purchase', 'Consumption', 'Sales', 'Closing Stock', 'Yield (Finished Products)', '% of Yield', 'Shortage/Excess'] },
+              { name: 'mfgFinishedProductsTable', label: '8.3 Manufacturing — Finished Products/By-products', type: 'table', maxRows: 4, columns: ['Item Name', 'Unit', 'Opening Stock', 'Purchase', 'Qty Manufactured', 'Sales', 'Closing Stock', 'Shortage/Excess'] }
+            ]
+          }
+        ]
+      },
+      {
+        id: 'salary_house_property_schedules',
+        label: 'Schedules Salary, House Property & BP Computation',
+        fieldSections: [
+          {
+            id: 'schedule_s',
+            label: 'SECTION 9 — Schedule S: Income from Salary (Up to 2 Employers)',
+            fields: [
+              { name: 'nameEmployer', label: 'Name of Employer', type: 'text', required: true },
+              { name: 'natureEmployer', label: 'Nature of Employer', type: 'dropdown', required: true, options: ['Central Government', 'State Government', 'PSU', 'CG-Pensioners', 'SG-Pensioners', 'PSU-Pensioners', 'Others-Pensioners', 'Others'] },
+              { name: 'tanEmployer', label: 'TAN of Employer', type: 'text', required: 'conditional', validation: { type: 'TAN' } },
+              { name: 'addressEmployer', label: 'Address of Employer / Town / State / Pincode', type: 'text_dropdown_combo', required: true },
+              { name: 'salary17_1_subTable', label: '1a. Salary u/s 17(1) — Sub-table (up to 3 rows)', type: 'table', required: true, columns: ['Nature (Basic / DA / HRA / LTA / Other Allowance / Any Other)', 'Description', 'Amount'] },
+              { name: 'perquisites17_2_subTable', label: '1b. Perquisites u/s 17(2) — Sub-table (up to 3 rows)', type: 'table', required: false, columns: ['Nature (Accommodation / Cars / Gas-electricity-water / Gifts / Free meals / Club / ESOP / Stock options / NPS 17(2)(vii) / Other benefits)', 'Description', 'Amount'] },
+              { name: 'profitInLieuSalary17_3_subTable', label: '1c. Profit in lieu of salary u/s 17(3) — Sub-table (up to 2 rows)', type: 'table', required: false, columns: ['Nature (Compensation on termination / Keyman / Before joining / Any other)', 'Description', 'Amount'] },
+              { name: 'retirementBenefit89A_notified', label: '1d. Retirement benefit account — Notified Country u/s 89A (up to 3 rows)', type: 'table', required: false, columns: ['Country (USA / UK / Canada)', 'Amount'] },
+              { name: 'retirementBenefit89A_nonNotified', label: '1e. Retirement benefit account — Non-Notified Country u/s 89A', type: 'amount', required: false },
+              { name: 'incomeTaxableReliefClaimedEarlier', label: '1f. Income taxable this year on which 89A relief claimed earlier', type: 'amount', required: false },
+              { name: 'grossSalaryPerEmployer', label: 'Gross Salary per employer (1a+1b+1c+1d+1e+1f)', type: 'amount', readOnly: true, computed: true },
+              { name: 'totalGrossSalaryCombined', label: 'Total Gross Salary (all employers combined)', type: 'amount', readOnly: true, computed: true },
+              { name: 'incomeRelief89A', label: '3a. Income for relief u/s 89A', type: 'amount', readOnly: true, computed: true },
+              { name: 'allowancesExempt10', label: '3. Allowances exempt u/s 10 (up to 4 rows)', type: 'table', required: false, columns: ['Nature (Sec 10(5) LTA / 10(6) Embassy / 10(7) Foreign Allowance / 10(10)–10(19) / 10(26) / 10(26AAA) / 10(12C) Agniveer / Any Other)', 'Description', 'Amount'] },
+              { name: 'hraSubForm', label: 'HRA u/s 10(13A) sub-form', type: 'sub_form', required: 'conditional', fields: ['Place of Work Dropdown (Metro/Non-metro)', 'HRA received', 'Rent paid', 'Salary', 'Eligible HRA'] },
+              { name: 'netSalary', label: '4. Net Salary (2–3a–3)', type: 'amount', readOnly: true, computed: true },
+              { name: 'standardDeduction16ia', label: '5a. Standard Deduction u/s 16(ia)', type: 'amount', readOnly: true, computed: true },
+              { name: 'entertainmentAllowance16ii', label: '5b. Entertainment Allowance u/s 16(ii)', type: 'amount', required: false, notes: 'Government employees' },
+              { name: 'professionalTax16iii', label: '5c. Professional Tax u/s 16(iii)', type: 'amount', required: false },
+              { name: 'totalDeductions16', label: '5. Total Deductions u/s 16', type: 'amount', readOnly: true, computed: true },
+              { name: 'incomeChargeableSalaries', label: '6. Income chargeable under Salaries (4–5)', type: 'amount', readOnly: true, computed: true }
+            ]
+          },
+          {
+            id: 'schedule_hp',
+            label: 'SECTION 10 — Schedule HP: Income from House Property (Supports 2 properties)',
+            fields: [
+              { name: 'hpAddressOwnership', label: 'Property Address & Ownership sub-form', type: 'sub_form', fields: ['Address', 'Town', 'State Dropdown', 'Country Dropdown', 'PIN', 'ZIP', 'Owner type', 'Co-owned? Dropdown', '% share (up to 7 co-owner rows)'] },
+              { name: 'tenantDetails', label: 'Tenant Details (up to 3 tenant rows)', type: 'table', columns: ['Name', 'PAN', 'Aadhaar', 'PAN/TAN for TDS'] },
+              { name: 'typeOfHp', label: 'Type of HP', type: 'dropdown', required: true, options: ['Self-Occupied', 'Let Out', 'Deemed Let Out'] },
+              { name: 'hpIncomeComputationFields', label: 'HP Income Computation (a to k)', type: 'group', fields: ['Gross rent', 'Unrealised rent', 'Local tax', 'Annual Value', '30%', 'Interest 24(b)', 'Total deduction', 'Arrears', 'Net HP income'] },
+              { name: 'loanTable24b', label: 'Section 24(b) Loan Table (up to 4 rows per property)', type: 'table', columns: ['Loan source dropdown', 'Bank name', 'Account No.', 'Sanction date', 'Loan amount', 'Outstanding', 'Interest'] },
+              { name: 'passThroughIncomeHp', label: 'Pass-Through Income from HP', type: 'amount', required: false, notes: 'From Schedule PTI' },
+              { name: 'totalHpIncome', label: 'Total HP Income (Σ1k + 2)', type: 'amount', readOnly: true, computed: true }
+            ]
+          },
+          {
+            id: 'schedule_bp_core',
+            label: 'SECTION 11 — Schedule BP: Computation of Income from Business / Profession',
+            fields: [
+              { name: 'bpNetProfitBeforeTaxPl', row: '1', label: 'Net Profit before tax from P&L (Item 53 or 61ii/62ii/63iii/64iii/65iv)', type: 'amount' },
+              { name: 'bpSpeculativeBusinessProfitLoss', row: '2a', label: 'Net profit/loss from speculative business included in 1', type: 'amount' },
+              { name: 'bpSpecifiedBusinessProfitLoss35AD', row: '2b', label: 'Net profit/loss from Specified Business u/s 35AD included in 1', type: 'amount' },
+              { name: 'bpIncomeConsideredOtherHeads', row: '3a-3g', label: 'Income/receipts credited to P&L considered under other heads (Salary/HP/CG/OS/115BBF/115BBG/115BBH)', type: 'amount_group', notes: '3g net of Cost of Acquisition for VDA' },
+              { name: 'bpProfitCoveredPresumptiveSections', row: '4a', label: 'Profit covered by 44AD/44ADA/44AE/44B/44BB/44BBA/44BBC/44DA (sub-rows per section)', type: 'amount_group' },
+              { name: 'bpProfitActivitiesRules', row: '4b', label: 'Profit from activities under Rule 7/7A/7B(1)/7B(1A)/8 (5 sub-rows)', type: 'amount_group' },
+              { name: 'bpExemptIncomeItems', row: '5a-5d', label: 'Exempt income (firm share / AOP share / other exempt items)', type: 'amount_group' },
+              { name: 'bpBalanceRow6', row: '6', label: 'Balance (1–2a–2b–3–4a–4b–5d)', type: 'amount', readOnly: true, computed: true },
+              { name: 'bpExpensesDebitedOtherHeads', row: '7a-7g', label: 'Expenses debited to P&L under other heads / 115BBF / 115BBG / 115BBH', type: 'amount_group' },
+              { name: 'bpExpensesExemptIncomeDisallowed14A', row: '8a, 8b', label: 'Expenses for exempt income / disallowed u/s 14A', type: 'amount_group' },
+              { name: 'bpTotalRow9', row: '9', label: 'Total (7+8a+8b)', type: 'amount', readOnly: true, computed: true },
+              { name: 'bpAdjustedProfit', row: '10', label: 'Adjusted Profit (6+9)', type: 'amount', readOnly: true, computed: true },
+              { name: 'bpDepreciationDebitedPl', row: '11', label: 'Depreciation debited to P&L', type: 'amount' },
+              { name: 'bpDepreciationAllowableScheduleDep', row: '12i-12iii', label: 'Depreciation allowable (Schedule DEP + own computation)', type: 'amount', readOnly: true, computed: true },
+              { name: 'bpProfitAfterDepreciationAdjustment', row: '13', label: 'Profit after depreciation adjustment', type: 'amount', readOnly: true, computed: true },
+              { name: 'bpAdditionsDisallowableOI', row: '14-25', label: 'Additions (disallowable u/s 36/37/40/40A/43B + deemed income sections 41/32AD/33AB/33ABA/35ABA/35ABB/40A(3A)/72A/80HHD/80IA + 43CA + other items)', type: 'amount_group', readOnly: true, computed: true }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 3,
+    label: 'Deductions',
+    route: 'deductions',
+    subsections: [
+      {
+        id: 'schedule_dep_scientific_research',
+        label: 'Schedules Depreciation & Scientific Research',
+        fieldSections: [
+          {
+            id: 'schedule_dep_fields',
+            label: 'Schedule DEP / Fixed Assets Technical Calculations',
+            fields: [
+              { name: 'wdvFirstDayPy', row: '3a', label: 'Written Down Value on 1st day of PY', type: 'amount', notes: 'Per block input' },
+              { name: 'wdvOldRateAssets', row: '3(b)', label: 'WDV of old-rate assets (50%/60%/80%)', type: 'amount' },
+              { name: 'wdvAdjustment115Bac', row: '3a_adj', label: 'Adjustment for 115BAC option', type: 'amount' },
+              { name: 'additionsMoreThan180Days', row: '4', label: 'Additions for ≥180 days in PY', type: 'amount' },
+              { name: 'considerationRealizationRow3or4', row: '5', label: 'Consideration/realization (out of row 3 or 4)', type: 'amount' },
+              { name: 'amountFullRateDepreciation', row: '6', label: 'Amount for full rate depreciation (3+4–5; min 0)', type: 'amount', readOnly: true, computed: true },
+              { name: 'additionsLessThan180Days', row: '7', label: 'Additions for <180 days in PY', type: 'amount' },
+              { name: 'considerationRealizationRow7', row: '8', label: 'Consideration/realization (out of row 7)', type: 'amount' },
+              { name: 'amountHalfRateDepreciation', row: '9', label: 'Amount for half rate depreciation (7–8; min 0)', type: 'amount', readOnly: true, computed: true },
+              { name: 'depreciationFullHalfRate', row: '10-11', label: 'Depreciation at full & half rate', type: 'amount', readOnly: true, computed: true },
+              { name: 'additionalDepreciation', row: '12-14', label: 'Additional depreciation', type: 'amount' },
+              { name: 'totalDepreciationDep', row: '15', label: 'Total Depreciation', type: 'amount', readOnly: true, computed: true },
+              { name: 'depreciationDisallowed38_2', row: '16', label: 'Depreciation disallowed u/s 38(2)', type: 'amount' },
+              { name: 'netAggregateDepreciation', row: '17', label: 'Net Aggregate Depreciation', type: 'amount', readOnly: true, computed: true },
+              { name: 'expenditureTransferAssets', row: '19', label: 'Expenditure on transfer of assets', type: 'amount' },
+              { name: 'capitalGainsLoss50', row: '20', label: 'Capital Gains/Loss u/s 50', type: 'amount', readOnly: true, computed: true },
+              { name: 'wdvAtEndOfYear', row: '21', label: 'WDV at end of year', type: 'amount', readOnly: true, computed: true },
+              { name: 'blockCeasesToExist', label: 'Block Ceases to Exist', type: 'dropdown', options: ['Y', 'N'], notes: 'Per block execution' }
+            ]
+          },
+          {
+            id: 'schedule_esr_fields',
+            label: 'Schedule ESR — Scientific Research Deductions',
+            fields: [
+              { name: 'esr_35_1_i', label: '35(1)(i) Scientific research expenditures', type: 'amount_columns_combo', notes: 'Amount debited to P&L + Amount allowable' },
+              { name: 'esr_35_1_ii', label: '35(1)(ii) Donation to research association', type: 'amount_columns_combo' },
+              { name: 'esr_35_1_iia', label: '35(1)(iia) Scientific research entity development', type: 'amount_columns_combo' },
+              { name: 'esr_35_1_iii', label: '35(1)(iii) Social science/statistical research', type: 'amount_columns_combo' },
+              { name: 'esr_35_1_iv', label: '35(1)(iv) Plant/machinery for research', type: 'amount_columns_combo' },
+              { name: 'esr_35_2AA', label: '35(2AA) National laboratory / university payment', type: 'amount_columns_combo' },
+              { name: 'esr_35_2AB', label: '35(2AB) R&D expenditure company', type: 'amount_columns_combo' },
+              { name: 'esr_35CCC', label: '35CCC Agricultural extension project', type: 'amount_columns_combo' },
+              { name: 'esr_35CCD', label: '35CCD Skill development project', type: 'amount_columns_combo' },
+              { name: 'totalEsrDeductions', label: 'Total ESR Deductions', type: 'amount', readOnly: true, computed: true }
+            ]
+          }
+        ]
+      },
+      {
+        id: 'chapter_via_and_10a',
+        label: 'Schedule 10A & Chapter VI-A Deductions',
+        fieldSections: [
+          {
+            id: 'section_10a_10aa_deductions',
+            label: 'Section 10A/10AA/10B/10BA Deductions',
+            fields: [
+              { name: 'deduction10A', label: 'Deduction u/s 10A', type: 'amount', required: 'conditional' },
+              { name: 'deduction10AA', label: 'Deduction u/s 10AA', type: 'amount', required: 'conditional', notes: 'Auto from Schedule 10AA' },
+              { name: 'deduction10B', label: 'Deduction u/s 10B', type: 'amount', required: 'conditional' },
+              { name: 'deduction10BA', label: 'Deduction u/s 10BA', type: 'amount', required: 'conditional' },
+              { name: 'totalSection10Deductions', label: 'Total Deductions (10A+10AA+10B+10BA)', type: 'amount', readOnly: true, computed: true }
+            ]
+          },
+          {
+            id: 'chapter_via_deductions',
+            label: 'Schedule VI-A: Chapter VI-A Deductions',
+            fields: [
+              { name: 'dedSec80C_LIC_PF', label: '80C Sub-table (Life insurance, PF, ELSS, tuition etc.)', type: 'formsubmodule', required: false },
+              { name: 'dedSec80CCC_Pension', label: '80CCC (Payment to Pension Fund)', type: 'amount', required: false },
+              { name: 'dedSec80CCD_1_NPS', label: '80CCD(1) NPS Contribution Employee', type: 'amount', required: false },
+              { name: 'dedSec80CCD_1B_NPS', label: '80CCD(1B) Additional NPS', type: 'amount', required: false },
+              { name: 'dedSec80CCD_2_NPS', label: '80CCD(2) Employer contribution to NPS', type: 'amount', required: false, notes: 'Allowed under both Regimes' },
+              { name: 'dedSec80D_Health', label: '80D Health Insurance Premium', type: 'amount', required: false, notes: 'Linked to 80D wizard' },
+              { name: 'dedSec80DD_DisabledDep', label: '80DD Maintenance of disabled dependent', type: 'amount', required: false },
+              { name: 'dedSec80DDB_MedicalDisease', label: '80DDB Medical treatment — specified disease', type: 'amount', required: false },
+              { name: 'dedSec80E_EducationLoan', label: '80E Interest on higher education loan', type: 'amount', required: false },
+              { name: 'dedSec80EE_HomeLoan', label: '80EE Interest on home loan (residential HP)', type: 'amount', required: false },
+              { name: 'dedSec80EEA_AffordableHome', label: '80EEA Interest on home loan (affordable housing)', type: 'amount', required: false },
+              { name: 'dedSec80EEB_EVLoan', label: '80EEB Interest on EV loan', type: 'amount', required: false },
+              { name: 'dedSec80G_Charitable', label: '80G Donations to charitable institutions', type: 'amount', required: false },
+              { name: 'dedSec80GG_Rent', label: '80GG Rent paid (Form 10BA)', type: 'amount', required: false },
+              { name: 'dedSec80GGA_Research', label: '80GGA Scientific research donations', type: 'amount', required: false },
+              { name: 'dedSec80GGC_Political', label: '80GGC Political party contributions', type: 'amount', required: false },
+              { name: 'dedSec80TTA_SavingsInt', label: '80TTA Interest on savings bank — non-senior citizens', type: 'amount', required: false, validation: { maxLimit: 10000 } },
+              { name: 'dedSec80TTB_DepositsInt', label: '80TTB Interest on deposits — resident senior citizens', type: 'amount', required: false, validation: { maxLimit: 50000 } },
+              { name: 'dedSec80U_SelfDisability', label: '80U Self disability deduction', type: 'amount', required: false },
+              { name: 'dedSec80CCH_Agnipath', label: '80CCH Contribution to Agnipath Scheme', type: 'amount', required: false, notes: 'Allowed under both Regimes' },
+              { name: 'totalChapterVIADeductions', label: 'Total Deductions u/s Chapter VI-A', type: 'amount', readOnly: true, computed: true }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 4,
+    label: 'Taxes Paid',
+    route: 'taxes',
+    subsections: [
+      {
+        id: 'tax_payments_schedules',
+        label: 'TDS, TCS & Advance Tax Paid',
+        fieldSections: [
+          {
+            id: 'tds_non_salary_schedule',
+            label: '17.2 TDS2 — Non-Salary TDS (Form 16A)',
+            fields: [
+              {
+                name: 'tds2NonSalaryTable',
+                label: 'TDS on Income other than Salary Table (Up to 4 rows)',
+                type: 'table',
+                maxRows: 4,
+                columns: [
+                  { name: 'slNo', label: 'Sl.No.' },
+                  { name: 'tdsCredit', label: 'TDS Credit mapping', type: 'dropdown', options: ['Self', 'Spouse 5A', 'Other 37BA(2)'] },
+                  { name: 'panAadhaarOtherPerson', label: 'PAN + Aadhaar of Other Person' },
+                  { name: 'tanDeductor', label: 'TAN of Deductor' },
+                  { name: 'sectionUnderTds', label: 'Section under TDS', type: 'dropdown' },
+                  { name: 'fyTds', label: 'Financial Year of TDS', type: 'dropdown' },
+                  { name: 'tdsBf', label: 'TDS b/f amount' },
+                  { name: 'deductedOwnHands', label: 'Deducted own hands' },
+                  { name: 'deductedSpouseOther', label: 'Deducted spouse/other' },
+                  { name: 'claimedOwn', label: 'Claimed own return' },
+                  { name: 'claimedSpouse', label: 'Claimed spouse' },
+                  { name: 'grossAmount', label: 'Gross Amount' }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 5,
+    label: 'Filing',
+    route: 'filing',
+    subsections: [
+      {
+        id: 'bank_details_schedules',
+        label: 'Bank Accounts, Foreign Income & Updated Returns',
+        fieldSections: [
+          {
+            id: 'bank_account_inputs',
+            label: '18.3 Bank Accounts Verification',
+            fields: [
+              { name: 'hasBankAccountInIndia', label: 'Bank Account in India?', type: 'dropdown', required: true, options: ['Yes', 'No'], notes: 'NR without Indian account may select No' },
+              { name: 'totalAccountsCount', label: 'Total savings + current accounts (excl. dormant)', type: 'number', required: true },
+              { name: 'primaryAccountTable', label: '(a) All accounts held — IFSC / Bank Name / Account No.', type: 'table', required: true, columns: ['IFSC', 'Bank Name', 'Account No.'], minRows: 1 },
+              { name: 'secondaryAccountTable', label: '(b) Other accounts details', type: 'table', required: true, columns: ['IFSC', 'Bank', 'Account No.', 'Type (Dropdown: Savings/Current/Others)', 'Select for refund (Checkbox)'] },
+              { name: 'foreignBankAccountSubTable', label: 'Foreign bank account for NR refund', type: 'table', required: 'conditional', columns: ['SWIFT Code', 'Bank Name', 'Country Dropdown', 'IBAN'], condition: 'hasBankAccountInIndia === "No"' },
+              { name: 'foreignAssetsDeclarationRadio', label: 'Foreign assets declaration (res. 14)', type: 'radio', required: true, options: ['Yes', 'No'], notes: 'Resident only; triggers Schedule FA' },
+              { name: 'trpDetails', label: 'Tax Return Preparer (TRP) Details', type: 'group', required: false, fields: ['TRP ID', 'TRP Name', 'Counter Signature', 'Reimbursement amount'] }
+            ]
+          },
+          {
+            id: 'schedule_esop_fields',
+            label: 'SECTION 20 — Schedule ESop Information',
+            fields: [
+              { name: 'panEligibleStartupEmployer', label: 'PAN of Eligible Start-up Employer', type: 'text', required: true, validation: { type: 'PAN' } },
+              { name: 'dpiitRegistrationNumber', label: 'DPIIT Registration Number', type: 'text', required: true },
+              { name: 'assessmentYearRows', label: 'Assessment Year Rows (2021-22 to 2025-26)', type: 'auto', notes: '5 static template rows' },
+              { name: 'amountTaxDeferredBf', label: 'Amount of Tax Deferred BF', type: 'amount', required: true, notes: 'User input for prior AYs' },
+              { name: 'securitiesSoldDate', label: 'Securities sold — Date (Col 4i)', type: 'date', required: 'conditional' },
+              { name: 'amountTaxAttributedSale', label: 'Amount of Tax Attributed to sale (Col 4ii)', type: 'amount', readOnly: true, computed: true, notes: 'Calculated from sub-table' },
+              { name: 'ceasedToBeEmployee', label: 'Ceased to be employee? (Col 5)', type: 'radio', required: 'conditional', options: ['Yes', 'No'] },
+              { name: 'dateOfCeasing', label: 'Date of Ceasing (Col 5i)', type: 'date', required: 'conditional', condition: 'ceasedToBeEmployee === "Yes"' },
+              { name: 'expiry48MonthsDate', label: '48 months expiry — specify date (Col 6)', type: 'date', required: 'conditional' },
+              { name: 'amountTaxPayableCurrentAY', label: 'Amount of tax payable in current AY (Col 7)', type: 'amount', readOnly: true, computed: true },
+              { name: 'balanceTaxDeferredCf', label: 'Balance tax deferred c/f (Col 8 = Col 3 – Col 7)', type: 'amount', readOnly: true, computed: true },
+              { name: 'saleEventsSubTable', label: 'Sub-table for sale events (up to 4 rows)', type: 'table', required: 'conditional', maxRows: 4, columns: ['AY', 'Date', 'Amount of Tax Attributed'] }
+            ]
+          },
+          {
+            id: 'updated_return_itru',
+            label: 'SECTION 21 — Part A 139(8A) & Part B-ATI: Updated Return (ITR-U)',
+            fields: [
+              { name: 'itruPan', label: '(A1) PAN', type: 'text', required: true, readOnly: true },
+              { name: 'itruName', label: '(A2) Name', type: 'text', required: true, readOnly: true },
+              { name: 'itruAadhaarNumber', label: '(A3) Aadhaar Number', type: 'text', required: 'conditional' },
+              { name: 'itruAadhaarEnrolmentId', label: '(A3a) Aadhaar Enrolment ID', type: 'text', required: 'conditional' },
+              { name: 'itruAssessmentYear', label: '(A4) Assessment Year', type: 'dropdown', required: true, options: ['AY 2025-26', 'Prior AYs up to 48 months'] },
+              { name: 'itruReturnPreviouslyFiled', label: '(A5) Return previously filed?', type: 'dropdown', required: true, options: ['Yes', 'No'] },
+              { name: 'itruFiledUnderSection', label: '(A6) If Yes, filed u/s', type: 'dropdown', required: 'conditional' },
+              { name: 'itruAckDetails', label: '(A7) ITR Type / Ack. No. / Date', type: 'dropdown_text_date_combo', required: 'conditional' },
+              { name: 'itruEligibleUpdatedReturn', label: '(A8) Eligible for updated return?', type: 'dropdown', required: true, options: ['Yes', 'No'], notes: 'Per conditions in 1st–4th provisos' },
+              { name: 'itruFormType', label: '(A9) ITR form', type: 'dropdown', required: true, defaultValue: 'ITR3', readOnly: true },
+              { name: 'itruReasonsUpdating', label: '(A10) Reasons for updating (up to 2)', type: 'dropdown', required: true, multiple: true, notes: '7 reasons available' },
+              { name: 'itruFilingPeriod', label: '(A11) Filing period', type: 'dropdown', required: true, options: ['Up to 12 months', '12–24 months', '24–36 months', '36–48 months'] },
+              { name: 'itruReducingCflDepreciationCredit', label: '(A12) Reducing CFL/depreciation/tax credit?', type: 'radio', required: true, options: ['Yes', 'No'] },
+              { name: 'itruAyRowsAffected', label: '(A12b) AY rows affected (2 rows)', type: 'table', required: 'conditional', columns: ['AY', 'Filed?'] }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 6,
+    label: 'Tax Summary',
+    route: 'tax-summary',
+    subsections: [
+      {
+        id: 'tax_computation_dashboard',
+        label: 'Tax Summary Dashboard & Validation Metadata',
+        fieldSections: [
+          {
+            id: 'amt_computation_fields',
+            label: 'Schedule AMT — Alternate Minimum Tax Computations',
+            fields: [
+              { name: 'amtTotalIncomePartB', item: '1', label: 'Total Income from Part B-TI', type: 'amount', readOnly: true, computed: true },
+              { name: 'amtDeductionChapterVia', item: '2a', label: 'Deduction claimed u/s Chapter VI-A (Part C)', type: 'amount', readOnly: true, computed: true },
+              { name: 'amtDeduction10AA', item: '2b', label: 'Deduction claimed u/s 10AA', type: 'amount', readOnly: true, computed: true },
+              { name: 'amtDeduction35AD', item: '2c', label: 'Deduction claimed u/s 35AD minus depreciation', type: 'amount', readOnly: true, computed: true },
+              { name: 'amtTotalAdjustment', item: '2d', label: 'Total Adjustment', type: 'amount', readOnly: true, computed: true },
+              { name: 'amtAdjustedTotalIncome', item: '3', label: 'Adjusted Total Income u/s 115JC(1) (1+2d)', type: 'amount', readOnly: true, computed: true },
+              { name: 'amtFromIfscUnits', item: '3a', label: 'From IFSC units', type: 'amount', readOnly: true, computed: true },
+              { name: 'amtFromOtherUnits', item: '3b', label: 'From other units (3–3a)', type: 'amount', readOnly: true, computed: true },
+              { name: 'amtTaxCalculated', item: '4', label: 'AMT Tax (9% of 3a + 18.5% of 3b) if 3 > ₹20 lakh', type: 'amount', readOnly: true, computed: true }
+            ]
+          },
+          {
+            id: 'foreign_income_summary_fields',
+            label: 'Schedules FSI & TR — Foreign Source Income Relief',
+            fields: [
+              { name: 'fsiCountryBlock', label: '16.9 Schedule FSI — Foreign Source Income (Residents, up to 4 countries)', type: 'table', columns: ['Country Code Dropdown', 'TIN', 'Salary Head Row', 'HP Head Row', 'Business or Profession Head Row', 'Capital Gains Head Row', 'Other Sources Head Row'], notes: 'Columns track: Income outside India / Tax paid outside / Tax payable in India / Tax Relief / DTAA Article' },
+              { name: 'trTaxReliefSummary', label: '16.10 Schedule TR — Tax Relief Summary (Residents)', type: 'auto', notes: 'Aggregates values from individual country sheets' }
+            ]
+          }
+        ]
+      }
+    ]
   }
-};
+];
 
-export default itr3FieldConfig;
+export const individual3ConfigMapping = {};
 
-function mapFieldSection(fieldSection) {
-  const normalFields = [];
-  const extraSections = [];
+itr3FieldConfig.forEach(step => {
+  individual3ConfigMapping[step.route] = {};
+  step.subsections.forEach(sub => {
+    individual3ConfigMapping[step.route][sub.id] = {
+      title: sub.label,
+      sections: sub.fieldSections.map(fs => {
+        const normalFields = [];
+        const extraSections = [];
+        fs.fields.forEach(f => {
+          let fieldConfig = { ...f };
 
-  fieldSection.fields.forEach(field => {
-    if (field.type === 'Table' || field.type === 'Matrix') {
-      extraSections.push({
-        title: field.label,
-        description: field.notes,
-        isList: true,
-        listName: field.name,
-        fields: (field.columns || []).map(col => ({
-          name: typeof col === 'string' ? col.replace(/[^a-zA-Z0-9]/g, '') : (col.name || 'col'),
-          label: typeof col === 'string' ? col : col.label,
-          type: 'Text', // fallback
-          required: false
-        }))
-      });
-    } else if (field.type === 'FormProfile' || field.type === 'FormSubModule' || field.type === 'SubForm') {
-      extraSections.push({
-        title: field.label,
-        description: field.notes,
-        fields: (field.fields || []).map(subF => typeof subF === 'string' ? {name: subF.replace(/[^a-zA-Z0-9]/g, ''), label: subF, type: 'Text'} : subF)
-      });
-    } else {
-      normalFields.push(field);
-    }
+          if (fieldConfig.type) {
+            fieldConfig.type = fieldConfig.type.toLowerCase();
+          }
+
+          if (fieldConfig.dependOn) {
+            fieldConfig.conditionalOn = fieldConfig.dependOn;
+            delete fieldConfig.dependOn;
+          }
+
+          if (typeof fieldConfig.condition === 'string') {
+            const matchEq = fieldConfig.condition.match(/([a-zA-Z0-9_]+)\s*===\s*['"]([^'"]+)['"]/);
+            if (matchEq) {
+              fieldConfig.conditionalOn = {
+                field: matchEq[1],
+                value: matchEq[2]
+              };
+              delete fieldConfig.condition;
+            } else {
+              delete fieldConfig.condition;
+            }
+          }
+
+          if (fieldConfig.type === 'table' || fieldConfig.type === 'matrix') {
+            extraSections.push({
+              title: fieldConfig.label,
+              description: fieldConfig.note || fieldConfig.notes,
+              isList: true,
+              listName: fieldConfig.name,
+              fields: (fieldConfig.columns || []).map(col => {
+                if (typeof col === 'string') {
+                  return { name: col.replace(/[^a-zA-Z0-9]/g, ''), label: col, type: 'text', required: false };
+                }
+                return {
+                  ...col,
+                  type: col.type ? col.type.toLowerCase() : 'text',
+                  required: false
+                };
+              })
+            });
+          } else if (fieldConfig.type === 'formprofile' || fieldConfig.type === 'formsubmodule' || fieldConfig.type === 'sub_form') {
+            if (fieldConfig.fields) {
+              extraSections.push({
+                title: fieldConfig.label,
+                description: fieldConfig.note || fieldConfig.notes,
+                fields: fieldConfig.fields.map(sub => {
+                  if (typeof sub === 'string') {
+                    return { name: sub.replace(/[^a-zA-Z0-9]/g, ''), label: sub, type: 'text' };
+                  }
+                  return {
+                    ...sub,
+                    type: sub.type ? sub.type.toLowerCase() : 'text'
+                  };
+                })
+              });
+            } else {
+              normalFields.push(fieldConfig);
+            }
+          } else {
+            normalFields.push(fieldConfig);
+          }
+        });
+        const sections = [];
+        if (normalFields.length > 0) sections.push({ title: fs.label, fields: normalFields });
+        return [...sections, ...extraSections];
+      }).flat()
+    };
   });
+});
 
-  const sections = [];
-  if (normalFields.length > 0) {
-    sections.push({
-      title: fieldSection.label || fieldSection.title,
-      fields: normalFields
-    });
-  }
-  return [...sections, ...extraSections];
+// Provide a fallback for efiling if requested by DynamicFilingStep
+if (individual3ConfigMapping.filing && individual3ConfigMapping.filing['bank_details_schedules']) {
+  individual3ConfigMapping.filing.efiling = individual3ConfigMapping.filing['bank_details_schedules'];
 }
 
-function mapSubsectionsToSections(subsections) {
-  let allSections = [];
-  if (!subsections) return allSections;
-  Object.values(subsections).forEach(sub => {
-    if (sub.fieldSections) {
-      Object.values(sub.fieldSections).forEach(fs => {
-        allSections = allSections.concat(mapFieldSection(fs));
-      });
-    }
-  });
-  return allSections;
-}
-
-export const individual3ConfigMapping = {
-  details: {
-    permanent: {
-      title: itr3FieldConfig.profileAndGeneralInfo.label,
-      sections: mapSubsectionsToSections({
-        personalAndIdentity: {
-          fieldSections: {
-            personalIdentity: itr3FieldConfig.profileAndGeneralInfo.subsections.personalAndIdentity.fieldSections.personalIdentity,
-            addressDetails: itr3FieldConfig.profileAndGeneralInfo.subsections.personalAndIdentity.fieldSections.addressDetails,
-            contactDetails: itr3FieldConfig.profileAndGeneralInfo.subsections.personalAndIdentity.fieldSections.contactDetails
-          }
-        }
-      })
-    },
-    karta: {
-      title: itr3FieldConfig.profileAndGeneralInfo.label,
-      sections: mapSubsectionsToSections({
-        mixed: {
-          fieldSections: {
-            residentialStatus: itr3FieldConfig.profileAndGeneralInfo.subsections.personalAndIdentity.fieldSections.residentialStatus,
-            taxRegime115BAC: itr3FieldConfig.profileAndGeneralInfo.subsections.filingAndRegimeCompliance.fieldSections.taxRegime115BAC
-          }
-        }
-      })
-    },
-    members: {
-      title: itr3FieldConfig.profileAndGeneralInfo.label,
-      sections: mapSubsectionsToSections({
-        mixed: {
-          fieldSections: {
-            filingMetadata: itr3FieldConfig.profileAndGeneralInfo.subsections.filingAndRegimeCompliance.fieldSections.filingMetadata,
-            seventhProviso: itr3FieldConfig.profileAndGeneralInfo.subsections.filingAndRegimeCompliance.fieldSections.seventhProviso,
-            representativeAssessee: itr3FieldConfig.profileAndGeneralInfo.subsections.filingAndRegimeCompliance.fieldSections.representativeAssessee
-          }
-        }
-      })
-    },
-    additional: {
-      title: itr3FieldConfig.profileAndGeneralInfo.label,
-      sections: mapSubsectionsToSections({
-        mixed: {
-          fieldSections: {
-            specialDisclosures: itr3FieldConfig.profileAndGeneralInfo.subsections.filingAndRegimeCompliance.fieldSections.specialDisclosures,
-            statutoryBenefits: itr3FieldConfig.profileAndGeneralInfo.subsections.filingAndRegimeCompliance.fieldSections.statutoryBenefits,
-            auditInformation: itr3FieldConfig.profileAndGeneralInfo.subsections.filingAndRegimeCompliance.fieldSections.auditInformation,
-            businessClassification: itr3FieldConfig.businessAccountsAndSchedules.subsections.natureOfBusiness.fieldSections.businessClassification
-          }
-        }
-      })
-    }
-  },
-  income: {
-    business: {
-      title: itr3FieldConfig.headsOfIncomeComputation.subsections.scheduleBP_BusinessComputation.label,
-      sections: mapSubsectionsToSections({
-        scheduleBP_BusinessComputation: itr3FieldConfig.headsOfIncomeComputation.subsections.scheduleBP_BusinessComputation
-      })
-    },
-    house_property: {
-      title: itr3FieldConfig.headsOfIncomeComputation.subsections.scheduleHP_HouseProperty.label,
-      sections: mapSubsectionsToSections({
-        scheduleHP_HouseProperty: itr3FieldConfig.headsOfIncomeComputation.subsections.scheduleHP_HouseProperty
-      })
-    },
-    other: {
-      title: itr3FieldConfig.headsOfIncomeComputation.subsections.scheduleS_Salaries.label,
-      sections: mapSubsectionsToSections({
-        scheduleS_Salaries: itr3FieldConfig.headsOfIncomeComputation.subsections.scheduleS_Salaries
-      })
-    }
-  },
-  financials: {
-    balance_sheet: {
-      title: itr3FieldConfig.businessAccountsAndSchedules.subsections.balanceSheet.label,
-      sections: mapSubsectionsToSections({
-        balanceSheet: itr3FieldConfig.businessAccountsAndSchedules.subsections.balanceSheet
-      })
-    },
-    profit_loss: {
-      title: itr3FieldConfig.businessAccountsAndSchedules.subsections.manufacturingTradingPL.label,
-      sections: mapSubsectionsToSections({
-        manufacturingTradingPL: itr3FieldConfig.businessAccountsAndSchedules.subsections.manufacturingTradingPL,
-        auditOtherAndQuantativeDetails: itr3FieldConfig.businessAccountsAndSchedules.subsections.auditOtherAndQuantativeDetails
-      })
-    }
-  },
-  deductions: {
-    chapter6a: {
-      title: itr3FieldConfig.globalTaxComputationAndVerification.subsections.deductionsAndSchedules.fieldSections.chapterVIA_Deductions.label,
-      sections: mapSubsectionsToSections({
-        mixed: {
-          fieldSections: {
-            chapterVIA_Deductions: itr3FieldConfig.globalTaxComputationAndVerification.subsections.deductionsAndSchedules.fieldSections.chapterVIA_Deductions,
-            amtTaxComputation: itr3FieldConfig.globalTaxComputationAndVerification.subsections.deductionsAndSchedules.fieldSections.amtTaxComputation
-          }
-        }
-      })
-    },
-    exempt_income: {
-      title: itr3FieldConfig.globalTaxComputationAndVerification.subsections.deductionsAndSchedules.fieldSections.exemptIncomeGrid.label,
-      sections: mapSubsectionsToSections({
-        mixed: {
-          fieldSections: {
-            exemptIncomeGrid: itr3FieldConfig.globalTaxComputationAndVerification.subsections.deductionsAndSchedules.fieldSections.exemptIncomeGrid,
-            foreignSourceIncomeSummary: itr3FieldConfig.globalTaxComputationAndVerification.subsections.deductionsAndSchedules.fieldSections.foreignSourceIncomeSummary
-          }
-        }
-      })
-    }
-  },
-  taxes: {
-    tds: {
-      title: "Tax Deducted at Source",
-      sections: mapSubsectionsToSections({
-        mixed: {
-          fieldSections: {
-            tds2NonSalaryLedger: itr3FieldConfig.globalTaxComputationAndVerification.subsections.deductionsAndSchedules.fieldSections.tds2NonSalaryLedger
-          }
-        }
-      })
-    },
-    tcs: {
-      title: "Tax Collected at Source",
-      sections: mapSubsectionsToSections({
-        mixed: {
-          fieldSections: {
-            tcsLedger: itr3FieldConfig.globalTaxComputationAndVerification.subsections.deductionsAndSchedules.fieldSections.tcsLedger
-          }
-        }
-      })
-    },
-    advance_tax: {
-      title: "Advance Tax",
-      sections: mapSubsectionsToSections({
-        mixed: {
-          fieldSections: {
-            advanceTaxLedger: itr3FieldConfig.globalTaxComputationAndVerification.subsections.deductionsAndSchedules.fieldSections.advanceTaxLedger
-          }
-        }
-      })
-    }
-  },
-  filing: {
-    bank: {
-      title: itr3FieldConfig.globalTaxComputationAndVerification.subsections.partB_TTI_AndUpdatedReturn.fieldSections.bankAccountsGrid.label,
-      sections: mapSubsectionsToSections({
-        mixed: {
-          fieldSections: {
-            bankAccountsGrid: itr3FieldConfig.globalTaxComputationAndVerification.subsections.partB_TTI_AndUpdatedReturn.fieldSections.bankAccountsGrid
-          }
-        }
-      })
-    },
-    efiling: {
-      title: "E-Filing & Verification",
-      sections: mapSubsectionsToSections({
-        mixed: {
-          fieldSections: {
-            updatedReturnMetadata: itr3FieldConfig.globalTaxComputationAndVerification.subsections.partB_TTI_AndUpdatedReturn.fieldSections.updatedReturnMetadata,
-            updatedReturnComputation: itr3FieldConfig.globalTaxComputationAndVerification.subsections.partB_TTI_AndUpdatedReturn.fieldSections.updatedReturnComputation
-          }
-        }
-      })
-    }
-  }
-};
+export default itr3FieldConfig;   

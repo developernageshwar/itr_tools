@@ -21,6 +21,8 @@ function UploadForm16Page() {
   const setItrFields = useItrStore((state) => state.setFields);
   const userId = useItrStore((state) => state.userId);
   const profileId = useItrStore((state) => state.activeProfileId);
+  const filingType = useItrStore((state) => state.selectedFilingType || state.entityType || 'Individual');
+  const lowerFilingType = filingType.toLowerCase();
   const [openFaq, setOpenFaq] = useState(null);
 
   const [stage, setStage] = useState('UPLOAD');
@@ -166,7 +168,7 @@ function UploadForm16Page() {
 
     setItrFields(finalPayload);
     toast.success("Form 16 data extracted successfully!");
-    router.push('/dashboard/income-sources');
+    router.push(`/dashboard/${lowerFilingType}/income`);
   };
 
   const handleFileUpload = async (file) => {
@@ -311,7 +313,7 @@ function UploadForm16Page() {
             {stage === 'UPLOAD' && (
               <Button
                 className="w-full h-[58px] bg-gradient-to-r from-[#C8D7FF] to-[#E9D1FE] text-[#3867D6] rounded-xl font-semibold text-[18px] shadow-sm hover:opacity-90 transition-all font-poppins mt-2"
-                onClick={() => router.push('/dashboard/income-sources')}
+                onClick={() => router.push(`/dashboard/${lowerFilingType}/income`)}
               >
                 Save & Continue
               </Button>
@@ -387,7 +389,7 @@ function UploadForm16Page() {
                 </div>
 
                 <div className="flex max-w-[973px] justify-center cursor-pointer">
-                  <button onClick={() => router.push('/dashboard/income-sources')} className="w-auto h-10 rotate-0 opacity-100 gap-2.5 rounded-lg py-2 px-4 bg-gradient-to-r from-[#1498EB] to-[#962DE3] text-transparent bg-clip-text font-semibold text-[16px]">
+                  <button onClick={() => router.push(`/dashboard/${lowerFilingType}/income`)} className="w-auto h-10 rotate-0 opacity-100 gap-2.5 rounded-lg py-2 px-4 bg-gradient-to-r from-[#1498EB] to-[#962DE3] text-transparent bg-clip-text font-semibold text-[16px]">
                     Continue without Form 16
                   </button>
                 </div>

@@ -28,7 +28,7 @@ const RegimeComparisonModal = ({ isOpen, onClose, onSwitchClick }) => {
     const { selectedRegime, calculateSummary } = state;
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     const [isDifferencesOpen, setIsDifferencesOpen] = useState(false);
-    
+
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';
@@ -59,7 +59,7 @@ const RegimeComparisonModal = ({ isOpen, onClose, onSwitchClick }) => {
         <AnimatePresence>
             {isOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity duration-300">
-                    <motion.div 
+                    <motion.div
                         initial={{ y: 50, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         exit={{ y: 50, opacity: 0 }}
@@ -155,10 +155,10 @@ const RegimeComparisonModal = ({ isOpen, onClose, onSwitchClick }) => {
                                         <span>Detailed comparison of New and Old regime</span>
                                         <MdClose size={20} className={`transform transition-transform ${isDetailsOpen ? 'rotate-0' : 'rotate-45'}`} />
                                     </div>
-                                    
+
                                     <AnimatePresence>
                                         {isDetailsOpen && (
-                                            <motion.div 
+                                            <motion.div
                                                 initial={{ height: 0, opacity: 0 }}
                                                 animate={{ height: 'auto', opacity: 1 }}
                                                 exit={{ height: 0, opacity: 0 }}
@@ -253,7 +253,7 @@ const RegimeComparisonModal = ({ isOpen, onClose, onSwitchClick }) => {
 
                                     <AnimatePresence>
                                         {isDifferencesOpen && (
-                                            <motion.div 
+                                            <motion.div
                                                 initial={{ height: 0, opacity: 0 }}
                                                 animate={{ height: 'auto', opacity: 1 }}
                                                 exit={{ height: 0, opacity: 0 }}

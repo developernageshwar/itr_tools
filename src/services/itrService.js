@@ -47,8 +47,9 @@ const itrService = {
       const response = await axios.post(`${API_BASE_URL}/save_draft.php`, payload);
       return response.data;
     } catch (error) {
-      console.error('Error saving draft:', error);
-      throw error;
+      console.warn('Draft save failed (Network/API issue):', error.message);
+      // Return a safe fallback rather than throwing, to prevent Next.js error overlays during navigation
+      return { success: false, error: error.message };
     }
   },
 

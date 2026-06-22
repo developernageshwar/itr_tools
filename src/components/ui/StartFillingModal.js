@@ -13,7 +13,9 @@ const StartFillingModal = ({ isOpen, onClose }) => {
   const { selectedFilingType, setSelectedFilingType, createNewProfile } = useItrStore();
 
   const options = [
-    'Individual','Individual2', 'Individual3','Individual4',  'HUF',
+     'Individual1', 'Individual2', 'Individual3', 'Individual4',  
+    //  'Individual', 
+    'HUF',
     'AOP/BOI', 'Company Public',
     'Company Private', 'Firm', 
      'LLP', 'Trust & Exempt Entities' 
@@ -22,11 +24,25 @@ const StartFillingModal = ({ isOpen, onClose }) => {
   // Cooperative Society  
 
   const handleProceed = () => {
-    createNewProfile(selectedFilingType); 
-    onClose();
-    const route = filingTypeConfig[selectedFilingType]?.detailsRoute || '/dashboard/pan-details';
-    router.push(route);
-  };
+      createNewProfile(selectedFilingType); 
+      onClose();
+      const route = filingTypeConfig[selectedFilingType]?.detailsRoute || '/dashboard/pan-details';
+      router.push(route);
+  };  
+
+
+
+  // const handleProceed = () => {
+  //   if (selectedFilingType === 'Individual') {
+  //     onClose();
+  //     router.push('/dashboard/eligibility');
+  //   } else {
+  //     createNewProfile(selectedFilingType); 
+  //     onClose();
+  //     const route = filingTypeConfig[selectedFilingType]?.detailsRoute || '/dashboard/pan-details';
+  //     router.push(route);
+  //   }
+  // }; 
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} className="w-[800px]    rounded-[16px] border border-[#C7C7CC] opacity-100">

@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation';
 import { useItrStore } from '@/store/itrStore';
 import { useAuth } from '@/context/AuthContext';
 import { fieldsConfig } from '@/config/fieldsConfig';
+import { individualConfigMapping, itr1ConfigMapping } from '@/config/individualFieldConfig';
 import { individual2ConfigMapping } from '@/config/individual2FieldConfig';
 import { individual3ConfigMapping } from '@/config/individual3FieldConfig';
-import { individual4ConfigMapping } from '@/config/individual4FieldConfig';
+import { itr4ConfigMapping } from '@/config/individual4FieldConfig';
 import { filingTypeConfig } from '@/config/filingConfig';
 import FloatingInput from '@/components/ui/FloatingInput';
 import FormSection from '@/components/ui/FormSection';
@@ -25,10 +26,10 @@ import ConfirmRegimeChangeModal from '@/components/modals/ConfirmRegimeChangeMod
 
 const getUniqueId = () => Date.now();
 
-const isStructuredType = (type) => ['HUF', 'LLP', 'Firm', 'AOP/BOI', 'Company Private', 'Company Public', 'Trust & Exempt Entities', 'Individual2', 'Individual3', 'Individual4'].includes(type);
+const isStructuredType = (type) => ['HUF', 'LLP', 'Firm', 'AOP/BOI', 'Company Private', 'Company Public', 'Trust & Exempt Entities', 'Individual', 'ITR1', 'ITR2', 'ITR3', 'ITR4', 'Individual1', 'Individual2', 'Individual3', 'Individual4'].includes(type);
 
 const renderLabelWithAsterisk = (labelStr) => {
-  if (typeof labelStr === 'string' && labelStr.includes('*')) {
+  if (typeof labelStr === 'string' && labelStr.includes('*')) { 
     const parts = labelStr.split('*');
     return (
       <>
@@ -158,7 +159,7 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
   };
   const handleRegimeSwitchClick = () => {
     setIsRegimeModalOpen(false);
-    setIsConfirmModalOpen(true);
+    setIsConfirmModalOpen(true); 
   };
   const handleRegimeConfirm = () => {
     const newRegime = state.selectedRegime === 'new' ? 'old' : 'new';
@@ -179,13 +180,20 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
 
   const validate = (entityType, currentStep, currentSubTab, data) => {
     const newErrors = {};
-    const tabFieldsConfig = entityType === 'Individual2'
-      ? individual2ConfigMapping[currentStep]?.[currentSubTab]
-      : entityType === 'Individual3'
-        ? individual3ConfigMapping[currentStep]?.[currentSubTab]
-        : entityType === 'Individual4'
-          ? individual4ConfigMapping[currentStep]?.[currentSubTab]
-          : fieldsConfig[entityType]?.[currentStep]?.[currentSubTab];
+    if (entityType === 'Individual' || entityType === 'Individual1' || entityType === 'ITR1') {
+      return newErrors;
+    }
+    const tabFieldsConfig = entityType === 'Individual'
+      ? individualConfigMapping[currentStep]?.[currentSubTab]
+      : entityType === 'ITR1' || entityType === 'Individual1'
+        ? itr1ConfigMapping[currentStep]?.[currentSubTab]
+          : entityType === 'ITR2' || entityType === 'Individual2'
+            ? individual2ConfigMapping[currentStep]?.[currentSubTab]
+            : entityType === 'ITR3' || entityType === 'Individual3'
+              ? individual3ConfigMapping[currentStep]?.[currentSubTab]
+              : entityType === 'ITR4' || entityType === 'Individual4'
+                ? itr4ConfigMapping[currentStep]?.[currentSubTab]
+                : fieldsConfig[entityType]?.[currentStep]?.[currentSubTab];
     if (!tabFieldsConfig || !tabFieldsConfig.sections) return newErrors;
 
     // Skip validation for optional steps/subtabs if they are completely empty
@@ -262,7 +270,7 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
         }
 
         // Special check: bank details under filing -> bank must have at least one account
-        if (stepRoute === 'filing' && tabKey === 'bank') {
+        if (stepRoute === 'filing' && tabKey === 'bank' && !['Individual', 'ITR1'].includes(filingType)) {
           const bankAccountsList = currentData.bankAccounts || [];
           if (bankAccountsList.length === 0) {
             if (!allErrors[`${stepRoute}_${tabKey}`]) {
@@ -476,13 +484,17 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
   };
 
 
-  const tabConfig = filingType === 'Individual2'
-    ? individual2ConfigMapping[step]?.[activeTab]
-    : filingType === 'Individual3'
-      ? individual3ConfigMapping[step]?.[activeTab]
-      : filingType === 'Individual4'
-        ? individual4ConfigMapping[step]?.[activeTab]
-        : fieldsConfig[filingType]?.[step]?.[activeTab];
+  const tabConfig = filingType === 'Individual'
+    ? individualConfigMapping[step]?.[activeTab]
+    : filingType === 'ITR1' || filingType === 'Individual1'
+      ? itr1ConfigMapping[step]?.[activeTab]
+      : filingType === 'ITR2' || filingType === 'Individual2'
+        ? individual2ConfigMapping[step]?.[activeTab]
+        : filingType === 'ITR3' || filingType === 'Individual3'
+          ? individual3ConfigMapping[step]?.[activeTab]
+          : filingType === 'ITR4' || filingType === 'Individual4'
+            ? itr4ConfigMapping[step]?.[activeTab]
+            : fieldsConfig[filingType]?.[step]?.[activeTab];
 
 
   const getInputPlaceholderLabel = (field) => {
@@ -519,17 +531,19 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
     const nameLower = name?.toLowerCase() || '';
     let finalVal = value;
 
-    if (isNumber || nameLower.includes('income') || nameLower.includes('turnover') || nameLower.includes('amount') || nameLower.includes('profit') || nameLower.includes('deduction') || nameLower.includes('rent') || nameLower.includes('receipt') || nameLower.includes('tax')) {
+    if (Array.isArray(value) || (value !== null && typeof value === 'object')) {
+      // Skip text replacements for complex structures like arrays
+    } else if (isNumber || nameLower.includes('income') || nameLower.includes('turnover') || nameLower.includes('amount') || nameLower.includes('profit') || nameLower.includes('deduction') || nameLower.includes('rent') || nameLower.includes('receipt') || nameLower.includes('tax')) {
       // Allow only digits for pure number fields
-      finalVal = value.replace(/[^0-9]/g, "");
+      finalVal = String(value).replace(/[^0-9]/g, "");
     } else if (nameLower.includes('pan') || (nameLower.includes('tan') && (nameLower.includes('deductor') || nameLower.includes('collector')))) {
       // PAN/TAN: uppercase alphanumeric only
-      finalVal = value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+      finalVal = String(value).toUpperCase().replace(/[^A-Z0-9]/g, "");
     } else if (nameLower.includes('ifsc')) {
-      finalVal = value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+      finalVal = String(value).toUpperCase().replace(/[^A-Z0-9]/g, "");
     } else if (nameLower.includes('mobile') || nameLower.includes('aadhaar') || nameLower.includes('pincode')) {
       // Digits only
-      finalVal = value.replace(/[^0-9]/g, "");
+      finalVal = String(value).replace(/[^0-9]/g, "");
     }
 
     if (isStructuredType(filingType)) {
@@ -537,8 +551,8 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
       const subTabData = stepData[activeTab] || {};
       const updatedSubTabData = { ...subTabData, [name]: finalVal };
 
-      // Auto-calculate Salary values for Individual2 (detailed Schedule S)
-      if (filingType === 'Individual2' && activeTab === 'salary') {
+      // Auto-calculate Salary values for ITR2 / Individual2 (detailed Schedule S)
+      if ((filingType === 'ITR2' || filingType === 'Individual2') && (activeTab === 'salary' || activeTab === 'schedule-s-salary')) {
         // --- Perquisites sub-components → salary17_2 ---
         const perqFields = ['accomodationPerquisite', 'carPerquisite', 'sweatEquityShares', 'otherPerquisites'];
         const s17_2_auto = perqFields.reduce((sum, f) => {
@@ -578,9 +592,137 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
         const chargeableSal = Math.max(0, netSal - (stdDed + entAllow + profTax));
         updatedSubTabData.incomeChargeableSalaries = chargeableSal.toString();
       }
+      if ((filingType === 'Individual' || filingType === 'ITR1' || filingType === 'Individual1') && (activeTab === 'salary' || activeTab === 'salary-pension-income')) {
+        const s17_1 = Number(name === 'salary17_1' ? finalVal : (subTabData.salary17_1 || 0));
+        const s17_2 = Number(name === 'salary17_2' ? finalVal : (subTabData.salary17_2 || 0));
+        const s17_3 = Number(name === 'salary17_3' ? finalVal : (subTabData.salary17_3 || 0));
+        const gross = s17_1 + s17_2 + s17_3;
+        updatedSubTabData.grossSalary = gross.toString();
 
-      // Auto-calculate House Property values for Individual2
-      if (filingType === 'Individual2' && activeTab === 'house_property') {
+        const regime = (state.details?.general?.optingOutNewRegime === 'Yes') ? 'old' : 'new';
+        const stdDedLimit = regime === 'new' ? 75000 : 50000;
+        const stdDed = Math.min(gross, stdDedLimit);
+        updatedSubTabData.deductionStandard = stdDed.toString();
+
+        const exempt = Number(name === 'exemptAllowances' ? finalVal : (subTabData.exemptAllowances || 0));
+        const profTax = Number(name === 'professionalTax' ? finalVal : (subTabData.professionalTax || 0));
+
+        const chargeableSal = Math.max(0, gross - exempt - stdDed - profTax);
+        updatedSubTabData.incomeChargeableSalaries = chargeableSal.toString();
+      }
+
+      if ((filingType === 'ITR1' || filingType === 'Individual1') && (activeTab === 'salary' || activeTab === 'salary-pension-income')) {
+        const getV = (fieldName) => Number(name === fieldName ? finalVal : (subTabData[fieldName] || 0));
+
+        // 1. Gross Salary (ia + ib + ic)
+        const s17_1 = getV('salary17_1');
+        const s17_2 = getV('salary17_2');
+        const s17_3 = getV('salary17_3');
+        const gross = s17_1 + s17_2 + s17_3;
+        updatedSubTabData.grossSalary = gross.toString();
+
+        // 2. HRA computation
+        const hraPlace = name === 'hraPlaceOfResidence' ? finalVal : (subTabData.hraPlaceOfResidence || '');
+        const factor = hraPlace.includes('Metro Cities') ? 0.50 : 0.40;
+
+        const hraActual = getV('hraActualReceived');
+        const rentPaid = getV('hraActualRentPaid');
+        const basicSal = getV('hraBasicSalary');
+        const dearness = getV('hraDearnessAllowance');
+
+        const salaryForHra = basicSal + dearness;
+
+        const rentMinusTen = Math.max(0, rentPaid - (0.10 * salaryForHra));
+        updatedSubTabData.hraRentMinusTenPercent = rentMinusTen.toString();
+
+        const pctSalary = salaryForHra * factor;
+        updatedSubTabData.hraFiftyOrFortyPercent = pctSalary.toString();
+
+        let hraExempt = 0;
+        if (hraPlace && hraActual > 0 && rentPaid > 0 && basicSal > 0) {
+          hraExempt = Math.min(hraActual, rentMinusTen, pctSalary);
+        }
+        updatedSubTabData.hraEligibleExemption = hraExempt.toString();
+        updatedSubTabData.sec10_13A = hraExempt.toString();
+
+        // 3. Exempt Allowances u/s 10 (List + Standalone HRA)
+        const exemptList = name === 'exemptAllowancesList' ? finalVal : (subTabData.exemptAllowancesList || []);
+        let listExemptSum = 0;
+        if (Array.isArray(exemptList)) {
+          listExemptSum = exemptList.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        }
+        const totalExempt = listExemptSum + hraExempt;
+
+        // 4. Net Salary
+        const netSal = Math.max(0, gross - totalExempt);
+        updatedSubTabData.netSalary = netSal.toString();
+
+        // 5. Standard Deduction
+        const regime = (state.details?.general?.optingOutNewRegime === 'Yes') ? 'old' : 'new';
+        const stdDedLimit = regime === 'new' ? 75000 : 50000;
+        const stdDed = Math.min(netSal, stdDedLimit);
+        updatedSubTabData.deductionStandard = stdDed.toString();
+
+        // 6. Deductions u/s 16
+        const dedEnt = getV('deductionEntertainment');
+        const dedProf = getV('deductionProfessionalTax');
+        const totalDeductions16 = stdDed + dedEnt + dedProf;
+        updatedSubTabData.deductionsTotal16 = totalDeductions16.toString();
+
+        // 7. Income chargeable under salaries
+        const chargeableSal = Math.max(0, netSal - totalDeductions16);
+        updatedSubTabData.incomeChargeableSalaries = chargeableSal.toString();
+      }
+
+      if ((filingType === 'ITR1' || filingType === 'Individual1') && (activeTab === 'house_property' || activeTab === 'house-property-income')) {
+        const getV = (fieldName) => Number(name === fieldName ? finalVal : (subTabData[fieldName] || 0));
+
+        // 1. Total (1b + 1c)
+        const unrealized = getV('unrealizedRent');
+        const munTax = getV('municipalTaxes');
+        const totalTaxRent = unrealized + munTax;
+        updatedSubTabData.totalTaxesRent = totalTaxRent.toString();
+
+        // 2. Annual Value (1a - 1d)
+        const grossRent = getV('grossRent');
+        const propType = name === 'propertyType' ? finalVal : (subTabData.propertyType || 'Let Out');
+        let annualVal = 0;
+        if (propType !== 'Self Occupied') {
+          annualVal = Math.max(0, grossRent - totalTaxRent);
+        }
+        updatedSubTabData.annualValue = annualVal.toString();
+
+        // 3. Annual Value of property owned
+        const isCoowned = (name === 'isCoOwned' ? finalVal : (subTabData.isCoOwned || 'No')) === 'Yes';
+        const pctShare = name === 'percentageShare' ? Number(finalVal) : Number(subTabData.percentageShare || 100);
+        const annualOwned = isCoowned ? Math.round(annualVal * (pctShare / 100)) : annualVal;
+        updatedSubTabData.annualValueOwned = annualOwned.toString();
+
+        // 4. 30% of annual value
+        const ded30 = Math.round(annualOwned * 0.30);
+        updatedSubTabData.deduction30 = ded30.toString();
+
+        // 5. Interest on borrowed capital (h)
+        const loans = name === 'loansList' ? finalVal : (subTabData.loansList || []);
+        let loansInterestSum = 0;
+        if (Array.isArray(loans)) {
+          loansInterestSum = loans.reduce((sum, loan) => sum + Number(loan.interest || 0), 0);
+        }
+        const cappedInterest = propType === 'Self Occupied' ? Math.min(200000, loansInterestSum) : loansInterestSum;
+        updatedSubTabData.interestBorrowedCapital = cappedInterest.toString();
+
+        // 6. Total (1g + 1h)
+        const totInterest = ded30 + cappedInterest;
+        updatedSubTabData.totalInterest = totInterest.toString();
+
+        // 7. Income from HP
+        const arrears = getV('arrearsRent');
+        const incomeHP = annualOwned - totInterest + arrears;
+        updatedSubTabData.incomeFromHP = incomeHP.toString();
+      }
+
+      // Auto-calculate House Property values for ITR2 / Individual2
+      if ((filingType === 'ITR2' || filingType === 'Individual2') && (activeTab === 'house_property' || activeTab === 'schedule-hp-house-property')) {
         const getV = (fieldName) => Number(name === fieldName ? finalVal : (subTabData[fieldName] || 0));
         const unrealized = getV('unrealizedRent');
         const munTax = getV('municipalTaxes');
@@ -615,8 +757,8 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
         updatedSubTabData.incomeFromHP = totalHpIncome.toString();
       }
 
-      // Auto-calculate Capital Gains values for Individual2
-      if (filingType === 'Individual2' && activeTab === 'capital_gains') {
+      // Auto-calculate Capital Gains values for ITR2 / Individual2
+      if ((filingType === 'ITR2' || filingType === 'Individual2') && (activeTab === 'capital_gains' || activeTab === 'schedule-cg-capital-gains')) {
         const getV = (fieldName) => Number(name === fieldName ? finalVal : (subTabData[fieldName] || 0));
 
         const stcgConsideration = getV('stcgImmovableConsideration');
@@ -671,8 +813,8 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
         updatedSubTabData.incomeFromVDA = incomeFromVDA.toString();
       }
 
-      // Auto-calculate Other Sources values for Individual2
-      if (filingType === 'Individual2' && activeTab === 'other') {
+      // Auto-calculate Other Sources values for ITR2 / Individual2
+      if ((filingType === 'ITR2' || filingType === 'Individual2') && (activeTab === 'other' || activeTab === 'schedule-os-other-sources')) {
         const getV = (fieldName) => Number(name === fieldName ? finalVal : (subTabData[fieldName] || 0));
 
         const familyPension = getV('familyPension');
@@ -686,8 +828,8 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
         updatedSubTabData.netOtherSourcesIncome = netOS.toString();
       }
 
-      // Auto-calculate Deductions values for Individual2
-      if (filingType === 'Individual2' && activeTab === 'chapter6a') {
+      // Auto-calculate Deductions values for ITR2 / Individual2
+      if ((filingType === 'ITR2' || filingType === 'Individual2') && (activeTab === 'chapter6a' || activeTab === 'schedule-via-deductions')) {
         const deds = ['deduction80C', 'deduction80CCC', 'deduction80CCD1', 'deduction80CCD2', 'deduction80D', 'deduction80DD', 'deduction80DDB', 'deduction80E', 'deduction80EEA', 'deduction80EEB', 'deduction80G', 'deduction80GG', 'deduction80GGC', 'deduction80TTA', 'deduction80TTB', 'deduction80U'];
         const totalDed = deds.reduce((sum, f) => {
           let val = Number(name === f ? finalVal : (subTabData[f] || 0));
@@ -699,8 +841,8 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
         updatedSubTabData.taxSavingsDeductions = totalDed.toString();
       }
 
-      // Auto-calculate values for Individual3 under Balance Sheet, Profit & Loss, and Business Computation
-      if (filingType === 'Individual3' && activeTab === 'balance_sheet') {
+      // Auto-calculate values for ITR3 under Balance Sheet, Profit & Loss, and Business Computation
+      if (filingType === 'ITR3' && activeTab === 'balance_sheet') {
         const getV = (fieldName) => Number(name === fieldName ? finalVal : (subTabData[fieldName] || 0));
 
         // Reserves
@@ -805,7 +947,7 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
         updatedSubTabData.totalApplication = totalApplication.toString();
       }
 
-      if (filingType === 'Individual3' && activeTab === 'profit_loss') {
+      if (filingType === 'ITR3' && activeTab === 'profit_loss') {
         const getV = (fieldName) => Number(name === fieldName ? finalVal : (subTabData[fieldName] || 0));
 
         // Manufacturing
@@ -897,7 +1039,7 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
         const totalExpenses = stdBusExp + compEmp + insWelf + commissionRoyalty + travelAdmin + ratesTaxes + auditFee + otherExpenses + totalBad + provInt;
       }
 
-      if (filingType === 'Individual3' && activeTab === 'business') {
+      if (filingType === 'ITR3' && activeTab === 'business') {
         const getV = (fieldName) => Number(name === fieldName ? finalVal : (subTabData[fieldName] || 0));
 
         // Try to fetch netProfitBeforeTax from PL financials step if PL exists
@@ -930,8 +1072,8 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
         updatedSubTabData.finalNetBpIncome = finalNetBp.toString();
       }
 
-      // Auto-calculate Salary values for Individual4 under "other" tab
-      if (filingType === 'Individual4' && activeTab === 'other') {
+      // Auto-calculate Salary values for ITR4 under "other" tab
+      if (filingType === 'ITR4' && activeTab === 'other') {
         const s17_1 = Number(name === 'salarySec17_1' ? finalVal : (subTabData.salarySec17_1 || 0));
         const s17_2 = Number(name === 'perquisitesSec17_2' ? finalVal : (subTabData.perquisitesSec17_2 || 0));
         const gross = s17_1 + s17_2;
@@ -947,8 +1089,8 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
         updatedSubTabData.salaryIncome = chargeableSal.toString();
       }
 
-      // Auto-calculate for Individual4 Presumptive Business (44AD) & Profession (44ADA)
-      if (filingType === 'Individual4' && activeTab === 'business') {
+      // Auto-calculate for ITR4 Presumptive Business (44AD) & Profession (44ADA)
+      if (filingType === 'ITR4' && activeTab === 'business') {
         if (name === 'turnoverBank' || name === 'turnoverCash') {
           const bank = Number(name === 'turnoverBank' ? finalVal : (subTabData.turnoverBank || 0));
           const cash = Number(name === 'turnoverCash' ? finalVal : (subTabData.turnoverCash || 0));
@@ -1183,16 +1325,17 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
     setErrors(prev => ({ ...prev, [name]: null }));
     setNewMemberData(prev => {
       const updated = { ...prev, [name]: value };
-      if (['LLP', 'Firm', 'AOP/BOI'].includes(filingType) && activeTab === 'house_property') {
-        const rent = Number(name === 'rentReceived' ? value : (prev.rentReceived || 0));
-        const taxes = Number(name === 'municipalTaxes' ? value : (prev.municipalTaxes || 0));
+      if (['Individual', 'ITR1', 'LLP', 'Firm', 'AOP/BOI'].includes(filingType) && activeTab === 'house_property') {
+        const propType = name === 'propertyType' ? value : (prev.propertyType || 'Let Out');
+        const rent = propType === 'Self Occupied' ? 0 : Number(name === 'rentReceived' ? value : (prev.rentReceived || 0));
+        const taxes = propType === 'Self Occupied' ? 0 : Number(name === 'municipalTaxes' ? value : (prev.municipalTaxes || 0));
         const loan = Number(name === 'homeLoanInterest' ? value : (prev.homeLoanInterest || 0));
         const netValue = rent - taxes;
-        const stdDeduction = Math.round(netValue * 0.3);
-        const income = netValue - stdDeduction - loan;
+        const stdDeduction = propType === 'Self Occupied' ? 0 : Math.round(netValue * 0.3);
+        const income = propType === 'Self Occupied' ? -Math.min(200000, loan) : netValue - stdDeduction - loan;
         updated.incomeFromProperty = income.toString();
       }
-      if (filingType === 'Individual3' && activeTab === 'house_property') {
+      if (filingType === 'ITR3' && activeTab === 'house_property') {
         const rent = Number(name === 'grossRentReceived' ? value : (prev.grossRentReceived || 0));
         const taxes = Number(name === 'localTaxesPaid' ? value : (prev.localTaxesPaid || 0));
         const annual = Math.max(0, rent - taxes);
@@ -1200,7 +1343,7 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
         updated.annualValueHP = annual.toString();
         updated.standardDeduction30 = stdDed.toString();
       }
-      if (filingType === 'Individual3' && activeTab === 'other') {
+      if (filingType === 'ITR3' && activeTab === 'other') {
         const s17_1 = Number(name === 'salarySec17_1' ? value : (prev.salarySec17_1 || 0));
         const s17_2 = Number(name === 'perquisitesSec17_2' ? value : (prev.perquisitesSec17_2 || 0));
         const s17_3 = Number(name === 'profitInLieuSalary' ? value : (prev.profitInLieuSalary || 0));
@@ -1509,17 +1652,17 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
     const isStructured = isStructuredType(filingType);
     if (!isStructured) return { entityName: null, formationDate: null, panNumber: null };
 
-    if (filingType === 'Individual4') {
+    if (filingType === 'ITR4') {
       const perm = state.details?.permanent || {};
       const fullName = [perm.firstName, perm.middleName, perm.lastName].filter(Boolean).join(' ');
       return {
         entityName: fullName || '',
         formationDate: perm.dobFormation || '',
-        panNumber: perm.panNumber || '',
+        panNumber: perm.panNumber || '',  
       };
     }
 
-    if (filingType === 'Individual2') {
+    if (filingType === 'ITR2') {
       const perm = state.details?.permanent || {};
       const fullName = [perm.firstName, perm.middleName, perm.lastName].filter(Boolean).join(' ');
       return {
@@ -1529,7 +1672,7 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
       };
     }
 
-    if (filingType === 'Individual3') {
+    if (filingType === 'ITR3') {
       const perm = state.details?.permanent || {};
       const fullName = [perm.firstName, perm.middleName, perm.lastName].filter(Boolean).join(' ');
       return {
@@ -1619,16 +1762,18 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
     const panNumber = entityInfo.panNumber;
     const currentData = isStructuredType(filingType) ? (state[step]?.[activeTab] || {}) : state;
     let efileConfig;
-    if (filingType === 'Individual2') {
+    if (filingType === 'ITR1' || filingType === 'Individual1') {
+      efileConfig = itr1ConfigMapping[step]?.[activeTab] || itr1ConfigMapping.filing?.efiling;
+    } else if (filingType === 'ITR2' || filingType === 'Individual2') {
       efileConfig = individual2ConfigMapping[step]?.[activeTab] || individual2ConfigMapping.filing?.efiling;
-    } else if (filingType === 'Individual3') {
+    } else if (filingType === 'ITR3' || filingType === 'Individual3') {
       efileConfig = individual3ConfigMapping[step]?.[activeTab] || individual3ConfigMapping.filing?.efiling;
-    } else if (filingType === 'Individual4') {
-      efileConfig = individual4ConfigMapping[step]?.[activeTab] || individual4ConfigMapping.filing?.efiling;
+    } else if (filingType === 'ITR4' || filingType === 'Individual4') {
+      efileConfig = itr4ConfigMapping[step]?.[activeTab] || itr4ConfigMapping.filing?.efiling;
     } else {
       efileConfig = fieldsConfig[filingType]?.[step]?.[activeTab] || fieldsConfig[filingType]?.filing?.efiling || fieldsConfig[filingType]?.tax?.verification;
     }
-    const isIndividualType = filingType.startsWith('Individual') && filingType !== 'Individual3';
+    const isIndividualType = filingType.startsWith('Individual') && filingType !== 'ITR3';
 
     return (
       <div className="flex flex-col gap-6">
@@ -2302,6 +2447,334 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
                                 })}
                               </div>
                               {renderHelperText(field.helperText)}
+                            </div>
+                          </FormRow>
+                        );
+                      }
+
+                      if (field.type === 'list') {
+                        const listData = state[step]?.[activeTab]?.[field.listName] || [];
+                        return (
+                          <FormRow key={field.name} label={getFieldLabel(field)}>
+                            <div className="flex flex-col gap-4 w-full sm:max-w-[680px]">
+                              {listData.map((item, idx) => (
+                                <div key={item.id || idx} className="flex gap-2 items-center w-full">
+                                  <ManualSelect
+                                    label="Nature"
+                                    value={item.nature || ''}
+                                    onChange={(e) => {
+                                      const updatedList = [...listData];
+                                      updatedList[idx] = { ...updatedList[idx], nature: e.target.value };
+                                      handleFieldChange(field.listName, updatedList);
+                                    }}
+                                    className="flex-1"
+                                  >
+                                    <option value="">Select Nature u/s 10</option>
+                                    {field.options?.map(opt => (
+                                      <option key={opt} value={opt}>{opt}</option>
+                                    ))}
+                                  </ManualSelect>
+                                  <ManualInput
+                                    label="Amount ₹"
+                                    value={item.amount || ''}
+                                    onChange={(e) => {
+                                      const updatedList = [...listData];
+                                      updatedList[idx] = { ...updatedList[idx], amount: e.target.value.replace(/[^0-9]/g, "") };
+                                      handleFieldChange(field.listName, updatedList);
+                                    }}
+                                    className="flex-1"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updatedList = listData.filter((_, i) => i !== idx);
+                                      handleFieldChange(field.listName, updatedList);
+                                    }}
+                                    className="text-red-500 hover:text-red-700 p-2"
+                                  >
+                                    <FiTrash2 size={18} />
+                                  </button>
+                                </div>
+                              ))}
+                              <div className="flex justify-end mt-1">
+                                <Button
+                                  variant="brand"
+                                  type="button"
+                                  onClick={() => {
+                                    const updatedList = [...listData, { id: Date.now(), nature: '', amount: '' }];
+                                    handleFieldChange(field.listName, updatedList);
+                                  }}
+                                  className="px-4 py-1.5 text-white font-poppins font-medium rounded text-xs"
+                                >
+                                  Add
+                                </Button>
+                              </div>
+                            </div>
+                          </FormRow>
+                        );
+                      }
+
+                      if (field.type === 'coOwnersList') {
+                        const listData = state[step]?.[activeTab]?.[field.listName] || [];
+                        return (
+                          <FormRow key={field.name} label={getFieldLabel(field)}>
+                            <div className="flex flex-col gap-4 w-full sm:max-w-[750px]">
+                              {listData.map((item, idx) => (
+                                <div key={item.id || idx} className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-gray-50 border border-gray-200 rounded-md relative">
+                                  <ManualInput
+                                    label="Name of Other Co-owner(s)"
+                                    value={item.name || ''}
+                                    onChange={(e) => {
+                                      const updatedList = [...listData];
+                                      updatedList[idx] = { ...updatedList[idx], name: e.target.value };
+                                      handleFieldChange(field.listName, updatedList);
+                                    }}
+                                    fullWidth
+                                  />
+                                  <ManualInput
+                                    label="PAN of the Co-owner(s)"
+                                    value={item.pan || ''}
+                                    onChange={(e) => {
+                                      const updatedList = [...listData];
+                                      updatedList[idx] = { ...updatedList[idx], pan: e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "") };
+                                      handleFieldChange(field.listName, updatedList);
+                                    }}
+                                    fullWidth
+                                  />
+                                  <ManualInput
+                                    label="Aadhaar No. of other Co-owner(s)"
+                                    value={item.aadhaar || ''}
+                                    onChange={(e) => {
+                                      const updatedList = [...listData];
+                                      updatedList[idx] = { ...updatedList[idx], aadhaar: e.target.value.replace(/[^0-9]/g, "") };
+                                      handleFieldChange(field.listName, updatedList);
+                                    }}
+                                    fullWidth
+                                  />
+                                  <ManualInput
+                                    label="Percentage share of other Co-owner(s)"
+                                    value={item.share || ''}
+                                    onChange={(e) => {
+                                      const updatedList = [...listData];
+                                      updatedList[idx] = { ...updatedList[idx], share: e.target.value.replace(/[^0-9.]/g, "") };
+                                      handleFieldChange(field.listName, updatedList);
+                                    }}
+                                    fullWidth
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updatedList = listData.filter((_, i) => i !== idx);
+                                      handleFieldChange(field.listName, updatedList);
+                                    }}
+                                    className="absolute top-2 right-2 text-red-500 hover:text-red-700 p-2"
+                                  >
+                                    <FiTrash2 size={16} />
+                                  </button>
+                                </div>
+                              ))}
+                              <div className="flex justify-end mt-1">
+                                <Button
+                                  variant="brand"
+                                  type="button"
+                                  onClick={() => {
+                                    const updatedList = [...listData, { id: Date.now(), name: '', pan: '', aadhaar: '', share: '' }];
+                                    handleFieldChange(field.listName, updatedList);
+                                  }}
+                                  className="px-4 py-1.5 text-white font-poppins font-medium rounded text-xs"
+                                >
+                                  Add Co-owner
+                                </Button>
+                              </div>
+                            </div>
+                          </FormRow>
+                        );
+                      }
+
+                      if (field.type === 'tenantsList') {
+                        const listData = state[step]?.[activeTab]?.[field.listName] || [];
+                        return (
+                          <FormRow key={field.name} label={getFieldLabel(field)}>
+                            <div className="flex flex-col gap-4 w-full sm:max-w-[750px]">
+                              {listData.map((item, idx) => (
+                                <div key={item.id || idx} className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-gray-50 border border-gray-200 rounded-md relative">
+                                  <ManualInput
+                                    label="Name(s) of Tenant"
+                                    value={item.name || ''}
+                                    onChange={(e) => {
+                                      const updatedList = [...listData];
+                                      updatedList[idx] = { ...updatedList[idx], name: e.target.value };
+                                      handleFieldChange(field.listName, updatedList);
+                                    }}
+                                    fullWidth
+                                  />
+                                  <ManualInput
+                                    label="PAN of the Tenant(s) (if available)"
+                                    value={item.pan || ''}
+                                    onChange={(e) => {
+                                      const updatedList = [...listData];
+                                      updatedList[idx] = { ...updatedList[idx], pan: e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "") };
+                                      handleFieldChange(field.listName, updatedList);
+                                    }}
+                                    fullWidth
+                                  />
+                                  <ManualInput
+                                    label="Aadhaar No. of Tenant(s) (if available)"
+                                    value={item.aadhaar || ''}
+                                    onChange={(e) => {
+                                      const updatedList = [...listData];
+                                      updatedList[idx] = { ...updatedList[idx], aadhaar: e.target.value.replace(/[^0-9]/g, "") };
+                                      handleFieldChange(field.listName, updatedList);
+                                    }}
+                                    fullWidth
+                                  />
+                                  <ManualInput
+                                    label="TAN/TIN of Tenant(s) (if TDS credit is claimed)"
+                                    value={item.tan || ''}
+                                    onChange={(e) => {
+                                      const updatedList = [...listData];
+                                      updatedList[idx] = { ...updatedList[idx], tan: e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "") };
+                                      handleFieldChange(field.listName, updatedList);
+                                    }}
+                                    fullWidth
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updatedList = listData.filter((_, i) => i !== idx);
+                                      handleFieldChange(field.listName, updatedList);
+                                    }}
+                                    className="absolute top-2 right-2 text-red-500 hover:text-red-700 p-2"
+                                  >
+                                    <FiTrash2 size={16} />
+                                  </button>
+                                </div>
+                              ))}
+                              <div className="flex justify-end mt-1">
+                                <Button
+                                  variant="brand"
+                                  type="button"
+                                  onClick={() => {
+                                    const updatedList = [...listData, { id: Date.now(), name: '', pan: '', aadhaar: '', tan: '' }];
+                                    handleFieldChange(field.listName, updatedList);
+                                  }}
+                                  className="px-4 py-1.5 text-white font-poppins font-medium rounded text-xs"
+                                >
+                                  Add Tenant
+                                </Button>
+                              </div>
+                            </div>
+                          </FormRow>
+                        );
+                      }
+
+                      if (field.type === 'loansList') {
+                        const listData = state[step]?.[activeTab]?.[field.listName] || [];
+                        return (
+                          <FormRow key={field.name} label={getFieldLabel(field)}>
+                            <div className="flex flex-col gap-4 w-full sm:max-w-[750px]">
+                              {listData.map((item, idx) => (
+                                <div key={item.id || idx} className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-gray-50 border border-gray-200 rounded-md relative">
+                                  <ManualSelect
+                                    label="Loan taken from"
+                                    value={item.loanSource || ''}
+                                    onChange={(e) => {
+                                      const updatedList = [...listData];
+                                      updatedList[idx] = { ...updatedList[idx], loanSource: e.target.value };
+                                      handleFieldChange(field.listName, updatedList);
+                                    }}
+                                  >
+                                    <option value="">Select Option</option>
+                                    <option value="Bank">Bank</option>
+                                    <option value="Institution">Institution</option>
+                                    <option value="Person">Person</option>
+                                  </ManualSelect>
+                                  <ManualInput
+                                    label="Name of the Bank / Institution / Person from which loan is taken"
+                                    value={item.lenderName || ''}
+                                    onChange={(e) => {
+                                      const updatedList = [...listData];
+                                      updatedList[idx] = { ...updatedList[idx], lenderName: e.target.value };
+                                      handleFieldChange(field.listName, updatedList);
+                                    }}
+                                    fullWidth
+                                  />
+                                  <ManualInput
+                                    label="Loan account number of the Bank/Institution"
+                                    value={item.loanAccountNo || ''}
+                                    onChange={(e) => {
+                                      const updatedList = [...listData];
+                                      updatedList[idx] = { ...updatedList[idx], loanAccountNo: e.target.value };
+                                      handleFieldChange(field.listName, updatedList);
+                                    }}
+                                    fullWidth
+                                  />
+                                  <ManualInput
+                                    label="Date of sanction of loan"
+                                    placeholder="DD/MM/YYYY"
+                                    value={item.sanctionDate || ''}
+                                    onChange={(e) => {
+                                      const updatedList = [...listData];
+                                      updatedList[idx] = { ...updatedList[idx], sanctionDate: e.target.value };
+                                      handleFieldChange(field.listName, updatedList);
+                                    }}
+                                    fullWidth
+                                  />
+                                  <ManualInput
+                                    label="Total amount of loan"
+                                    value={item.totalLoan || ''}
+                                    onChange={(e) => {
+                                      const updatedList = [...listData];
+                                      updatedList[idx] = { ...updatedList[idx], totalLoan: e.target.value.replace(/[^0-9]/g, "") };
+                                      handleFieldChange(field.listName, updatedList);
+                                    }}
+                                    fullWidth
+                                  />
+                                  <ManualInput
+                                    label="Loan outstanding on last date of financial year"
+                                    value={item.outstanding || ''}
+                                    onChange={(e) => {
+                                      const updatedList = [...listData];
+                                      updatedList[idx] = { ...updatedList[idx], outstanding: e.target.value.replace(/[^0-9]/g, "") };
+                                      handleFieldChange(field.listName, updatedList);
+                                    }}
+                                    fullWidth
+                                  />
+                                  <ManualInput
+                                    label="Interest on borrowed capital u/s 24(b)"
+                                    value={item.interest || ''}
+                                    onChange={(e) => {
+                                      const updatedList = [...listData];
+                                      updatedList[idx] = { ...updatedList[idx], interest: e.target.value.replace(/[^0-9]/g, "") };
+                                      handleFieldChange(field.listName, updatedList);
+                                    }}
+                                    fullWidth
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updatedList = listData.filter((_, i) => i !== idx);
+                                      handleFieldChange(field.listName, updatedList);
+                                    }}
+                                    className="absolute top-2 right-2 text-red-500 hover:text-red-700 p-2"
+                                  >
+                                    <FiTrash2 size={16} />
+                                  </button>
+                                </div>
+                              ))}
+                              <div className="flex justify-end mt-1">
+                                <Button
+                                  variant="brand"
+                                  type="button"
+                                  onClick={() => {
+                                    const updatedList = [...listData, { id: Date.now(), loanSource: '', lenderName: '', loanAccountNo: '', sanctionDate: '', totalLoan: '', outstanding: '', interest: '' }];
+                                    handleFieldChange(field.listName, updatedList);
+                                  }}
+                                  className="px-4 py-1.5 text-white font-poppins font-medium rounded text-xs"
+                                >
+                                  Add Loan
+                                </Button>
+                              </div>
                             </div>
                           </FormRow>
                         );
