@@ -175,8 +175,7 @@ export const calculateTax = (
 
   // ── Rebate u/s 87A (only Resident Individual) ──────────
   let rebate = 0;
-  if (['Individual', 'ITR1', 'ITR2', 'ITR3', 'ITR4',
-    'Individual1', 'Individual2', 'Individual3', 'Individual4', 'HUF'].includes(filingType)) {
+  if (['Individual', 'ITR1', 'ITR2', 'ITR3', 'ITR4', 'HUF'].includes(filingType)) {
     if (regime === 'new' && income <= 700_000) rebate = Math.min(totalTax, 25_000);
     if (regime === 'old' && income <= 500_000) rebate = Math.min(totalTax, 12_500);
   }
@@ -205,17 +204,17 @@ export const calculateTax = (
 export const determineITRType = (state) => {
   const filingType = state.selectedFilingType || state.filingType || 'Individual';
 
-  if (filingType === 'ITR2' || filingType === 'Individual2') {
+  if (filingType === 'ITR2') {
     return { type: 'ITR-2', reason: 'Individual with Salary, House Property or Capital Gains' };
   }
-  if (filingType === 'ITR3' || filingType === 'Individual3') {
+  if (filingType === 'ITR3') {
     return { type: 'ITR-3', reason: 'Individual with Business/Profession Income (Schedule BP & Financials)' };
   }
-  if (filingType === 'ITR4' || filingType === 'Individual4') {
+  if (filingType === 'ITR4') {
     return { type: 'ITR-4', reason: 'Individual with Presumptive Business/Profession Income' };
   }
-  if (filingType === 'Individual1') {
-    return { type: 'ITR-1', reason: 'Salary / Single House Property / Other Sources (≤ ₹50 Lakhs)' };
+  if (filingType === 'ITR1') {
+    return { type: 'ITR1', reason: 'Salary / Single House Property / Other Sources (≤ ₹50 Lakhs)' };
   }
 
   if (

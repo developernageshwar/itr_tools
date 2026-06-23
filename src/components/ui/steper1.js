@@ -25,6 +25,8 @@ const Stepper1 = ({ currentStep = 1, onStepClick, errorSteps = [], customSteps }
     }
   };
 
+  const isTaxSummaryActive = currentStep === steps[steps.length - 1].id;
+
   return (
     <div className="flex items-center w-full max-w-[1000px] select-none">
       {steps.map((step, index) => {
@@ -35,7 +37,24 @@ const Stepper1 = ({ currentStep = 1, onStepClick, errorSteps = [], customSteps }
           <React.Fragment key={step.id}>
             <div
               onClick={() => handleStepClick(step.route)}
-              className={`     
+              // className={`     
+              //   rotate-0 opacity-100 gap-[10px] rounded-[16px] py-2   
+              //   font-normal text-base leading-6 tracking-normal align-middle
+              //   flex items-center justify-center 
+              //   px-[30px] 
+              //   font-poppins 
+              //   transition-all duration-300
+              //   cursor-pointer hover:opacity-80 uppercase
+              //   ${isActive
+              //     ? "bg-gradient-brand text-white"
+              //     : isCompleted
+              //       ? (isTaxSummaryActive && errorSteps.includes(step.id) ? "bg-gradient-to-r from-[#1498EB]/50 to-[#962DE3]/50 text-white border border-red-500" : "bg-gradient-to-r from-[#1498EB]/50 to-[#962DE3]/50 text-white font-medium")
+              //       : (isTaxSummaryActive && errorSteps.includes(step.id) ? "bg-white border border-red-500 text-[#8E8E93]" : "bg-white border border-[#8E8E93] text-[#8E8E93]")
+              //   }
+              // `}  
+
+
+                className={`     
                 rotate-0 opacity-100 gap-[10px] rounded-[16px] py-2   
                 font-normal text-base leading-6 tracking-normal align-middle
                 flex items-center justify-center 
@@ -46,10 +65,10 @@ const Stepper1 = ({ currentStep = 1, onStepClick, errorSteps = [], customSteps }
                 ${isActive
                   ? "bg-gradient-brand text-white"
                   : isCompleted
-                    ? (errorSteps.includes(step.id) ? " bg-gradient-to-r from-[#1498EB]/50 to-[#962DE3]/50 text-white border-1 border-red-500" : "bg-gradient-to-r from-[#1498EB]/50 to-[#962DE3]/50  text-white font-medium")
-                    : (errorSteps.includes(step.id) ? " bg-gradient-brand border-1 border-red-500" : "border border-[#8E8E93] text-[#8E8E93]")
+                    ? (isTaxSummaryActive && errorSteps.includes(step.id) ? "bg-gradient-to-r from-[#1498EB]/50 to-[#962DE3]/50 text-white border border-red-500" : "bg-gradient-to-r from-[#1498EB]/50 to-[#962DE3]/50 text-white font-medium")
+                    : (isTaxSummaryActive && errorSteps.includes(step.id) ? "bg-white border border-red-500 text-[#8E8E93]" : "bg-white border border-[#8E8E93] text-[#8E8E93]")
                 }
-              `}
+              `} 
             >
               {step.label} 
             </div>

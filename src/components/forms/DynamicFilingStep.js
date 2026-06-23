@@ -26,7 +26,7 @@ import ConfirmRegimeChangeModal from '@/components/modals/ConfirmRegimeChangeMod
 
 const getUniqueId = () => Date.now();
 
-const isStructuredType = (type) => ['HUF', 'LLP', 'Firm', 'AOP/BOI', 'Company Private', 'Company Public', 'Trust & Exempt Entities', 'Individual', 'ITR1', 'ITR2', 'ITR3', 'ITR4', 'Individual1', 'Individual2', 'Individual3', 'Individual4'].includes(type);
+const isStructuredType = (type) => ['HUF', 'LLP', 'Firm', 'AOP/BOI', 'Company Private', 'Company Public', 'Trust & Exempt Entities', 'Individual', 'ITR1', 'ITR2', 'ITR3', 'ITR4'].includes(type);
 
 const renderLabelWithAsterisk = (labelStr) => {
   if (typeof labelStr === 'string' && labelStr.includes('*')) { 
@@ -180,18 +180,18 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
 
   const validate = (entityType, currentStep, currentSubTab, data) => {
     const newErrors = {};
-    if (entityType === 'Individual' || entityType === 'Individual1' || entityType === 'ITR1') {
+    if (entityType === 'Individual') {
       return newErrors;
     }
     const tabFieldsConfig = entityType === 'Individual'
       ? individualConfigMapping[currentStep]?.[currentSubTab]
-      : entityType === 'ITR1' || entityType === 'Individual1'
+      : entityType === 'ITR1'
         ? itr1ConfigMapping[currentStep]?.[currentSubTab]
-          : entityType === 'ITR2' || entityType === 'Individual2'
+          : entityType === 'ITR2'
             ? individual2ConfigMapping[currentStep]?.[currentSubTab]
-            : entityType === 'ITR3' || entityType === 'Individual3'
+            : entityType === 'ITR3' 
               ? individual3ConfigMapping[currentStep]?.[currentSubTab]
-              : entityType === 'ITR4' || entityType === 'Individual4'
+              : entityType === 'ITR4'
                 ? itr4ConfigMapping[currentStep]?.[currentSubTab]
                 : fieldsConfig[entityType]?.[currentStep]?.[currentSubTab];
     if (!tabFieldsConfig || !tabFieldsConfig.sections) return newErrors;
@@ -486,13 +486,13 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
 
   const tabConfig = filingType === 'Individual'
     ? individualConfigMapping[step]?.[activeTab]
-    : filingType === 'ITR1' || filingType === 'Individual1'
+    : filingType === 'ITR1' 
       ? itr1ConfigMapping[step]?.[activeTab]
-      : filingType === 'ITR2' || filingType === 'Individual2'
+      : filingType === 'ITR2' 
         ? individual2ConfigMapping[step]?.[activeTab]
-        : filingType === 'ITR3' || filingType === 'Individual3'
+        : filingType === 'ITR3'
           ? individual3ConfigMapping[step]?.[activeTab]
-          : filingType === 'ITR4' || filingType === 'Individual4'
+          : filingType === 'ITR4'
             ? itr4ConfigMapping[step]?.[activeTab]
             : fieldsConfig[filingType]?.[step]?.[activeTab];
 
@@ -592,7 +592,7 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
         const chargeableSal = Math.max(0, netSal - (stdDed + entAllow + profTax));
         updatedSubTabData.incomeChargeableSalaries = chargeableSal.toString();
       }
-      if ((filingType === 'Individual' || filingType === 'ITR1' || filingType === 'Individual1') && (activeTab === 'salary' || activeTab === 'salary-pension-income')) {
+      if ((filingType === 'Individual' || filingType === 'ITR1') && (activeTab === 'salary' || activeTab === 'salary-pension-income')) {
         const s17_1 = Number(name === 'salary17_1' ? finalVal : (subTabData.salary17_1 || 0));
         const s17_2 = Number(name === 'salary17_2' ? finalVal : (subTabData.salary17_2 || 0));
         const s17_3 = Number(name === 'salary17_3' ? finalVal : (subTabData.salary17_3 || 0));
@@ -611,7 +611,7 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
         updatedSubTabData.incomeChargeableSalaries = chargeableSal.toString();
       }
 
-      if ((filingType === 'ITR1' || filingType === 'Individual1') && (activeTab === 'salary' || activeTab === 'salary-pension-income')) {
+      if ((filingType === 'ITR1') && (activeTab === 'salary' || activeTab === 'salary-pension-income')) {
         const getV = (fieldName) => Number(name === fieldName ? finalVal : (subTabData[fieldName] || 0));
 
         // 1. Gross Salary (ia + ib + ic)
@@ -674,7 +674,7 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
         updatedSubTabData.incomeChargeableSalaries = chargeableSal.toString();
       }
 
-      if ((filingType === 'ITR1' || filingType === 'Individual1') && (activeTab === 'house_property' || activeTab === 'house-property-income')) {
+      if ((filingType === 'ITR1') && (activeTab === 'house_property' || activeTab === 'house-property-income')) {
         const getV = (fieldName) => Number(name === fieldName ? finalVal : (subTabData[fieldName] || 0));
 
         // 1. Total (1b + 1c)
@@ -1563,13 +1563,23 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
       const basePayload = state.getPayload();
       if (user?.id || user?.user_id) {
         basePayload.user_id = user.id || user.user_id;
-      }
+      } 
 
       const isStructured = isStructuredType(filingType);
-      const permanentInfo = isStructured ? (state.basic?.entity_details || state.details?.permanent || state.details?.general || {}) : {};
-      const entityName = isStructured ? (permanentInfo.entityName || permanentInfo.hufName || permanentInfo.llpName || permanentInfo.companyName || permanentInfo.firmName || permanentInfo.aopName) : (state.hufName || state.entityName || state.companyName || state.firmName || state.societyName || state.llpName);
-      const formationDate = isStructured ? (permanentInfo.formationDate || permanentInfo.dateOfCommencement || permanentInfo.dateOfIncorporation || permanentInfo.dateOfFormation) : state.formationDate;
-      const panNumber = isStructured ? (permanentInfo.panNumber || permanentInfo.pan) : state.panNumber;
+      const permanentInfo = isStructured ? (state.basic?.entity_details || state.details?.permanent || state.details?.general || state.details?.['part-a-gen'] || {}) : {};
+      const entityName = isStructured ? (permanentInfo.firstName ? `${permanentInfo.firstName} ${permanentInfo.lastName || ''}`.trim() : permanentInfo.entityName || permanentInfo.hufName || permanentInfo.llpName || permanentInfo.companyName || permanentInfo.firmName || permanentInfo.aopName) : (state.firstName ? `${state.firstName} ${state.lastName || ''}`.trim() : state.hufName || state.entityName || state.companyName || state.firmName || state.societyName || state.llpName);
+      const formationDate = isStructured ? (permanentInfo.dobFormation || permanentInfo.formationDate || permanentInfo.dateOfCommencement || permanentInfo.dateOfIncorporation || permanentInfo.dateOfFormation) : (state.dobFormation || state.formationDate);
+      const panNumber = isStructured ? (permanentInfo.pan || permanentInfo.panNumber) : (state.pan || state.panNumber);
+
+      const residentialStatusInfo = isStructured ? (state.details?.['residential-status'] || state.details?.general || {}) : {};
+      const resStatus = isStructured ? (residentialStatusInfo.residentialStatus || state.residentialStatus) : state.residentialStatus;
+      
+      const bankInfo = isStructured ? (state.filing?.['filing-verification-step'] || state.filing?.general || {}) : {};
+      const bankAccts = isStructured 
+        ? [...(bankInfo.primaryBankAccountsTable || []), ...(bankInfo.otherBankAccountsTable || []), ...(state.bankAccounts || [])]
+        : (state.bankAccounts || []);
+
+      const addressInfo = isStructured ? (state.details?.['primary-address'] || state.details?.permanent || state.details?.general || {}) : {};
 
       const payload = {
         ...basePayload,
@@ -1578,21 +1588,21 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
           name: entityName || 'Not Provided',
           pan: panNumber || 'Not Provided',
           formationDate: formationDate || 'Not Provided',
-          residentialStatus: state.residentialStatus || 'Not Provided',
+          residentialStatus: resStatus || 'Not Provided',
           filingSection: state.filingSection || 'Not Provided',
           kartaDetails: null,
           membersList: state.coparceners || state.aopMembers || state.directors || [],
           address: {
-            flatNo: state.flatNo || '',
-            premiseName: state.premiseName || '',
-            roadStreet: state.roadStreet || '',
-            areaLocality: state.areaLocality || '',
-            city: state.city || '',
-            state: state.state || '',
-            pincode: state.pincode || '',
-            country: state.country || 'INDIA',
+            flatNo: addressInfo.pFlatDoorBlock || addressInfo.flatNo || state.flatNo || '',
+            premiseName: addressInfo.pPremisesBuildingVillage || addressInfo.premiseName || state.premiseName || '',
+            roadStreet: addressInfo.pRoadStreetPo || addressInfo.roadStreet || state.roadStreet || '',
+            areaLocality: addressInfo.pAreaLocality || addressInfo.areaLocality || state.areaLocality || '',
+            city: addressInfo.pTownCityDistrict || addressInfo.city || state.city || '',
+            state: addressInfo.pState || addressInfo.state || state.state || '',
+            pincode: addressInfo.pPinCode || addressInfo.pincode || state.pincode || '',
+            country: addressInfo.pCountry || addressInfo.country || state.country || 'INDIA',
           },
-          bankAccounts: state.bankAccounts || [],
+          bankAccounts: bankAccts,
         }
       };
 
@@ -1762,18 +1772,18 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
     const panNumber = entityInfo.panNumber;
     const currentData = isStructuredType(filingType) ? (state[step]?.[activeTab] || {}) : state;
     let efileConfig;
-    if (filingType === 'ITR1' || filingType === 'Individual1') {
+    if (filingType === 'ITR1') {
       efileConfig = itr1ConfigMapping[step]?.[activeTab] || itr1ConfigMapping.filing?.efiling;
-    } else if (filingType === 'ITR2' || filingType === 'Individual2') {
+    } else if (filingType === 'ITR2') {
       efileConfig = individual2ConfigMapping[step]?.[activeTab] || individual2ConfigMapping.filing?.efiling;
-    } else if (filingType === 'ITR3' || filingType === 'Individual3') {
+    } else if (filingType === 'ITR3') {
       efileConfig = individual3ConfigMapping[step]?.[activeTab] || individual3ConfigMapping.filing?.efiling;
-    } else if (filingType === 'ITR4' || filingType === 'Individual4') {
+    } else if (filingType === 'ITR4') {
       efileConfig = itr4ConfigMapping[step]?.[activeTab] || itr4ConfigMapping.filing?.efiling;
     } else {
       efileConfig = fieldsConfig[filingType]?.[step]?.[activeTab] || fieldsConfig[filingType]?.filing?.efiling || fieldsConfig[filingType]?.tax?.verification;
     }
-    const isIndividualType = filingType.startsWith('Individual') && filingType !== 'ITR3';
+    const isIndividualType = (filingType.startsWith('Individual') || ['ITR1', 'ITR2', 'ITR4'].includes(filingType)) && filingType !== 'ITR3';
 
     return (
       <div className="flex flex-col gap-6">
@@ -2177,7 +2187,7 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
   }
 
   // Normal Form Rendering
-  const isIndividualType = filingType.startsWith('Individual');
+  const isIndividualType = filingType.startsWith('Individual') || ['ITR1', 'ITR2', 'ITR3', 'ITR4'].includes(filingType);
 
   if (isIndividualType) {
     return (

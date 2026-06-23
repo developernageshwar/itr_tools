@@ -1,9 +1,9 @@
 export const filingTypeConfig = {
-  'Individual1': {
-    id: 'Individual1',
-    name: 'Individual1',
-    baseRoute: '/dashboard/Individual1',
-    detailsRoute: '/dashboard/Individual1/details',
+  'ITR1': {
+    id: 'ITR1',
+    name: 'ITR1',
+    baseRoute: '/dashboard/ITR1',
+    detailsRoute: '/dashboard/ITR1/details',
     steps: [
       { id: 1, label: 'Details', route: 'details' },
       { id: 2, label: 'Income Sources', route: 'income' },
@@ -50,11 +50,11 @@ export const filingTypeConfig = {
       ]
     }
   },
-  'Individual2': {
-    id: 'Individual2',
-    name: 'Individual2',
-    baseRoute: '/dashboard/Individual2',
-    detailsRoute: '/dashboard/Individual2/details',
+  'ITR2': {
+    id: 'ITR2',
+    name: 'ITR2',
+    baseRoute: '/dashboard/ITR2',
+    detailsRoute: '/dashboard/ITR2/details',
     steps: [
       { id: 1, label: 'Details', route: 'details' },
       { id: 2, label: 'Income Sources', route: 'income' },
@@ -88,11 +88,11 @@ export const filingTypeConfig = {
     }
   },
 
-  'Individual4': {
-    id: 'Individual4',
-    name: 'Individual4',
-    baseRoute: '/dashboard/Individual4',
-    detailsRoute: '/dashboard/Individual4/details',
+  'ITR4': {
+    id: 'ITR4',
+    name: 'ITR4',
+    baseRoute: '/dashboard/ITR4',
+    detailsRoute: '/dashboard/ITR4/details',
     steps: [
       { id: 1, label: 'Details', route: 'details' },
       { id: 2, label: 'Income Sources', route: 'income' },
@@ -127,11 +127,11 @@ export const filingTypeConfig = {
       ]
     }
   },
-  'Individual3': {
-    id: 'Individual3',
-    name: 'Individual3',
-    baseRoute: '/dashboard/Individual3',
-    detailsRoute: '/dashboard/Individual3/details',
+  'ITR3': {
+    id: 'ITR3',
+    name: 'ITR3',
+    baseRoute: '/dashboard/ITR3',
+    detailsRoute: '/dashboard/ITR3/details',
     steps: [
       { id: 1, label: 'Details', route: 'details' },
       { id: 2, label: 'Income Sources', route: 'income' },
@@ -159,7 +159,7 @@ export const filingTypeConfig = {
       ],
       filing: [
         { id: 'bank_details_schedules', label: 'Bank Accounts & Filing' },
-        // { id: 'efiling', label: 'E-Filing' } 
+        // { id: 'efiling', label: 'E-Filing' }
       ]
     }
   },
@@ -259,7 +259,7 @@ export const filingTypeConfig = {
     id: 'aop-boi',
     name: 'AOP/BOI',
     baseRoute: '/dashboard/aop-boi',
-    detailsRoute: '/dashboard/aop-boi/details',
+    detailsRoute: '/dashboard/aop-boi/details', 
     steps: [
       { id: 1, label: 'Details', route: 'details' },
       { id: 2, label: 'Income Sources', route: 'income' },

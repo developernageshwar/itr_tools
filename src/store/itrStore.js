@@ -6,7 +6,7 @@ import { taxReturnService } from '../services/taxReturnService';
 const getProfileDetails = (currentFilingType, state, p) => {
   let profileName = p.name;
   let profilePan = p.pan;
-  if (['Individual', 'ITR1', 'ITR2', 'ITR3', 'ITR4', 'Individual1', 'Individual2', 'Individual3', 'Individual4'].includes(currentFilingType)) {
+  if (['Individual', 'ITR1', 'ITR2', 'ITR3', 'ITR4',].includes(currentFilingType)) {
     const perm = state.details?.permanent || {};
     profileName = [perm.firstName, perm.middleName, perm.lastName].filter(Boolean).join(' ') || p.name;
     profilePan = perm.panNumber || p.pan;
@@ -565,8 +565,7 @@ export const useItrStore = create(
         const snapshot = _extractFormData(state);
         const currentFilingType = state.selectedFilingType || state.filingType || 'Individual';
         const isStructured = ['HUF', 'LLP', 'Firm', 'AOP/BOI', 'Company Private', 'Company Public', 'Trust & Exempt Entities',
-          'Individual', 'ITR1', 'ITR2', 'ITR3', 'ITR4',
-          'Individual1', 'Individual2', 'Individual3', 'Individual4'].includes(currentFilingType);
+          'Individual', 'ITR1', 'ITR2', 'ITR3', 'ITR4'].includes(currentFilingType);
 
         const updatedProfiles = state.profiles.map(p => {
           if (p.id === state.activeProfileId) {
@@ -682,8 +681,7 @@ export const useItrStore = create(
 
         // For structured types, dynamically copy values from store
         if (['HUF', 'LLP', 'Firm', 'AOP/BOI', 'Company Private', 'Company Public',
-          'Individual', 'ITR1', 'ITR2', 'ITR3', 'ITR4',
-          'Individual1', 'Individual2', 'Individual3', 'Individual4'].includes(filingType)) {
+          'Individual', 'ITR1', 'ITR2', 'ITR3', 'ITR4'].includes(filingType)) {
           payload.details = state.details || {};
           payload.income = state.income || {};
           payload.deductions = state.deductions || {};
@@ -701,8 +699,8 @@ export const useItrStore = create(
             isRefund: summary.isRefund,
           };
 
-          // LLP, Companies & ITR3/Individual3 also have financials
-          if (['LLP', 'Firm', 'AOP/BOI', 'Company Private', 'Company Public', 'ITR3', 'Individual3'].includes(filingType)) {
+          
+          if (['LLP', 'Firm', 'AOP/BOI', 'Company Private', 'Company Public', 'ITR3'].includes(filingType)) {
             payload.financials = state.financials || {};
           }
         }
@@ -775,7 +773,7 @@ export const useItrStore = create(
         let anonDonations = 0;
 
         // ── HUF ────────────────────────────────────────────────────────
-        if (isHuf || ['Individual', 'ITR1', 'ITR2', 'ITR3', 'ITR4', 'Individual1', 'Individual2', 'Individual3', 'Individual4'].includes(filingType)) {
+        if (isHuf || ['Individual', 'ITR1', 'ITR2', 'ITR3', 'ITR4',].includes(filingType)) {
           const income = state.income || {};
           const deductionsSec = state.deductions || {};
           const taxesSec = state.taxes || {};
@@ -791,8 +789,7 @@ export const useItrStore = create(
           let advanceTax = taxesSec.advance_tax || {};
           let selfAssess = taxesSec.self_assessment || {};
 
-          if (filingType === 'ITR1' || filingType === 'Individual1') {
-            // Individual1 subsection IDs from filingConfig.js
+          if (filingType === 'ITR1') {
             houseProperty = income['house-property-income'] || {};
             otherSrc = income['other-sources-income'] || {};
             chapter6a = {
@@ -805,6 +802,7 @@ export const useItrStore = create(
             tds = taxesSec['tds-schedules-ledger'] || {};
             tcs = taxesSec['tcs-and-challan-schedules'] || {};
             advanceTax = taxesSec['tcs-and-challan-schedules'] || {};
+            selfAssess = {};
           } else if (filingType === 'ITR2' || filingType === 'Individual2') {
             // Individual2 subsection IDs from filingConfig.js
             houseProperty = income['schedule-hp-house-property'] || {};
@@ -813,8 +811,7 @@ export const useItrStore = create(
             tds = taxesSec['tax-payments-schedules'] || {};
             tcs = taxesSec['tax-payments-schedules'] || {};
             advanceTax = taxesSec['tax-payments-schedules'] || {};
-          } else if (filingType === 'ITR3' || filingType === 'Individual3') {
-            // Individual3 subsection IDs from filingConfig.js
+          } else if (filingType === 'ITR3') { 
             businessHP = {
               ...(income['business_profession_regular'] || {}),
               ...(income['business_profession_presumptive'] || {})
@@ -846,9 +843,9 @@ export const useItrStore = create(
           // House property — support list or single
           const hpList = houseProperty.housePropertiesList || houseProperty.properties || [];
           if (hpList.length > 0) {
-            house = hpList.reduce((s, hp) => s + (n(hp.incomeFromProperty || hp.annualValueHP) || hpNet(hp)), 0);
+            house = hpList.reduce((s, hp) => s + (n(hp.incomeFromProperty || hp.annualValueHP || hp.hpFinalPropertyIncome) || hpNet(hp)), 0);
           } else {
-            house = hpNet(houseProperty);
+            house = n(houseProperty.hpTotalFinalIncome) || n(houseProperty.hpFinalPropertyIncome) || hpNet(houseProperty);
           }
 
           // Capital gains — Individual2 uses schedule-cg-capital-gains subsection
@@ -861,14 +858,28 @@ export const useItrStore = create(
             + n(capGains.stcgTotal) + n(capGains.ltcgTotal)
             + n(capGains.stcg111A) + n(capGains.ltcg112A)
             + n(capGains.stcgImmovableNetGains) + n(capGains.ltcgImmovableNetGains)
-            + n(capGains.stcgSec111A) + n(capGains.stcgOther);
+            + n(capGains.stcgSec111A) + n(capGains.stcgOther)
+            + n(capGains.cgStImmovableFinalGains) + n(capGains.cgSlumpSaleFinalGains) 
+            + n(capGains.cgStEquityFinalGainsPostJul2024) + n(capGains.cgStEquityFinalGainsPreJul2024) 
+            + n(capGains.cgStNrSharesSec111APreJul2024) + n(capGains.cgStNrSharesSec111APostJul2024) 
+            + n(capGains.cgStNrSharesOther) + n(capGains.cgStFiiFinalGains) + n(capGains.cgStTotalDeemedA6) 
+            + n(capGains.ltcgSec112APreJul2024) + n(capGains.ltcgSec112APostJul2024) + n(capGains.ltcgSec112ATotal);
 
           // Other sources
-          interest = n(otherSrc.savingsInterest) + n(otherSrc.depositInterest) + n(otherSrc.refundInterest);
-          dividend = n(otherSrc.dividendIncome);
-          other = n(more.agriculturalIncome) + n(otherSrc.otherIncome);
+          interest = n(otherSrc.savingsInterest) + n(otherSrc.depositInterest) + n(otherSrc.refundInterest)
+            + n(otherSrc.interestFromSavingsBankAccount) + n(otherSrc.interestFromDeposits) + n(otherSrc.interestFromIncomeTaxRefund)
+            + n(otherSrc.osInterestSavings) + n(otherSrc.osInterestDeposits) + n(otherSrc.osInterestItRefund) + n(otherSrc.osInterestPf1) + n(otherSrc.osInterestPf2) + n(otherSrc.osInterestPf3) + n(otherSrc.osInterestPf4) + n(otherSrc.osInterestOthers);
+          dividend = n(otherSrc.dividendIncome) + n(otherSrc.osDividendOther) + n(otherSrc.osDividendSec2_22_e) + n(otherSrc.osDividendSec2_22_f);
+          other = n(more.agriculturalIncome) + n(otherSrc.otherIncome)
+            + n(otherSrc.familyPensionAmount) + n(otherSrc.pfInterestTaxable1stProviso10_11) 
+            + n(otherSrc.pfInterestTaxable2ndProviso10_11) + n(otherSrc.pfInterestTaxable1stProviso10_12) 
+            + n(otherSrc.pfInterestTaxable2ndProviso10_12) + n(otherSrc.anyOtherIncomeWithDescription)
+            + n(otherSrc.osFamilyPension) + n(otherSrc.osRetirement89ANonNotified) + n(otherSrc.osGiftTotalSec56_2_x)
+            + n(otherSrc.osWinningsLotteriesSec115BB) + n(otherSrc.osWinningsOnlineGamesSec115BBJ);
 
           // Deductions Chapter VI-A
+          const sumRows = (arr, field) => (Array.isArray(arr) ? arr.reduce((s, r) => s + n(r[field]), 0) : 0);
+          
           deductions = n(chapter6a.deduction80C)
             + Math.min(n(chapter6a.deduction80D), 75000)
             + n(chapter6a.deduction80G)
@@ -881,14 +892,33 @@ export const useItrStore = create(
             + n(chapter6a.deduction80E)
             + n(chapter6a.deduction80EE)
             + n(chapter6a.deduction80EEA)
-            + n(chapter6a.deduction80U);
+            + n(chapter6a.deduction80U)
+            // ITR1/ITR2/ITR4 specific dynamic extraction
+            + n(chapter6a.totalDeductionUsh80C) + sumRows(chapter6a['section-80c-repeating-grid'], 'sec80cEligibleAmount')
+            + n(chapter6a.totalDeductionUsh80CCC) + sumRows(chapter6a['section-80ccc-repeating-grid'], 'sec80cccDeductionAmount')
+            + n(chapter6a.sec80dEligibleAmountOfDeductionTotal)
+            + sumRows(chapter6a['loan-interest-shared-columns'], 'loanIntInterestAmountClaimed')
+            + sumRows(chapter6a['donation-financial-quanta'], 'donEligibleAmountRowDeduction') + n(chapter6a.donEligibleAmountRowDeduction)
+            + sumRows(chapter6a['schedule-80gga-scientific-research'], 'sec80ggaEligibleAmount') + n(chapter6a.sec80ggaEligibleAmount)
+            + sumRows(chapter6a['schedule-80ggc-political-parties'], 'sec80ggcEligibleAmount') + n(chapter6a.sec80ggcEligibleAmount)
+            + sumRows(chapter6a['disability-self-80u'], 'sec80uDeductionAmount') + n(chapter6a.sec80uDeductionAmount)
+            + sumRows(chapter6a['disability-dependent-80dd'], 'sec80ddDeductionAmount') + n(chapter6a.sec80ddDeductionAmount)
+            + sumRows(chapter6a.dedSec80C_table, 'amount') + sumRows(chapter6a.dedSec80CCC_table, 'amount')
+            + sumRows(chapter6a.dedSec80CCD_1_table, 'amount') + sumRows(chapter6a.dedSec80CCD_1B_table, 'amount')
+            + n(chapter6a.dedSec80CCD_2) + n(chapter6a.dedSec80CCG) + n(chapter6a.dedSec80CCF)
+            + n(chapter6a.dedSec80D_auto) + n(chapter6a.dedSec80DD_auto) + n(chapter6a.dedSec80DDB)
+            + n(chapter6a.dedSec80E_auto) + n(chapter6a.dedSec80EE_auto) + n(chapter6a.dedSec80EEA_auto)
+            + n(chapter6a.dedSec80EEB_auto) + n(chapter6a.dedSec80G_auto) + n(chapter6a.dedSec80GG)
+            + n(chapter6a.dedSec80GGA_auto) + n(chapter6a.dedSec80GGC_auto) + n(chapter6a.dedSec80TTA)
+            + n(chapter6a.dedSec80TTB) + n(chapter6a.dedSec80U_auto) + n(chapter6a.dedSec80CCH)
+            + n(chapter6a.dedAnyOtherAmount) + n(chapter6a.sec80DEligibleDeductionCalculated)
+            + n(chapter6a.totalDeductionsPartB) + n(chapter6a.totalDeductionsPartC);
 
 
-          // Taxes paid — robust: handles both array-rows and direct numeric fields
+
           const extractFromSection = (sec, rowFields, directFields) => {
             if (!sec || typeof sec !== 'object') return 0;
             let sum = 0;
-            // 1. Scan for arrays of row objects
             Object.values(sec).forEach(val => {
               if (Array.isArray(val)) {
                 sum += val.reduce((s, r) => {
@@ -906,22 +936,22 @@ export const useItrStore = create(
 
           const tdsSum = extractFromSection(
             tds,
-            ['taxDeductedSalary', 'tdsClaimedThisYear', 'amountClaimed', 'tdsClaimed', 'taxDeducted', 'taxDeductedNonSalary'],
-            ['totalTdsClaimed', 'taxDeductedSalary', 'amountClaimed']
+            ['taxDeductedSalary', 'tdsClaimedThisYear', 'amountClaimed', 'tdsClaimed', 'taxDeducted', 'taxDeductedNonSalary', 'tds2CreditClaimedThisYear', 'tds3CreditClaimedThisYear'],
+            ['totalTdsClaimed', 'taxDeductedSalary', 'amountClaimed', 'tds1TotalTaxDeductedRow']
           );
           const tcsSum = extractFromSection(
             tcs,
-            ['amountClaimedTCS', 'tcsClaimed', 'amountClaimed', 'tcsAmount'],
+            ['amountClaimedTCS', 'tcsClaimed', 'amountClaimed', 'tcsAmount', 'tcsCreditClaimedThisYear'],
             ['totalTcsClaimed', 'amountClaimedTCS']
           );
           const advSum = extractFromSection(
             advanceTax,
-            ['taxAmountDeposited', 'amount'],
+            ['taxAmountDeposited', 'amount', 'challanTaxPaidAmount'],
             ['totalAdvanceTaxPaid', 'taxAmountDeposited']
           );
           const satSum = extractFromSection(
             selfAssess,
-            ['taxAmountDeposited', 'amount'],
+            ['taxAmountDeposited', 'amount', 'challanTaxPaidAmount'],
             ['totalSelfAssessmentTaxPaid', 'taxAmountDeposited']
           );
 
@@ -1118,8 +1148,7 @@ export const useItrStore = create(
         }
 
         // ── Gross Total Income ────────────────────────────────────────────────────────────────
-        const isAnyIndividual = ['Individual', 'ITR1', 'ITR2', 'ITR3', 'ITR4',
-          'Individual1', 'Individual2', 'Individual3', 'Individual4'].includes(filingType);
+        const isAnyIndividual = ['Individual', 'ITR1', 'ITR2', 'ITR3', 'ITR4',].includes(filingType);
 
         // Helper to extract chargeable salary from a salary section object
         const extractSalary = (salarySec) => {
@@ -1144,14 +1173,12 @@ export const useItrStore = create(
         };
 
         let salary = 0;
-        if (filingType === 'ITR1' || filingType === 'Individual1') {
-          // Individual1: salary-pension-income subsection
+        if (filingType === 'ITR1') {
           salary = extractSalary((state.income || {})['salary-pension-income'] || {});
-        } else if (filingType === 'ITR2' || filingType === 'Individual2') {
+        } else if (filingType === 'ITR2') {
           // Individual2: schedule-s-salary subsection
           salary = extractSalary((state.income || {})['schedule-s-salary'] || {});
-        } else if (filingType === 'ITR3' || filingType === 'Individual3') {
-          // Individual3: salary_house_property_schedules subsection (employers array or single)
+        } else if (filingType === 'ITR3') {
           const salarySec = (state.income || {})['salary_house_property_schedules'] || {};
           const employers = salarySec.employers || salarySec.employersList || [];
           if (employers.length > 0) {
@@ -1163,8 +1190,7 @@ export const useItrStore = create(
           } else {
             salary = extractSalary(salarySec);
           }
-        } else if (filingType === 'ITR4' || filingType === 'Individual4') {
-          // Individual4: other subsection holds salary fields
+        } else if (filingType === 'ITR4') {
           const otherSec = (state.income || {}).other || {};
           const gross = n(otherSec.salarySec17_1) + n(otherSec.perquisitesSec17_2)
             + n(otherSec.salary17_1) + n(otherSec.salary17_2);
@@ -1180,21 +1206,20 @@ export const useItrStore = create(
         const grossIncome = salary + interest + capital + house + dividend + business + crypto + other;
         const totalDeductions = Math.max(0, deductions);
 
-        // â”€â”€ Standard Deduction (salary earners only) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        
         const stdDedOld = (isAnyIndividual && salary > 0) ? 50000 : 0;
         const stdDedNew = (isAnyIndividual && salary > 0) ? 75000 : 0;
 
-        // â”€â”€ Net Taxable Income â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+       
         const oldTaxableIncome = Math.max(0, grossIncome - stdDedOld - totalDeductions);
         const newTaxableIncome = Math.max(0, grossIncome - stdDedNew - totalDeductions);
 
-        // â”€â”€ Corporate regime selection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         const regime = state.selectedRegime || 'new';
         const corporateRegime = state.corporateRegime || regime; // '115BAA' | '115BAB' | '115BA' | 'new' | 'old'
 
         const effectiveRegime = filingType.includes('Company') ? corporateRegime : regime;
 
-        // â”€â”€ Tax calculation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  
         const oldRegimeTaxCalc = calculateTax(oldTaxableIncome, OLD_REGIME_SLABS, 'old', filingType, anonDonations);
         const newRegimeTaxCalc = calculateTax(newTaxableIncome, NEW_REGIME_SLABS, effectiveRegime, filingType, anonDonations);
 
@@ -1212,15 +1237,13 @@ export const useItrStore = create(
         const activeTaxCalc = regime === 'new' ? newRegimeTaxCalc : oldRegimeTaxCalc;
         const estimatedTax = activeTaxCalc.finalTax;
 
-        // â”€â”€ Taxes paid (always direct value, never back-calculate) â”€â”€â”€â”€â”€â”€
         const taxesPaid = taxes;
         const rawBalance = taxesPaid - estimatedTax;
 
         const itrSelection = determineITRType(state);
 
         const activeStdDed = regime === 'new' ? stdDedNew : stdDedOld;
-        // taxableIncome shown in summary = grossIncome − Chapter VI-A deductions only
-        // (standard deduction is displayed separately as part of salary head)
+        
         const displayTaxableIncome = Math.max(0, grossIncome - totalDeductions);
 
         return {

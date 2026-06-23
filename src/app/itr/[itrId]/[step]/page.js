@@ -14,7 +14,7 @@ export default function ItrStepRedirectPage() {
 
   useEffect(() => {
     if (!itrId || !step) return;
-
+ 
     async function fetchAndRedirect() {
       try {
         const data = await taxReturnService.getItrDetails(itrId);

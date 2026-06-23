@@ -120,7 +120,7 @@ export default function FilingFlowPage() {
     }
   };
 
-  const isIndividualType = filingType.startsWith('Individual');
+  const isIndividualType = filingType.startsWith('Individual') || ['ITR1', 'ITR2', 'ITR3', 'ITR4'].includes(filingType);
 
   const renderSubTabs = () => {
     if (currentSubTabs.length === 0) return null;
@@ -145,12 +145,20 @@ export default function FilingFlowPage() {
     );
   };
 
+
   const handleStepClick = (route) => {
     if (typeof window !== 'undefined' && window.currentSaveHandler) {
-      window.currentSaveHandler();
+      const isTargetITR = ['ITR1', 'ITR2', 'ITR3', 'ITR4'].includes(filingType) || filingType === 'Individual';
+      const isTaxSummary = currentStepRoute === 'tax-summary'; 
+
+      if (!(isTargetITR && isTaxSummary)) {
+        window.currentSaveHandler();
+      }
     }
     router.push(`${configEntry.baseRoute}/${route}`);
-  };
+  };  
+
+
 
   return (
     <div className="w-full min-h-screen bg-[#F8F9FC]">
@@ -170,6 +178,26 @@ export default function FilingFlowPage() {
                     onStepClick={handleStepClick}
                   />
                 </div>
+                
+                {/* Form 16 Upload Banner */}
+                {['ITR1', 'ITR2', 'ITR3', 'ITR4'].includes(filingType) && currentStepRoute === 'details' && (
+                  <div className="w-full bg-gradient-to-r from-[#eef2ff] to-[#f5f3ff] border border-[#c7d2fe] rounded-2xl p-6 mb-6 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm">
+                    <div className="flex flex-col gap-1">
+                      <h3 className="font-poppins font-bold text-[#3867D6] text-lg">Have a Form 16?</h3>
+                      <p className="font-poppins text-[#4b5563] text-sm max-w-xl">Upload your Form 16 to automatically fill in your salary details, deductions, and save time on manual entry.</p> 
+                    </div>
+                    <Button 
+                      variant="brand" 
+                      className="whitespace-nowrap px-8 rounded-lg shadow-sm font-semibold"
+                      onClick={() => {
+                        const currentUrl = encodeURIComponent(window.location.pathname);
+                        router.push(`/dashboard/upload-form16?itr=${filingType}&returnTo=${currentUrl}`);
+                      }}
+                    >
+                      Upload Form 16
+                    </Button>
+                  </div>
+                )} 
                 
                 {/* Content Area */}
                 <div className="w-full flex flex-col gap-6">
