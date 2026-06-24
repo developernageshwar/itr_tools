@@ -588,9 +588,10 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
         updatedSubTabData.totalDeductionU16 = (stdDed + entAllow + profTax).toString();
 
         // --- Net Chargeable Salary ---
-        const netSal = Math.max(0, gross - totalExempt);
-        const chargeableSal = Math.max(0, netSal - (stdDed + entAllow + profTax));
-        updatedSubTabData.incomeChargeableSalaries = chargeableSal.toString();
+        const netSal = Math.max(0, gross - totalExempt);  
+
+       
+
       }
       if ((filingType === 'Individual' || filingType === 'ITR1') && (activeTab === 'salary' || activeTab === 'salary-pension-income')) {
         const s17_1 = Number(name === 'salary17_1' ? finalVal : (subTabData.salary17_1 || 0));
@@ -651,13 +652,14 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
         if (Array.isArray(exemptList)) {
           listExemptSum = exemptList.reduce((sum, item) => sum + Number(item.amount || 0), 0);
         }
-        const totalExempt = listExemptSum + hraExempt;
+        const totalExempt = listExemptSum + hraExempt;  
 
-        // 4. Net Salary
-        const netSal = Math.max(0, gross - totalExempt);
-        updatedSubTabData.netSalary = netSal.toString();
+        //  const netSal = Math.max(0, gross - totalExempt);
+        // updatedSubTabData.netSalary = netSal.toString(); 
 
-        // 5. Standard Deduction
+        const netSal = getV('netSalary');
+
+        // 5. Standard Deduction 
         const regime = (state.details?.general?.optingOutNewRegime === 'Yes') ? 'old' : 'new';
         const stdDedLimit = regime === 'new' ? 75000 : 50000;
         const stdDed = Math.min(netSal, stdDedLimit);

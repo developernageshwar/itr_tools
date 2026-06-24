@@ -1,10 +1,48 @@
+const statesList = [
+  { value: "Andaman and Nicobar Islands", label: "Andaman and Nicobar Islands" },
+  { value: "Andhra Pradesh", label: "Andhra Pradesh" },
+  { value: "Arunachal Pradesh", label: "Arunachal Pradesh" },
+  { value: "Assam", label: "Assam" },
+  { value: "Bihar", label: "Bihar" },
+  { value: "Chandigarh", label: "Chandigarh" },
+  { value: "Chhattisgarh", label: "Chhattisgarh" },
+  { value: "Dadra and Nagar Haveli and Daman and Diu", label: "Dadra and Nagar Haveli and Daman and Diu" },
+  { value: "Delhi", label: "Delhi" },
+  { value: "Goa", label: "Goa" },
+  { value: "Gujarat", label: "Gujarat" },
+  { value: "Haryana", label: "Haryana" },
+  { value: "Himachal Pradesh", label: "Himachal Pradesh" },
+  { value: "Jammu and Kashmir", label: "Jammu and Kashmir" },
+  { value: "Jharkhand", label: "Jharkhand" },
+  { value: "Karnataka", label: "Karnataka" },
+  { value: "Kerala", label: "Kerala" },
+  { value: "Ladakh", label: "Ladakh" },
+  { value: "Lakshadweep", label: "Lakshadweep" },
+  { value: "Madhya Pradesh", label: "Madhya Pradesh" },
+  { value: "Maharashtra", label: "Maharashtra" },
+  { value: "Manipur", label: "Manipur" },
+  { value: "Meghalaya", label: "Meghalaya" },
+  { value: "Mizoram", label: "Mizoram" },
+  { value: "Nagaland", label: "Nagaland" },
+  { value: "Odisha", label: "Odisha" },
+  { value: "Puducherry", label: "Puducherry" },
+  { value: "Punjab", label: "Punjab" },
+  { value: "Rajasthan", label: "Rajasthan" },
+  { value: "Sikkim", label: "Sikkim" },
+  { value: "Tamil Nadu", label: "Tamil Nadu" },
+  { value: "Telangana", label: "Telangana" },
+  { value: "Tripura", label: "Tripura" },
+  { value: "Uttar Pradesh", label: "Uttar Pradesh" },
+  { value: "Uttarakhand", label: "Uttarakhand" },
+  { value: "West Bengal", label: "West Bengal" }
+];
 
-const itr1FieldConfig = [
+export const itr1FieldConfig = [
   {
     id: 1,
     label: "Details",
     route: "details",
-    subsections: [ 
+    subsections: [
       {
         id: "personal-identity",
         title: "1.1 Personal Identity",
@@ -18,7 +56,7 @@ const itr1FieldConfig = [
                 label: "First Name",
                 type: "Text",
                 required: true,
-                validation: { alphaOnly: true, maxChars: 75 } 
+                validation: { alphaOnly: true, maxChars: 75 }
               },
               {
                 name: "middleName",
@@ -157,9 +195,17 @@ const itr1FieldConfig = [
                 label: "State",
                 type: "Dropdown ▼",
                 required: true,
-                notes: "Includes all 37 Indian states/UTs + Foreign (code 99)"
+                options: statesList
               },
-              { name: "primaryCountryRegion", label: "Country / Region", type: "Dropdown ▼", required: true, defaultValue: "91-INDIA" },
+              {
+                name: "primaryCountryRegion",
+                label: "Country / Region",
+                type: "Dropdown ▼",
+                required: true,
+                options: [{ value: "India", label: "India" }],
+                defaultValue: "India",
+                disabled: true
+              },
               {
                 name: "primaryPinCode",
                 label: "PIN Code",
@@ -197,8 +243,8 @@ const itr1FieldConfig = [
               { name: "secondaryRoadStreetPostOffice", label: "Secondary Road / Street / Post Office", type: "Text", required: false },
               { name: "secondaryAreaLocality", label: "Secondary Area / Locality", type: "Text", required: false },
               { name: "secondaryTownCityDistrict", label: "Secondary Town / City / District", type: "Text", required: "Conditional", condition: "secondary_address_not_same" },
-              { name: "secondaryState", label: "Secondary State", type: "Dropdown ▼", required: "Conditional", condition: "secondary_address_not_same" },
-              { name: "secondaryCountryRegion", label: "Secondary Country / Region", type: "Dropdown ▼", required: "Conditional", condition: "secondary_address_not_same" },
+              { name: "secondaryState", label: "Secondary State", type: "Dropdown ▼", required: "Conditional", condition: "secondary_address_not_same", options: statesList },
+              { name: "secondaryCountryRegion", label: "Secondary Country / Region", type: "Dropdown ▼", required: "Conditional", condition: "secondary_address_not_same", options: [{ value: "India", label: "India" }], defaultValue: "India", disabled: true },
               { name: "secondaryPinCode", label: "Secondary PIN Code", type: "Text (6 digits)", required: "Conditional", condition: "secondary_address_not_same_domestic" },
               { name: "secondaryNoZipCodeCheckbox", label: "Secondary No ZIP Code (checkbox)", type: "Checkbox", required: false },
               { name: "secondaryZipCode", label: "Secondary ZIP Code", type: "Text", required: "Conditional", condition: "secondary_address_not_same_foreign" }
@@ -275,7 +321,19 @@ const itr1FieldConfig = [
             title: "2.1.3 Net Salary & Deductions u/s 16",
             fields: [
               { name: "incomeClaimedForRelief89A", ref: "B1-iia", label: "Less: Income claimed for relief u/s 89A (iia)", type: "Amount (🔒 Auto)", required: false, notes: "Auto calculated from 89A schedule mappings" },
-              { name: "netSalary", ref: "B1-iii", label: "Net Salary (iii = i – ii)", type: "Amount (🔒 Auto)", required: false, formula: "B1-i - B1-iia" },
+
+              // {
+              //   name: "netSalary", ref: "B1-iii", label: "Net Salary (iii = i – ii)", type: "Amount (🔒 Auto)", required: false,
+              //   formula: "B1-i - B1-iia"
+              // },  
+
+
+              {
+                name: "netSalary", ref: "B1-iii", label: "Net Salary (iii = i – ii)", type: "Amount (₹)", required: false,
+              
+              }, 
+
+
               { name: "standardDeduction16_ia", ref: "B1-iva", label: "Standard Deduction u/s 16(ia)", type: "Amount (₹)", required: false, notes: "Statutory cap logic applied automatically by system" },
               { name: "entertainmentAllowance16_ii", ref: "B1-ivb", label: "Entertainment Allowance u/s 16(ii)", type: "Amount (₹)", required: false, notes: "Restricted to Government employees only" },
               { name: "professionalTax16_iii", ref: "B1-ivc", label: "Professional Tax u/s 16(iii)", type: "Amount (₹)", required: false },
@@ -295,7 +353,9 @@ const itr1FieldConfig = [
             fields: [
               { name: "hpAddressFull", label: "Address (full)", type: "Text", required: true },
               { name: "hpTownCity", label: "Town / City", type: "Text", required: true },
-              { name: "hpState", label: "State", type: "Dropdown ▼", required: true },
+
+              { name: "hpState", label: "State", type: "Dropdown ▼", required: true, options: statesList },
+
               { name: "hpCountry", label: "Country", type: "Dropdown ▼", required: true, defaultValue: "91-INDIA" },
               { name: "hpPinCode", label: "PIN Code", type: "Text (6 digits)", required: "Conditional", condition: "domestic_hp" },
               { name: "hpZipCode", label: "ZIP Code", type: "Text", required: "Conditional", condition: "foreign_hp" },

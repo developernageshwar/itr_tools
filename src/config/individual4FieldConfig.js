@@ -1,5 +1,43 @@
+const statesList = [
+  { value: 'Andaman and Nicobar Islands', label: 'Andaman and Nicobar Islands' },
+  { value: 'Andhra Pradesh', label: 'Andhra Pradesh' },
+  { value: 'Arunachal Pradesh', label: 'Arunachal Pradesh' },
+  { value: 'Assam', label: 'Assam' },
+  { value: 'Bihar', label: 'Bihar' },
+  { value: 'Chandigarh', label: 'Chandigarh' },
+  { value: 'Chhattisgarh', label: 'Chhattisgarh' },
+  { value: 'Dadra and Nagar Haveli and Daman and Diu', label: 'Dadra and Nagar Haveli and Daman and Diu' },
+  { value: 'Delhi', label: 'Delhi' },
+  { value: 'Goa', label: 'Goa' },
+  { value: 'Gujarat', label: 'Gujarat' },
+  { value: 'Haryana', label: 'Haryana' },
+  { value: 'Himachal Pradesh', label: 'Himachal Pradesh' },
+  { value: 'Jammu and Kashmir', label: 'Jammu and Kashmir' },
+  { value: 'Jharkhand', label: 'Jharkhand' },
+  { value: 'Karnataka', label: 'Karnataka' },
+  { value: 'Kerala', label: 'Kerala' },
+  { value: 'Ladakh', label: 'Ladakh' },
+  { value: 'Lakshadweep', label: 'Lakshadweep' },
+  { value: 'Madhya Pradesh', label: 'Madhya Pradesh' },
+  { value: 'Maharashtra', label: 'Maharashtra' },
+  { value: 'Manipur', label: 'Manipur' },
+  { value: 'Meghalaya', label: 'Meghalaya' },
+  { value: 'Mizoram', label: 'Mizoram' },
+  { value: 'Nagaland', label: 'Nagaland' },
+  { value: 'Odisha', label: 'Odisha' },
+  { value: 'Puducherry', label: 'Puducherry' },
+  { value: 'Punjab', label: 'Punjab' },
+  { value: 'Rajasthan', label: 'Rajasthan' },
+  { value: 'Sikkim', label: 'Sikkim' },
+  { value: 'Tamil Nadu', label: 'Tamil Nadu' },
+  { value: 'Telangana', label: 'Telangana' },
+  { value: 'Tripura', label: 'Tripura' },
+  { value: 'Uttar Pradesh', label: 'Uttar Pradesh' },
+  { value: 'Uttarakhand', label: 'Uttarakhand' },
+  { value: 'West Bengal', label: 'West Bengal' }
+];
 
-const itr4FieldConfig = {
+export const itr4FieldConfig = {
   mainSections: {
     partAGeneralInformation: {
       id: "partAGeneralInformation",
@@ -41,8 +79,8 @@ const itr4FieldConfig = {
                 { id: "primRoadStreetPO", label: "Road / Street / Post Office", type: "text", required: false },
                 { id: "primAreaLocality", label: "Area / Locality", type: "text", required: false },
                 { id: "primTownCityDistrict", label: "Town / City / District", type: "text", required: true },
-                { id: "primState", label: "State", type: "dropdown", required: true, options: "01-Andaman & Nicobar Islands to 37-Ladakh + 99-Foreign" },
-                { id: "primCountry", label: "Country / Region", type: "dropdown", required: true, default: "91-INDIA", options: "200+ country options" },
+                { id: "primState", label: "State", type: "dropdown", required: true, options: statesList },
+                { id: "primCountry", label: "Country / Region", type: "dropdown", required: true, defaultValue: "India", options: [{ value: 'India', label: 'India' }], disabled: true },
                 { id: "primPinCode", label: "PIN Code", type: "text", required: "conditional", validation: "6 digits; required for Indian addresses; first digit ≠ 0" },
                 { id: "primNoZipCode", label: "No ZIP Code", type: "checkbox", required: false, validation: "Tick for foreign addresses without ZIP" },
                 { id: "primZipCode", label: "ZIP Code", type: "text", required: "conditional", validation: "Required for foreign addresses when No ZIP Code is not ticked" }
@@ -65,8 +103,8 @@ const itr4FieldConfig = {
                 { id: "secRoadStreetPO", label: "Road / Street / Post Office", type: "text", required: false },
                 { id: "secAreaLocality", label: "Area / Locality", type: "text", required: false },
                 { id: "secTownCityDistrict", label: "Town / City / District", type: "text", required: "conditional" },
-                { id: "secState", label: "State", type: "dropdown", required: "conditional" },
-                { id: "secCountry", label: "Country / Region", type: "dropdown", required: "conditional" },
+                { id: "secState", label: "State", type: "dropdown", required: "conditional", options: statesList },
+                { id: "secCountry", label: "Country / Region", type: "dropdown", required: "conditional", defaultValue: "India", options: [{ value: 'India', label: 'India' }], disabled: true },
                 { id: "secPinCode", label: "PIN Code", type: "text", required: "conditional" },
                 { id: "secNoZipCode", label: "No ZIP Code", type: "checkbox", required: false },
                 { id: "secZipCode", label: "ZIP Code", type: "text", required: "conditional" }

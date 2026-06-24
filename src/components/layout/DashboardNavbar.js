@@ -33,8 +33,8 @@ const DashboardNavbar = () => {
     <div className="fixed top-0 left-0 right-0 z-50">
 
       {/* Top Main Navbar */}
-      <nav className="h-[72px] bg-white border-b border-[#E0E0E0] flex items-center">
-        <div className="w-full h-20 border-b-[4px] px-10 bg-white flex items-center justify-between ">
+      <nav className="w-full bg-white border-b border-[#E0E0E0] flex items-center">
+        <div className="w-full h-20 px-10 bg-white flex items-center justify-between shadow-sm">
 
           {/* Logo */}
           <Link href="/dashboard" className="flex items-center flex-shrink-0">
@@ -109,11 +109,11 @@ const DashboardNavbar = () => {
       </nav>
 
       {/* Announcement Bar */}
-      <div className="w-full h-15 flex justify-center items-center py-0.5 px-10 bg-[#2B2B2B]">
+      {/* <div className="w-full h-15 flex justify-center items-center py-0.5 px-10 bg-[#2B2B2B]">
         <p className="font-poppins font-normal text-[14px] leading-[17px] tracking-normal text-center text-[#FF8D28]">
         E-filing submission for AY 2026-27 is not yet live by IT Department. We'll notify you once it is enabled, meanwhile prepare your return and keep it ready. 
         </p>
-      </div>
+      </div> */}
 
     </div>
   );

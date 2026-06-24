@@ -167,13 +167,11 @@ export const calculateTax = (
       { min: 0, max: 'Anon. Donation 30%', rate: 30, taxableAmount: anonymousDonations, taxAmount: anonTax },
     ];
   } else {
-    // ── Individual / HUF — slab-based ──────────────────
     const r = applySlabs(income, slabs);
     totalTax = r.totalTax;
     breakdown = r.breakdown;
   }
 
-  // ── Rebate u/s 87A (only Resident Individual) ──────────
   let rebate = 0;
   if (['Individual', 'ITR1', 'ITR2', 'ITR3', 'ITR4', 'HUF'].includes(filingType)) {
     if (regime === 'new' && income <= 700_000) rebate = Math.min(totalTax, 25_000);
@@ -182,11 +180,9 @@ export const calculateTax = (
 
   const taxAfterRebate = Math.max(0, totalTax - rebate);
 
-  // ── Surcharge ──────────────────────────────────────────
   const sc = taxAfterRebate * surchargeRate(income, filingType, regime);
-  const base = taxAfterRebate + sc;
-
-  // ── Health & Education Cess @ 4 % ─────────────────────
+  const base = taxAfterRebate + sc; 
+  
   const cess = base * 0.04;
   const finalTax = Math.round(base + cess);
 
@@ -259,10 +255,10 @@ export const determineITRType = (state) => {
     const p44AE = Number(businessHP.presumptiveIncome44AE || 0);
     if (p44AD > 0 || p44ADA > 0 || p44AE > 0) {
       return { type: 'ITR-4', reason: 'HUF with Presumptive Business Income u/s 44AD/ADA/AE' };
-    }
+    } 
 
     const hasBusiness =
-      Number(businessHP.netBusinessIncome || 0) > 0 ||
+      Number(businessHP.netBusinessIncome || 0) > 0 || 
       Number(state.businessIncome || 0) > 0 ||
       Number(state.cryptoIncome || 0) > 0;
     if (hasBusiness) {

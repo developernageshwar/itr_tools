@@ -9,10 +9,10 @@ import { usePathname } from 'next/navigation';
 const Navbar = () => {
   const pathname = usePathname();
 
-  const noNavbarPaths = ['/login', '/register', '/confirm', '/dashboard'];
-  if (noNavbarPaths.includes(pathname)) {
+  const noNavbarPaths = ['/login', '/register', '/confirm'];
+  if (noNavbarPaths.includes(pathname) || pathname.startsWith('/dashboard')) {
     return null;
-  }
+  } 
 
   return (
     <header className="w-full fixed top-0 left-0 z-50">

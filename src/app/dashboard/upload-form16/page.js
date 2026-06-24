@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   MdKeyboardArrowDown,
@@ -15,36 +15,58 @@ import Link from 'next/link';
 import { useItrStore } from '@/store/itrStore';
 import { toast } from 'react-toastify';
 import axiosInstance from '@/lib/axiosInstance';
+import { mapForm16ToStore, buildStorePayload } from '@/utils/form16Mapper';
 
 function UploadForm16Page() {
   const router = useRouter();
   const setItrFields = useItrStore((state) => state.setFields);
   const userId = useItrStore((state) => state.userId);
   const profileId = useItrStore((state) => state.activeProfileId);
-  const filingType = useItrStore((state) => state.selectedFilingType || state.entityType || 'Individual');
-  const lowerFilingType = filingType.toLowerCase();
+  const storeFilingType = useItrStore((state) => state.selectedFilingType || state.entityType || 'Individual');
   const [openFaq, setOpenFaq] = useState(null);
-  const [returnTo, setReturnTo] = useState(null);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const urlParams = new URLSearchParams(window.location.search);
-      setReturnTo(urlParams.get('returnTo'));
-    }
-  }, []);
+ 
+  const getUrlParams = () => {
+    if (typeof window === 'undefined') return { returnTo: null, itrParam: null };
+    const params = new URLSearchParams(window.location.search);
+    return {
+      returnTo: params.get('returnTo'), 
+      itrParam: params.get('itr'),        
+    };
+  };
+
+  
+  const getDestinationRoute = () => {
+    const { returnTo, itrParam } = getUrlParams();
+
+    if (returnTo) return returnTo;
+
+    const itrRouteMap = {
+      ITR1: '/dashboard/ITR1/details',
+      ITR2: '/dashboard/ITR2/details',
+      ITR3: '/dashboard/ITR3/details',
+      ITR4: '/dashboard/ITR4/details',
+      Individual: '/dashboard/individual/details',
+      Individual2: '/dashboard/individual2/details',
+      Individual3: '/dashboard/individual3/details',
+      Individual4: '/dashboard/individual4/details',
+    };
+
+    const key = itrParam || storeFilingType;
+    return itrRouteMap[key] || `/dashboard/${(key || 'individual').toLowerCase()}/details`;
+  };
+
+  const getFilingType = () => {
+    const { itrParam } = getUrlParams();
+    return itrParam || storeFilingType;
+  };
 
   const handleContinue = () => {
-    if (returnTo) {
-      router.push(returnTo);
-    } else {
-      router.push(`/dashboard/${lowerFilingType}/income`);
-    }
+    router.push(getDestinationRoute());
   };
 
   const [stage, setStage] = useState('UPLOAD');
-
   const [processingStatus, setProcessingStatus] = useState('');
-
   const [pdfPassword, setPdfPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [pendingFile, setPendingFile] = useState(null);
@@ -59,132 +81,56 @@ function UploadForm16Page() {
   ];
 
   const handleExtractedData = (apiResult) => {
-    const resData = apiResult?.data || {};
+    try {
+      console.log("Form 16 API Result:", apiResult);
 
-    console.log("API Result:", apiResult);
+      // Resolve filing type from URL param first, then store
+      const currentFilingType = getFilingType();
+      console.log("Filing type for Form 16 mapping:", currentFilingType);
 
-    const parseAmount = (val) => {
-      if (val === null || val === undefined || val === '') return undefined;
-      const num = parseFloat(val);
-      return isNaN(num) ? undefined : Math.round(num);
-    };
-
-    let firstName = undefined;
-    let middleName = undefined;
-    let lastName = undefined;
-    let flatNo = undefined;
-    let roadStreet = undefined;
-    let areaLocality = undefined;
-    let city = undefined;
-    let state = undefined;
-    let pincode = undefined;
-
-    if (resData.employee?.details) {
-      const parts = resData.employee.details.split('\n');
-      if (parts.length > 0) {
-        const nameParts = parts[0].trim().split(' ').filter(n => n);
-        firstName = nameParts[0] || undefined;
-        if (nameParts.length > 1) {
-          lastName = nameParts[nameParts.length - 1];
-          if (nameParts.length > 2) {
-            middleName = nameParts.slice(1, -1).join(' ');
-          }
-        }
-      }
-      if (parts.length > 1) {
-        const addrParts = parts[1].split(',');
-        flatNo = addrParts[0]?.trim();
-        roadStreet = addrParts[1]?.trim();
-        areaLocality = addrParts[2]?.trim();
-      }
-      if (parts.length > 2) {
-        const lastLine = parts[2];
-        const pinMatch = lastLine.match(/\d{6}/);
-        if (pinMatch) pincode = pinMatch[0];
-
-        const cityStateParts = lastLine.split('-');
-        if (cityStateParts.length > 0) {
-          const citySplit = cityStateParts[0].split(',');
-          city = citySplit[0]?.trim();
-        }
-        if (cityStateParts.length > 1) {
-          const statePart = cityStateParts[1].replace(/\d{6}/, '').trim();
-          if (statePart) state = statePart;
-        }
-      }
-    }
-
-    // Dynamically map API response structure to frontend form state
-    const mappedData = {
-      employerName: resData.employer?.details ? resData.employer.details.split('\n')[0] : undefined,
-      employerTan: resData.deductor?.tan,
-      panNumber: resData.employee?.pan,
-      employeePan: resData.employee?.pan,
-
-      firstName,
-      middleName,
-      lastName,
-      flatNo,
-      roadStreet,
-      areaLocality,
-      city,
-      state,
-      pincode,
-
-      //salary details
-      salaryIncome: parseAmount(resData.salary_details?.salary_u_s_17_1) || parseAmount(resData.salary_details?.gross_total_income),
-      interestIncome: parseAmount(resData.salary_details?.interest_on_savings_account) || parseAmount(resData.salary_details?.interest_from_banks),
-      taxSavingsDeductions: parseAmount(resData.deductions?.total_deductions) || parseAmount(resData.deductions?.section_80C),
-      taxesPaid: parseAmount(resData.salary_details?.net_tax_payable) || parseAmount(resData.salary_details?.net_tax_payable), 
-
-      capitalGains: parseAmount(resData.salary_details?.capital_gains_short_term_or_long_term),   
-
-      houseProperties: parseAmount(resData.salary_details?.capital_gains_short_term_or_long_term),
-
-      dividendIncome: parseAmount(resData.salary_details?.capital_gains_short_term_or_long_term),
-
-      businessIncome: parseAmount(resData.salary_details?.professional_tax), 
-
-      cryptoIncome: parseAmount(resData.salary_details?.capital_gains_short_term_or_long_term), 
-
-      otherIncome: parseAmount(resData.salary_details?.capital_gains_short_term_or_long_term),
-
-      foreignAssets: parseAmount(resData.salary_details?.capital_gains_short_term_or_long_term),
-
-      otherDisclosures: parseAmount(resData.salary_details?.capital_gains_short_term_or_long_term),  
-
-      exempt_allowances: parseAmount(resData.salary_details?.hra_exemption), 
-
-      exemptAllowances: parseAmount(resData.salary_details?.hra_exemption),
-
-      standard_deduction: parseAmount(resData.salary_details?.standard_deduction),
-
-      standardDeduction: parseAmount(resData.salary_details?.standard_deduction),
-
-      section_80d: parseAmount(resData.deductions?.section_80D),
+      // Map API response → structured store payload
+      const mapped = mapForm16ToStore(apiResult);
+      const payload = buildStorePayload(mapped, currentFilingType);
       
-      section80d: parseAmount(resData.deductions?.section_80D),
-      
-    };
+      // Explicitly map payload.salaryIncome to the netSalary field for ITR1
+      if (payload.salaryIncome) { 
+        if (!payload.income) payload.income = {};
+        if (!payload.income['salary-pension-income']) payload.income['salary-pension-income'] = {};
+        
+        const netSal = Number(payload.salaryIncome) || 0;
+        payload.income['salary-pension-income'].netSalary = netSal.toString();
+        
+        // Auto-calculate dependent fields so Tax Summary updates immediately
+        const regime = (payload.details?.general?.optingOutNewRegime === 'Yes') ? 'old' : 'new';
+        const stdDedLimit = regime === 'new' ? 75000 : 50000;
+        const stdDed = Math.min(netSal, stdDedLimit);
+        
+        payload.income['salary-pension-income'].standardDeduction16_ia = stdDed.toString();
+        payload.income['salary-pension-income'].deductionStandard = stdDed.toString();
+        
+        const chargeable = Math.max(0, netSal - stdDed);
+        payload.income['salary-pension-income'].incomeChargeableUnderSalaries = chargeable.toString();
+        payload.income['salary-pension-income'].incomeChargeableSalaries = chargeable.toString();
+        
+        // Also map explicitly for ITR2's 'schedule-s-salary'
+        if (!payload.income['schedule-s-salary']) payload.income['schedule-s-salary'] = {};
+        payload.income['schedule-s-salary'].incomeChargeableSalaries = payload.salaryIncome.toString();
+      }
 
-    const numericFields = [
-      'salary_income', 'salaryIncome', 'interestIncome', 'taxSavingsDeductions', 'tax_savings_deductions', 'taxesPaid',
-      'capitalGains', 'houseProperties', 'dividendIncome', 'businessIncome', 'cryptoIncome', 'otherIncome', 'foreignAssets', 'otherDisclosures',
-      'exempt_allowances', 'exemptAllowances', 'standard_deduction', 'standardDeduction', 'section_80d', 'section80d'
-    ];
+      console.log("Form 16 mapped payload:", payload);
 
-    const finalPayload = {};
-    for (const [key, value] of Object.entries(mappedData)) {
-       if (value !== undefined && value !== null && value !== '' && !Number.isNaN(value)) {
-           finalPayload[key] = value;
-       } else {
-           finalPayload[key] = numericFields.includes(key) ? 0 : '';
-       }
+      setItrFields(payload);
+
+      const destination = getDestinationRoute();
+      console.log("Redirecting to:", destination);
+
+      toast.success("Form 16 data extracted and auto-filled successfully!");
+      router.push(destination);
+    } catch (err) {
+      console.error("Form 16 mapping error:", err);
+      toast.error("Extracted data but could not auto-fill all fields. Please review manually.");
+      router.push(getDestinationRoute());
     }
-
-    setItrFields(finalPayload);
-    toast.success("Form 16 data extracted successfully!");
-    handleContinue();
   };
 
   const handleFileUpload = async (file) => {
@@ -201,19 +147,23 @@ function UploadForm16Page() {
       formData.append("userId", userId);
       formData.append("profileId", profileId);
 
-      const { data } = await axiosInstance.post('/form16', formData, {
+      const { data } = await axiosInstance.post('https://form16-extractor-api-1.onrender.com/extract', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      if (!data.success && data.status !== true) {
-        if (data.status === 'PASSWORD_REQUIRED') {
-          setStage('LOCKED');
-          return;
-        }
-        throw new Error(data.message || 'Failed to process Form 16');
+      const bodyStatus = data?.status;
+      const isPasswordRequired =
+        bodyStatus === 'PASSWORD_REQUIRED' ||
+        data?.error === 'PASSWORD_REQUIRED' ||
+        data?.message === 'PASSWORD_REQUIRED';
+
+      if (isPasswordRequired) {
+        setStage('LOCKED');
+        return;
       }
 
-      setProcessingStatus('Parsing lines...');
+      // Any other 200 response is treated as a successful extraction
+      setProcessingStatus('Parsing extracted data...');
       handleExtractedData(data);
 
     } catch (error) {
@@ -258,20 +208,32 @@ function UploadForm16Page() {
       formData.append("userId", userId);
       formData.append("profileId", profileId);
 
-      const { data } = await axiosInstance.post('/api/tax/v1/decrypt-form16', formData, {
+      const { data } = await axiosInstance.post('https://form16-extractor-api-1.onrender.com/extract', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      if (!data.success && data.status !== true) {
-        if (data.status === 'INVALID_PASSWORD') {
-          toast.error(data.message || "Incorrect password.");
-          setStage('LOCKED');
-          return;
-        }
-        throw new Error(data.message || 'Failed to decrypt/parse Form 16');
+      // Axios only resolves on 2xx — treat as success unless body signals a known failure.
+      const bodyStatus2 = data?.status;
+      const isInvalidPassword =
+        bodyStatus2 === 'INVALID_PASSWORD' ||
+        data?.error === 'INVALID_PASSWORD';
+      const isPasswordRequired2 =
+        bodyStatus2 === 'PASSWORD_REQUIRED' ||
+        data?.error === 'PASSWORD_REQUIRED';
+
+      if (isInvalidPassword) {
+        toast.error(data?.message || "Incorrect password. Please try again.");
+        setStage('LOCKED');
+        return;
       }
 
-      setProcessingStatus('Parsing lines...');
+      if (isPasswordRequired2) {
+        setStage('LOCKED');
+        return;
+      }
+
+      // Successful extraction
+      setProcessingStatus('Parsing extracted data...');
       handleExtractedData(data);
 
     } catch (error) {

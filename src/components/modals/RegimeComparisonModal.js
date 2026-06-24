@@ -181,7 +181,7 @@ const RegimeComparisonModal = ({ isOpen, onClose, onSwitchClick }) => {
                                                             </tr>
                                                             <tr className="border-b border-[#E5E7EB]">
                                                                 <td className="py-4 px-4 text-[#545456]">Standard Deduction</td>
-                                                                <td className={`py-4 px-4 text-center transition-colors ${isNew ? 'bg-[#F0F8FF]/50 text-[#1E1E1E]' : 'text-[#545456]'}`}>₹ {state.salaryIncome > 0 ? '50,000' : '0'}</td>
+                                                                <td className={`py-4 px-4 text-center transition-colors ${isNew ? 'bg-[#F0F8FF]/50 text-[#1E1E1E]' : 'text-[#545456]'}`}>₹ {state.salaryIncome > 0 ? '75,000' : '0'}</td>
                                                                 <td className={`py-4 px-4 text-center transition-colors ${!isNew ? 'bg-[#F0F8FF]/50 text-[#1E1E1E]' : 'text-[#545456]'}`}>₹ {state.salaryIncome > 0 ? '50,000' : '0'}</td>
                                                             </tr>
                                                             <tr className="border-b border-[#E5E7EB]">

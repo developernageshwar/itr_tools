@@ -70,9 +70,9 @@ export default function TaxSummaryStep({ filingType }) {
         { label: summary.isRefund ? "Tax Refund" : "Tax Due", value: summary.refundOrDue, isGreen: !summary.isRefund },
     ];
 
-    useEffect(() => {
+    useEffect(() => { 
         const handleSubmit = async () => {
-            if (isSubmitting) return;
+            if (isSubmitting) return;   
             setIsSubmitting(true);
             try {
                 // We're adapting the validation to avoid strict checking on dynamic structures, 

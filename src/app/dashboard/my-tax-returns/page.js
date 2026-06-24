@@ -10,6 +10,7 @@ import Button from '@/components/ui/Button';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import Footer2 from '@/components/layout/Footer2';
 import StartFillingModal from '@/components/ui/StartFillingModal';
+import ReturnDetailsModal from '@/components/modals/ReturnDetailsModal';
 import { useItrStore } from '@/store/itrStore';
 import { useAuth } from '@/context/AuthContext';
 import itrService from '@/services/itrService'; 
@@ -21,6 +22,7 @@ export default function MyTaxReturnsPage() {
 
   const [expandedProfiles, setExpandedProfiles] = useState({});
   const [isStartFillingOpen, setIsStartFillingOpen] = useState(false);
+  const [selectedProfileToView, setSelectedProfileToView] = useState(null);
 
   const { user } = useAuth();
   const [apiProfiles, setApiProfiles] = useState([]);
@@ -222,6 +224,15 @@ export default function MyTaxReturnsPage() {
                               {profile.filingType || 'Individual'}
                             </span>
                           </span>
+                          <button 
+                            className="ml-2 cursor-pointer text-[13px] bg-white border border-[#1498EB] text-[#1498EB] hover:bg-gradient-brand hover:text-white hover:border-transparent px-4 py-1 rounded-[6px] font-medium transition-all shadow-sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedProfileToView(profile);
+                            }}
+                          >
+                            View
+                          </button>
                         </div>
                         <p className="font-poppins font-normal text-[16px] leading-[24px] tracking-normal text-[#8E8E93]">
                           PAN: {profile.pan || 'Not Available'}
@@ -337,6 +348,12 @@ export default function MyTaxReturnsPage() {
         <Footer2 />
 
       </div>
+      
+      <ReturnDetailsModal 
+        isOpen={!!selectedProfileToView} 
+        onClose={() => setSelectedProfileToView(null)} 
+        profile={selectedProfileToView} 
+      />
     </ProtectedRoute>
   );
 } 
