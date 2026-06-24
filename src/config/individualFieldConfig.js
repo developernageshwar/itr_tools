@@ -356,7 +356,7 @@ export const itr1FieldConfig = [
 
               { name: "hpState", label: "State", type: "Dropdown ▼", required: true, options: statesList },
 
-              { name: "hpCountry", label: "Country", type: "Dropdown ▼", required: true, defaultValue: "91-INDIA" },
+              { name: "hpCountry", label: "Country", type: "Dropdown ▼", required: true, defaultValue: "91-INDIA", options: [{ value: "91-INDIA", label: "91-INDIA" }] },
               { name: "hpPinCode", label: "PIN Code", type: "Text (6 digits)", required: "Conditional", condition: "domestic_hp" },
               { name: "hpZipCode", label: "ZIP Code", type: "Text", required: "Conditional", condition: "foreign_hp" },
               { name: "ownerOfTheProperty", label: "Owner of the Property", type: "Dropdown ▼", required: true, options: [{ value: "Self", label: "Self" }, { value: "Co-owner", label: "Co-owner" }, { value: "Deemed Owner", label: "Deemed Owner" }] },
@@ -606,7 +606,7 @@ export const itr1FieldConfig = [
               { name: "donNameOfDonee", label: "(ii) Name of Donee", type: "Text", required: "Conditional", notes: "If any single field in a row layout is touched, ALL sibling fields within that corresponding index immediately convert to mandatory status" },
               { name: "donAddress", label: "(iii) Address", type: "Text", required: "Conditional" },
               { name: "donCityTownDistrict", label: "(iv) City or Town or District", type: "Text", required: "Conditional" },
-              { name: "donStateCode", label: "(v) State Code", type: "Dropdown ▼", required: "Conditional" },
+              { name: "donStateCode", label: "(v) State Code", type: "Dropdown ▼", required: "Conditional", options: statesList },
               { name: "donPinCode", label: "(vi) Pin Code", type: "Text (6 digits)", required: "Conditional" },
               { name: "donPanOfDonee", label: "(vii) PAN of Donee", type: "Text (PAN)", required: "Conditional", notes: "Fallback entry logic string code 'GGGGG0000G' is permitted exclusively for Government establishments lacking native PAN issuance records" },
               { name: "donArnReferenceNumber", label: "ARN Donation Reference Number", type: "Text", required: "Conditional", condition: "Category_D_Only" }
@@ -654,7 +654,7 @@ export const itr1FieldConfig = [
               { name: "sec80ggaDoneeName", label: "(iii) Name of Donee", type: "Text", required: true },
               { name: "sec80ggaAddress", label: "(iv) Address", type: "Text", required: true },
               { name: "sec80ggaCityTownDistrict", label: "(v) City or Town or District", type: "Text", required: true },
-              { name: "sec80ggaStateCode", label: "(vi) State Code", type: "Dropdown ▼", required: true },
+              { name: "sec80ggaStateCode", label: "(vi) State Code", type: "Dropdown ▼", required: true , options: statesList  },
               { name: "sec80ggaPinCode", label: "(vii) Pin Code", type: "Text", required: true },
               { name: "sec80ggaDoneePan", label: "(viii) PAN of Donee", type: "Text (PAN)", required: true },
               { name: "sec80ggaCashDonationDate", label: "(ix) Date of Donation in cash", type: "Date", required: "Conditional" },
@@ -689,7 +689,7 @@ export const itr1FieldConfig = [
                 label: "Nature of Disability (i)",
                 type: "Dropdown ▼",
                 required: true,
-                options: [
+                options: [ 
                   { value: "Blindness", label: "Blindness" },
                   { value: "Low Vision", label: "Low Vision" },
                   { value: "Hearing Impairment", label: "Hearing Impairment" },
@@ -732,8 +732,33 @@ export const itr1FieldConfig = [
             id: "disability-dependent-80dd",
             title: "3.8 Schedule 80DD — Maintenance of Dependent with Disability Matrix",
             fields: [
-              { name: "sec80ddNatureOfDisability", label: "Nature of Disability (i)", type: "Dropdown ▼", required: true, notes: "Shared options match structural 80U list" },
-              { name: "sec80ddTypeOfDisability", label: "Type of Disability (ib)", type: "Dropdown ▼", required: true, notes: "Shared options match structural 80U list" },
+              { name: "sec80ddNatureOfDisability", label: "Nature of Disability (i)", type: "Dropdown ▼", required: true, notes: "Shared options match structural 80U list" , options: [ 
+                  { value: "Blindness", label: "Blindness" },
+                  { value: "Low Vision", label: "Low Vision" },
+                  { value: "Hearing Impairment", label: "Hearing Impairment" },
+                  { value: "Loco Motor", label: "Loco Motor Disability" },
+                  { value: "Mental Retardation", label: "Mental Retardation" },
+                  { value: "Mental Illness", label: "Mental Illness" },
+                  { value: "Autism", label: "Autism" },
+                  { value: "Cerebral Palsy", label: "Cerebral Palsy" },
+                  { value: "Multiple Disability incl. blindness/CP/autism", label: "Multiple Disability (including blindness / CP / autism)" }
+                ] },
+              { name: "sec80ddTypeOfDisability", label: "Type of Disability (ib)", type: "Dropdown ▼", required: true, notes: "Shared options match structural 80U list" , options: [
+                  { value: "a_Dementia", label: "(a) Dementia" },
+                  { value: "b_Dystonia", label: "(b) Dystonia Musculorum Deformans" },
+                  { value: "c_MotorNeuronDisease", label: "(c) Motor Neuron Disease" },
+                  { value: "d_Ataxia", label: "(d) Ataxia" },
+                  { value: "e_Chorea", label: "(e) Chorea" },
+                  { value: "f_Hemiballismus", label: "(f) Hemiballismus" },
+                  { value: "g_Aphasia", label: "(g) Aphasia" },
+                  { value: "h_Parkinsons", label: "(h) Parkinson's Disease" },
+                  { value: "i_MalignantCancers", label: "(i) Malignant Cancers" },
+                  { value: "j_AIDS", label: "(j) Full Blown AIDS" },
+                  { value: "k_ChronicRenalFailure", label: "(k) Chronic Renal Failure" },
+                  { value: "l_HaematologicalDisorders", label: "(l) Haematological Disorders" },
+                  { value: "m_Haemophilia", label: "(m) Haemophilia" },
+                  { value: "n_Thalassaemia", label: "(n) Thalassaemia" }
+                ]}, 
               { name: "sec80ddDeductionAmount", label: "Amount of Deduction (ii) ₹", type: "Amount (🔒 Auto)", required: false },
               {
                 name: "sec80ddTypeOfDependent",
@@ -785,7 +810,7 @@ export const itr1FieldConfig = [
               { name: "tds2SlNo", label: "(1) Sl. No.", type: "Auto", required: false },
               { name: "tds2DeductorTan", label: "(2a) TAN of Deductor", type: "Text (TAN)", required: true },
               { name: "tds2DeductorName", label: "(2b) Name of Deductor", type: "Text", required: true },
-              { name: "tds2SectionCode", label: "(3) Section under which TDS deducted", type: "Dropdown ▼", required: true, notes: "Predefined income segment statutory codes (e.g., 194A, 194B, 194C, 194I, 194J, 193 etc.)" },
+              { name: "tds2SectionCode", label: "(3) Section under which TDS deducted", type: "Dropdown ▼", required: true, notes: "Predefined income segment statutory codes (e.g., 194A, 194B, 194C, 194I, 194J, 193 etc.)", options: [{ value: "194-IB", label: "194-IB" }] },
               { name: "tds2GrossReceiptSubjectToTax", label: "(4) Gross Receipt subject to Tax Deduction (₹)", type: "Amount", required: true },
               { name: "tds2FinancialYearOfDeduction", label: "(5) Year of Tax Deduction", type: "Year / Dropdown ▼", required: true, notes: "Financial fiscal tracking index mapping" },
               { name: "tds2TaxDeductedAmount", label: "(6) Tax Deducted (₹)", type: "Amount", required: true },
@@ -800,9 +825,9 @@ export const itr1FieldConfig = [
               { name: "tds3TenantPan", label: "(2) PAN of Tenant", type: "Text (PAN)", required: true, notes: "Mandatory when executing tax withholding records matching Section 194-IB parameter types" },
               { name: "tds3TenantAadhaar", label: "(3a) Aadhaar No. of Tenant", type: "Text (12 digits)", required: false },
               { name: "tds3TenantName", label: "(3b) Name of Tenant", type: "Text", required: true },
-              { name: "tds3SectionCode", label: "(4) Section under which TDS deducted", type: "Dropdown ▼", required: true, defaultValue: "194-IB" },
+              { name: "tds3SectionCode", label: "(4) Section under which TDS deducted", type: "Dropdown ▼", required: true, defaultValue: "194-IB" ,options: [{ value: "194-IB", label: "194-IB" }] },
               { name: "tds3GrossReceiptSubjectToTax", label: "(5) Gross Receipt subject to Tax Deduction (₹)", type: "Amount", required: true },
-              { name: "tds3YearOfTaxDeduction", label: "(6) Year of Tax Deduction", type: "Dropdown ▼", required: true },
+              { name: "tds3YearOfTaxDeduction", label: "(6) Year of Tax Deduction", type: "date", required: true },
               { name: "tds3TaxDeductedAmount", label: "(7) Tax Deducted (₹)", type: "Amount", required: true },
               { name: "tds3CreditClaimedThisYear", label: "TDS Credit Claimed this Year (₹)", type: "Amount", required: true }
             ]
@@ -821,7 +846,7 @@ export const itr1FieldConfig = [
               { name: "tcsCollectorTan", label: "(2) Tax Collection Account No. of Collector", type: "Text (TAN)", required: true },
               { name: "tcsCollectorName", label: "(3) Name of Collector", type: "Text", required: true },
               { name: "tcsGrossPaymentSubjectToCollection", label: "(4) Gross Payment subject to Tax Collection (₹)", type: "Amount", required: true },
-              { name: "tcsYearOfCollection", label: "(5) Year of Tax Collection", type: "Dropdown ▼ / Year", required: true },
+              { name: "tcsYearOfCollection", label: "(5) Year of Tax Collection", type: "Date", required: true },
               { name: "tcsTaxCollectedAmount", label: "(6) Tax Collected (₹)", type: "Amount", required: true },
               { name: "tcsCreditClaimedThisYear", label: "TCS Credit Claimed this Year (₹)", type: "Amount", required: true }
             ]
@@ -835,7 +860,7 @@ export const itr1FieldConfig = [
               { name: "challanDepositDate", label: "(3) Date of Deposit (DD/MM/YYYY)", type: "Date", required: true, validation: { format: "DD/MM/YYYY" } },
               { name: "challanSerialNumber", label: "(4) Serial Number of Challan", type: "Text", required: true },
               { name: "challanTaxPaidAmount", label: "Tax Paid (₹)", type: "Amount", required: true },
-              { name: "challanTypeClassification", label: "Type of Tax (auto-classified)", type: "Dropdown ▼ (read-only)", required: false, notes: "Advance Tax / Self-Assessment Tax parameter token systematically tagged based on relative deposit execution timeline dates" }
+              // { name: "challanTypeClassification", label: "Type of Tax (auto-classified)", type: "Dropdown ▼ (read-only)", required: false, notes: "Advance Tax / Self-Assessment Tax parameter token systematically tagged based on relative deposit execution timeline dates" } 
             ]
           }
         ]
@@ -947,7 +972,7 @@ export const itr1FieldConfig = [
             id: "itru-eligibility-reasoning",
             title: "Eligibility Framework Reason Codes",
             fields: [
-              { name: "itruIsEligibleToFile", label: "(A8) Are you eligible to file updated return?", type: "Dropdown ▼ (Yes/No)", required: true },
+              { name: "itruIsEligibleToFile", label: "(A8) Are you eligible to file updated return?", type: "Dropdown ▼ (Yes/No)", required: true , options: [{ value: "Yes", label: "Yes" }, { value: "No", label: "No" }] },
               { name: "itruFormSelectedForUpdating", label: "(A9) ITR form for updating income", type: "Dropdown ▼", required: true, options: [{ value: "ITR1", label: "ITR1" }, { value: "ITR2", label: "ITR2" }, { value: "ITR3", label: "ITR3" }, { value: "ITR4", label: "ITR4" }, { value: "ITR5", label: "ITR5" }, { value: "ITR6", label: "ITR6" }, { value: "ITR7", label: "ITR7" }] },
               {
                 name: "itruReasonsForUpdatingIncome",

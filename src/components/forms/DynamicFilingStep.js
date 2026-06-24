@@ -510,7 +510,7 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
     }
 
     // 3. Dropdown/select
-    if (field.type === 'select') {
+    if ((field.type === 'select' || field.type?.toLowerCase().includes('dropdown') || field.type?.toLowerCase().includes('select'))) {
       return 'Select';
     }
 
@@ -2061,7 +2061,7 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
                       const val = currentData[field.name] || '';
                       const isNumber = field.type === 'number';
 
-                      if (field.type === 'select') {
+                      if ((field.type === 'select' || field.type?.toLowerCase().includes('dropdown') || field.type?.toLowerCase().includes('select'))) {
                         return (
                           <FormRow key={fieldIdx} label={getFieldLabel(field)}>
                             <ManualSelect
@@ -2132,7 +2132,7 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
                       const val = currentData[field.name] || '';
                       const isNumber = field.type === 'number';
 
-                      if (field.type === 'select') {
+                      if ((field.type === 'select' || field.type?.toLowerCase().includes('dropdown') || field.type?.toLowerCase().includes('select'))) {
                         return (
                           <FloatingInput
                             key={fieldIdx}
@@ -2283,7 +2283,7 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
                         const isNum = field.type === 'number';
                         const fieldVal = newMemberData[field.name] || '';
 
-                        if (field.type === 'select') {
+                        if ((field.type === 'select' || field.type?.toLowerCase().includes('dropdown') || field.type?.toLowerCase().includes('select'))) {
                           return (
                             <FormRow key={field.name} label={getFieldLabel(field)}>
                               <ManualSelect
@@ -2792,7 +2792,7 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
                         );
                       }
 
-                      if (field.type === 'select') {
+                      if ((field.type === 'select' || field.type?.toLowerCase().includes('dropdown') || field.type?.toLowerCase().includes('select'))) {
                         return (
                           <FormRow key={field.name} label={getFieldLabel(field)}>
                             <div className="flex flex-col w-full sm:w-[320px] gap-1">
@@ -2974,7 +2974,7 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
                     <p className="font-poppins font-semibold text-sm mb-4 text-black">Add {section.title} Manually</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {section.fields.filter(shouldRenderField).map(field => {
-                        if (field.type === 'select') {
+                        if ((field.type === 'select' || field.type?.toLowerCase().includes('dropdown') || field.type?.toLowerCase().includes('select'))) {
                           return (
                             <FloatingInput
                               key={field.name}
@@ -3037,7 +3037,7 @@ export default function DynamicFilingStep({ filingType, step, activeTab, handleN
                       ? (state[step]?.[activeTab]?.[field.name] || '')
                       : (state[field.name] || '');
 
-                    if (field.type === 'select') {
+                    if ((field.type === 'select' || field.type?.toLowerCase().includes('dropdown') || field.type?.toLowerCase().includes('select'))) {
                       return (
                         <FloatingInput
                           key={field.name}

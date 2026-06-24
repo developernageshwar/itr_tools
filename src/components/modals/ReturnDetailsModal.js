@@ -12,7 +12,8 @@ const ReturnDetailsModal = ({ isOpen, onClose, profile }) => {
   const filingType = profile.filingType;
 
   const { configList } = useMemo(() => {
-    let list = [];
+    let list = []; 
+  
 
     if (filingType === 'ITR1' || filingType === 'Individual') {
       list = itr1FieldConfig || [];

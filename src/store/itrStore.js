@@ -980,15 +980,11 @@ export const useItrStore = create(
           );
 
           taxes = tdsSum + tcsSum + advSum + satSum;
-          // Store breakdowns for detailed display in TaxSummaryStep
-          // (returned in summary object below)
           Object.assign(state, {
             _taxBreakdown: { tdsSum, tcsSum, advSum, satSum }
           });
-          // Use module-scope variables so they're accessible below
           var _tdsSum = tdsSum, _tcsSum = tcsSum, _advSum = advSum, _satSum = satSum;
 
-          // ── Trust & Exempt Entities (ITR-7) ────────────────────────────────────────────────────────
         } else if (filingType === 'Trust & Exempt Entities') {
           const income = state.income || {};
           const taxSec = state.tax || {};
