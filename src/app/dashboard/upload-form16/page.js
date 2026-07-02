@@ -92,29 +92,37 @@ function UploadForm16Page() {
       const mapped = mapForm16ToStore(apiResult);
       const payload = buildStorePayload(mapped, currentFilingType);
       
-      // Explicitly map payload.salaryIncome to the netSalary field for ITR1
-      if (payload.salaryIncome) { 
+      // Map details from Form 16 raw data if available
+      if (mapped.form16RawData) {
+        const raw = mapped.form16RawData;
+        const grossSalary17_1 = Number(raw.salary17_1) || 0;
+        const perquisites17_2 = Number(raw.perquisites17_2) || 0;
+        const profits17_3 = Number(raw.profits17_3) || 0;
+        const standardDeduction = Number(raw.standardDeduction) || 75000;
+        const netTaxableSalary = Number(raw.incomeChargeableSalaries) || 0;
+
         if (!payload.income) payload.income = {};
+        
+        // Populate ITR1 specific fields
         if (!payload.income['salary-pension-income']) payload.income['salary-pension-income'] = {};
+        payload.income['salary-pension-income'].salaryAsPerSection17_1 = grossSalary17_1.toString();
+        payload.income['salary-pension-income'].valueIOfPerquisitesuS17_2 = perquisites17_2.toString();
+        payload.income['salary-pension-income'].profitInLieuOfSalaryuS17_3 = profits17_3.toString();
+        payload.income['salary-pension-income'].grossSalaryTotal = (grossSalary17_1 + perquisites17_2 + profits17_3).toString();
+        payload.income['salary-pension-income'].standardDeduction16_ia = standardDeduction.toString();
+        payload.income['salary-pension-income'].deductionStandard = standardDeduction.toString();
+        payload.income['salary-pension-income'].netSalary = (grossSalary17_1 + perquisites17_2 + profits17_3).toString();
+        payload.income['salary-pension-income'].incomeChargeableUnderSalaries = netTaxableSalary.toString();
+        payload.income['salary-pension-income'].incomeChargeableSalaries = netTaxableSalary.toString();
         
-        const netSal = Number(payload.salaryIncome) || 0;
-        payload.income['salary-pension-income'].netSalary = netSal.toString();
-        
-        // Auto-calculate dependent fields so Tax Summary updates immediately
-        const regime = (payload.details?.general?.optingOutNewRegime === 'Yes') ? 'old' : 'new';
-        const stdDedLimit = regime === 'new' ? 75000 : 50000;
-        const stdDed = Math.min(netSal, stdDedLimit);
-        
-        payload.income['salary-pension-income'].standardDeduction16_ia = stdDed.toString();
-        payload.income['salary-pension-income'].deductionStandard = stdDed.toString();
-        
-        const chargeable = Math.max(0, netSal - stdDed);
-        payload.income['salary-pension-income'].incomeChargeableUnderSalaries = chargeable.toString();
-        payload.income['salary-pension-income'].incomeChargeableSalaries = chargeable.toString();
-        
-        // Also map explicitly for ITR2's 'schedule-s-salary'
+        // Populate ITR2 specific fields
         if (!payload.income['schedule-s-salary']) payload.income['schedule-s-salary'] = {};
-        payload.income['schedule-s-salary'].incomeChargeableSalaries = payload.salaryIncome.toString();
+        payload.income['schedule-s-salary'].salary17_1 = grossSalary17_1.toString();
+        payload.income['schedule-s-salary'].salary17_2 = perquisites17_2.toString();
+        payload.income['schedule-s-salary'].salary17_3 = profits17_3.toString();
+        payload.income['schedule-s-salary'].grossSalary = (grossSalary17_1 + perquisites17_2 + profits17_3).toString();
+        payload.income['schedule-s-salary'].deductionStandard = standardDeduction.toString();
+        payload.income['schedule-s-salary'].incomeChargeableSalaries = netTaxableSalary.toString();
       }
 
       console.log("Form 16 mapped payload:", payload);
@@ -147,9 +155,13 @@ function UploadForm16Page() {
       formData.append("userId", userId);
       formData.append("profileId", profileId);
 
-      const { data } = await axiosInstance.post('https://form16-extractor-api-1.onrender.com/extract', formData, {
+      // const { data } = await axiosInstance.post('https://form16-extractor-api-1.onrender.com/extract', formData, {
+      //   headers: { 'Content-Type': 'multipart/form-data' },
+      // });  
+
+      const { data } = await axiosInstance.post('https://form16.onrender.com/extract', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      }); 
 
       const bodyStatus = data?.status;
       const isPasswordRequired =
@@ -208,9 +220,14 @@ function UploadForm16Page() {
       formData.append("userId", userId);
       formData.append("profileId", profileId);
 
-      const { data } = await axiosInstance.post('https://form16-extractor-api-1.onrender.com/extract', formData, {
+      // const { data } = await axiosInstance.post('https://form16-extractor-api-1.onrender.com/extract', formData, {
+      //   headers: { 'Content-Type': 'multipart/form-data' },
+      // });  
+
+
+      const { data } = await axiosInstance.post('https://form16.onrender.com/extract', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      }); 
 
       // Axios only resolves on 2xx — treat as success unless body signals a known failure.
       const bodyStatus2 = data?.status;

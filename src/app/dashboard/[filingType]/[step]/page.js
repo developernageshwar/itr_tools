@@ -44,7 +44,14 @@ export default function FilingFlowPage() {
 
   const currentStepObj = steps.find(s => s.route === currentStepRoute);
   const currentStepId = currentStepObj?.id;
-  const currentSubTabs = subTabs[currentStepRoute] || [];
+  let currentSubTabs = subTabs[currentStepRoute] || [];
+  if (currentStepRoute === 'income' && state.eligibilityAnswers?.q2 === 'no') {
+    currentSubTabs = currentSubTabs.filter(tab => 
+      tab.id !== 'house-property-income' && 
+      tab.id !== 'schedule-hp-house-property' && 
+      tab.id !== 'house_property'
+    );
+  }
 
   // Determine active tab dynamically: if activeTab is not in currentSubTabs, default to the first one
   const isTabValid = currentSubTabs.some(t => t.id === activeTab);
@@ -59,15 +66,25 @@ export default function FilingFlowPage() {
     return <div className="p-10 text-center">Invalid Step.</div>;
   }
 
+  const isSavingSection = state.isSavingSection || false;
+
+  useEffect(() => {
+    // Reset any transition loading states when step route changes
+    state.setFields({ isSavingSection: false });
+  }, [currentStepRoute]);
+
   const handleNextTab = () => {
     const currentIndex = currentSubTabs.findIndex(t => t.id === effectiveActiveTab);
     if (currentIndex < currentSubTabs.length - 1) {
       setActiveTab(currentSubTabs[currentIndex + 1].id);
+      state.setFields({ isSavingSection: false });
     } else {
       // Go to next step
       const nextStepIndex = steps.findIndex(s => s.id === currentStepId);
       if (nextStepIndex < steps.length - 1) {
         router.push(`${configEntry.baseRoute}/${steps[nextStepIndex + 1].route}`);
+      } else {
+        state.setFields({ isSavingSection: false });
       }
     }
   };
@@ -156,12 +173,23 @@ export default function FilingFlowPage() {
       }
     }
     router.push(`${configEntry.baseRoute}/${route}`);
-  };  
-
-
+  };
 
   return (
-    <div className="w-full min-h-screen bg-[#F8F9FC]">
+    <div className="w-full min-h-screen relative">
+      {isSavingSection && (
+        <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center  transition-all duration-300">
+          <div className="flex flex-col items-center gap-4 p-6">
+            <div className="relative flex items-center justify-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-[#3867D6]" />
+              
+            </div>
+            <p className="font-poppins font-semibold text-[#1E1E1E] text-sm tracking-wide">
+              Saving & loading next section...
+            </p>
+          </div>
+        </div>
+      )}
       {isIndividualType ? (
         <div className="w-full flex justify-center pt-8 pb-1 px-4">
           <div className="max-w-[1440px] w-full px-6">
@@ -220,6 +248,8 @@ export default function FilingFlowPage() {
                   type="button"
                   className="w-full h-[52px] rounded-xl font-semibold text-base shadow-md"
                   onClick={handleSidebarSaveAndNext}
+                  isLoading={isSavingSection}
+                  disabled={isSavingSection}
                 >
                   {currentStepRoute === 'tax-summary' ? 'Final Submission' : 'Go to next'}
                 </Button>

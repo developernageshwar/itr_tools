@@ -31,6 +31,8 @@
  * }
  */
 
+import { statesList } from '@/config/constant';
+
 const parseAmount = (val) => {
   if (val === null || val === undefined || val === '') return 0;
   const num = parseFloat(String(val).replace(/,/g, ''));
@@ -117,6 +119,55 @@ const buildTdsRows = (challanDetails = [], employerName = '', tanDeductor = '') 
  * This function normalises both into a single `resData` object.
  */
 const extractStructuredData = (apiResponse) => {
+  // Shape C — new structuredData format
+  if (apiResponse?.structuredData) {
+    const sd = apiResponse.structuredData;
+    return {
+      employee: {
+        pan: sd.employee?.pan || '',
+        details: sd.employee?.name || '',
+      },
+      employer: {
+        details: sd.employer?.name || '',
+        pan: sd.employer?.pan || '',
+        tan: sd.employer?.tan || '',
+      },
+      deductor: {
+        tan: sd.employer?.tan || '',
+        pan: sd.employer?.pan || '',
+      },
+      salary_details: {
+        salary_u_s_17_1: sd.salary?.salary17_1 || 0,
+        salary_17_1: sd.salary?.salary17_1 || 0,
+        perquisites_17_2: sd.salary?.perquisites17_2 || 0,
+        profit_in_lieu_17_3: sd.salary?.profits17_3 || 0,
+        standard_deduction: sd.salary?.standardDeduction || 0,
+        net_taxable_salary: sd.salary?.incomeChargeableSalaries || 0,
+        income_chargeable_salaries: sd.salary?.incomeChargeableSalaries || 0,
+        gross_salary: (sd.salary?.salary17_1 || 0) + (sd.salary?.perquisites17_2 || 0) + (sd.salary?.profits17_3 || 0),
+        total_tds_deducted: sd.taxes?.netTaxPayable || sd.taxes?.taxPayable || 0,
+      },
+      taxes: {
+        taxOnIncome: sd.taxes?.taxOnIncome || 0,
+        healthEducationCess: sd.taxes?.healthEducationCess || 0,
+        taxPayable: sd.taxes?.taxPayable || 0,
+        netTaxPayable: sd.taxes?.netTaxPayable || 0,
+      },
+      deductions: {
+        section_80C: sd.deductions?.section80C || 0,
+        section_80D: sd.deductions?.section80D || 0,
+        total_deductions: sd.deductions?.totalDeductions || 0,
+      },
+      quarterly_tds: [],
+      challan_details: [],
+      assessment_year: sd.assessment?.assessmentYear || '2025-26',
+      employer_period: {
+        from: sd.assessment?.periodFrom || '',
+        to: sd.assessment?.periodTo || '',
+      },
+    };
+  }
+
   // Shape B — already structured
   if (apiResponse?.data?.employee || apiResponse?.data?.salary_details) {
     return apiResponse.data;
@@ -215,6 +266,31 @@ const extractStructuredData = (apiResponse) => {
   };
 };
 
+const mapStateName = (stateStr) => {
+  if (!stateStr) return '';
+  const lower = stateStr.toLowerCase().trim();
+  const matched = statesList.find(s => s.value.toLowerCase() === lower || s.label.toLowerCase() === lower);
+  if (matched) return matched.value;
+
+  const lowerTrimmed = lower.replace(/[^a-z]/g, '');
+  if (lowerTrimmed === 'delhi' || lowerTrimmed === 'newdelhi') return 'Delhi';
+  if (lowerTrimmed === 'maharashtra' || lowerTrimmed === 'mumbai') return 'Maharashtra';
+  if (lowerTrimmed === 'karnataka' || lowerTrimmed === 'bangalore' || lowerTrimmed === 'bengaluru') return 'Karnataka';
+  if (lowerTrimmed === 'up' || lowerTrimmed === 'uttarpradesh') return 'Uttar Pradesh';
+  if (lowerTrimmed === 'mp' || lowerTrimmed === 'madhyapradesh') return 'Madhya Pradesh';
+  if (lowerTrimmed === 'ap' || lowerTrimmed === 'andhrapradesh') return 'Andhra Pradesh';
+  if (lowerTrimmed === 'wb' || lowerTrimmed === 'westbengal') return 'West Bengal';
+  if (lowerTrimmed === 'tn' || lowerTrimmed === 'tamilnadu') return 'Tamil Nadu';
+
+  const substringMatch = statesList.find(s => lower.includes(s.value.toLowerCase()));
+  if (substringMatch) return substringMatch.value;
+
+  const superstringMatch = statesList.find(s => s.value.toLowerCase().includes(lower));
+  if (superstringMatch) return superstringMatch.value;
+
+  return stateStr;
+};
+
 /**
  * Main mapper: converts API response to ITR store fields
  * Returns an object ready to be passed to setItrFields()
@@ -301,30 +377,119 @@ export const mapForm16ToStore = (apiResponse) => {
   const periodFrom = resData.employer_period?.from || '';
   const periodTo = resData.employer_period?.to || '';
 
+  // ── Build Details Payloads for ITR forms ──────────────────────────────────
+  const itr1DetailsPayload = {
+    'personal-identity': {
+      firstName,
+      middleName,
+      lastName,
+      pan: employeePan,
+      dob: '',
+      hasAadhaar: 'No',
+      natureOfEmployment: 'OTH',
+    },
+    'contact-communications': {
+      primaryEmailId: '',
+      primaryMobileNumber: '',
+    },
+    'address-specifications': {
+      primaryFlatDoorBlockNo: employeeAddress.flatNo || '',
+      primaryBuildingPremisesVillage: employeeAddress.roadStreet || '',
+      primaryRoadStreetPostOffice: employeeAddress.roadStreet || '',
+      primaryAreaLocality: employeeAddress.areaLocality || '',
+      primaryTownCityDistrict: employeeAddress.city || '',
+      primaryState: mapStateName(employeeAddress.state) || '',
+      primaryCountryRegion: 'India',
+      primaryPinCode: employeeAddress.pincode || '',
+      isSecondaryAddressSameAsPrimary: 'Yes',
+    }
+  };
+
+  const itr2DetailsPayload = {
+    'part-a-gen': {
+      firstName,
+      middleName,
+      lastName,
+      pan: employeePan,
+      dobFormation: '',
+      // Address
+      pFlatDoorBlock: employeeAddress.flatNo || '',
+      pBuildingPremisesVillage: employeeAddress.roadStreet || '',
+      pRoadStreetPostOffice: employeeAddress.roadStreet || '',
+      pAreaLocality: employeeAddress.areaLocality || '',
+      pTownCityDistrict: employeeAddress.city || '',
+      pState: mapStateName(employeeAddress.state) || '',
+      pCountryRegion: 'India',
+      pPinCode: employeeAddress.pincode || '',
+      // Contact
+      primaryEmail: '',
+      primaryMobileNumber: '',
+    }
+  };
+
+  const itr3DetailsPayload = {
+    'general_info': {
+      firstName,
+      middleName,
+      lastName,
+      pan: employeePan,
+      dobFormation: '',
+      // Address
+      pFlatDoorBlock: employeeAddress.flatNo || '',
+      pBuildingPremisesVillage: employeeAddress.roadStreet || '',
+      pRoadStreetPostOffice: employeeAddress.roadStreet || '',
+      pAreaLocality: employeeAddress.areaLocality || '',
+      pTownCityDistrict: employeeAddress.city || '',
+      pState: mapStateName(employeeAddress.state) || '',
+      pCountryRegion: 'India',
+      pPinCode: employeeAddress.pincode || '',
+      // Contact
+      primaryEmail: '',
+      primaryMobileNumber: '',
+    }
+  };
+
+  const itr4DetailsPayload = {
+    'permanent': {
+      firstName,
+      middleName,
+      lastName,
+      pan: employeePan,
+      dobFormation: '',
+      // Address
+      pFlatDoorBlock: employeeAddress.flatNo || '',
+      pBuildingPremisesVillage: employeeAddress.roadStreet || '',
+      pRoadStreetPostOffice: employeeAddress.roadStreet || '',
+      pAreaLocality: employeeAddress.areaLocality || '',
+      pTownCityDistrict: employeeAddress.city || '',
+      pState: mapStateName(employeeAddress.state) || '',
+      pCountryRegion: 'India',
+      pPinCode: employeeAddress.pincode || '',
+      // Contact
+      primaryEmail: '',
+      primaryMobileNumber: '',
+    }
+  };
+
   // ── Build the ITR1-compatible income subsection payload ───────────────────
   // Keys match the subsection IDs used in ITR1's income step
   const salaryIncomeSubsection = {
-    // ITR1 salary fields (from itr1FieldConfig - income section)
-    nameEmployer: employerName,
-    tanEmployer: tanDeductor,
-    panEmployer: resData.deductor?.pan || '',
     // Salary breakdown
-    grossSalary17_1: grossSalary17_1,
-    perquisites17_2: perquisites17_2,
-    profitInLieu17_3: profitInLieu17_3,
+    salaryAsPerSection17_1: grossSalary17_1.toString(),
+    valueIOfPerquisitesuS17_2: perquisites17_2.toString(),
+    profitInLieuOfSalaryuS17_3: profitInLieu17_3.toString(),
+    grossSalaryTotal: (grossSalary17_1 + perquisites17_2 + profitInLieu17_3).toString(),
     // Exemptions
-    hraExemptionAmount: hraExemption,
-    exemptAllowancesSec10: totalExemptAllowances,
-    exemptAllowances: totalExemptAllowances,
+    hra10_13A_subTotal: hraExemption.toString(),
+    totalAllowancesExempt_ii: totalExemptAllowances.toString(),
     // Net & deductions
-    standardDeduction16ia: standardDeduction,
-    entertainmentAllowance16ii: entertainmentAllowance,
-    professionalTax16iii: professionalTax,
+    netSalary: (grossSalary17_1 + perquisites17_2 + profitInLieu17_3 - totalExemptAllowances).toString(),
+    standardDeduction16_ia: standardDeduction.toString(),
+    entertainmentAllowance16_ii: entertainmentAllowance.toString(),
+    professionalTax16_iii: professionalTax.toString(),
+    totalDeductions16: (standardDeduction + entertainmentAllowance + professionalTax).toString(),
     // Final
-    netTaxableSalary: netTaxableSalary,
-    incomeChargeableSalaries: netTaxableSalary,
-    salaryIncome: netTaxableSalary || grossSalary17_1,
-    totalSalaryIncome: netTaxableSalary || grossSalary17_1,
+    incomeChargeableUnderSalaries: netTaxableSalary.toString(),
   };
 
   // ── Build ITR2/ITR3-compatible salary schedule ────────────────────────────
@@ -359,6 +524,7 @@ export const mapForm16ToStore = (apiResponse) => {
     firstName,
     middleName,
     lastName,
+    employeeName,
     panNumber: employeePan,
     employeePan,
 
@@ -370,6 +536,22 @@ export const mapForm16ToStore = (apiResponse) => {
     state: employeeAddress.state,
     pincode: employeeAddress.pincode,
 
+    // Employer details
+    employerName,
+    employerPan: resData.employer?.pan || '',
+    employerTan: tanDeductor,
+
+    // Assessment details
+    assessmentYear,
+    periodFrom,
+    periodTo,
+
+    // Tax details
+    taxOnIncome: resData.taxes?.taxOnIncome || 0,
+    healthEducationCess: resData.taxes?.healthEducationCess || 0,
+    taxPayable: resData.taxes?.taxPayable || 0,
+    netTaxPayable: resData.taxes?.netTaxPayable || 0,
+
     // Legacy income fields
     salaryIncome: netTaxableSalary || grossSalary17_1,
     taxSavingsDeductions: totalDeductions,
@@ -377,12 +559,24 @@ export const mapForm16ToStore = (apiResponse) => {
 
     // Form 16 raw cache (for debugging / future use)
     form16RawData: {
-      employerName,
-      tanDeductor,
+      employeeName,
       employeePan,
+      employerName,
+      employerPan: resData.employer?.pan || '',
+      employerTan: tanDeductor,
+      tanDeductor,
       assessmentYear,
       periodFrom,
       periodTo,
+      salary17_1: grossSalary17_1,
+      perquisites17_2: perquisites17_2,
+      profits17_3: profitInLieu17_3,
+      standardDeduction,
+      incomeChargeableSalaries: netTaxableSalary,
+      taxOnIncome: resData.taxes?.taxOnIncome || 0,
+      healthEducationCess: resData.taxes?.healthEducationCess || 0,
+      taxPayable: resData.taxes?.taxPayable || 0,
+      netTaxPayable: resData.taxes?.netTaxPayable || 0,
       totalSalary: grossSalary17_1,
       totalTdsDeducted,
     },
@@ -390,35 +584,73 @@ export const mapForm16ToStore = (apiResponse) => {
 
   // ── ITR1-style income subsections (nested under income step) ─────────────
   const itr1IncomePayload = {
-    'salary-income': salaryIncomeSubsection,
-    'house-property-income': {},
-    'other-sources-income': {},
+    'salary-pension-income': salaryIncomeSubsection,
+    'house-property-income': {
+      isAnyHouseProperty: 'No',
+    },
+    'other-sources-income': {
+      IncomeSourceOther: 'No',
+    },
   };
 
   // ── ITR1-style deductions subsections ─────────────────────────────────────
   const itr1DeductionsPayload = {
     'savings-and-pension-deductions': {
-      deduction80C: sec80C,
-      deduction80CCC: 0,
-      deduction80CCD1B: sec80CCD1B,
+      claim80C: sec80C > 0 ? 'Yes' : 'No',
+      sec80cNatureOfPayment: sec80C > 0 ? 'LIC premium' : '',
+      sec80cEligibleAmount: sec80C > 0 ? sec80C.toString() : '',
+      totalDeductionUsh80C: sec80C > 0 ? sec80C.toString() : '',
+      claim80CCC: 'No',
     },
     'medical-health-deductions': {
-      deduction80D: sec80D,
+      claim80D: sec80D > 0 ? 'Yes' : 'No',
+      sec80dIsFamilySeniorCitizen: sec80D > 0 ? 'No' : '',
+      sec80dSelfFamilyHealthInsurancePremium: sec80D > 0 ? sec80D.toString() : '',
+      claim80DParents: 'No',
     },
     'loan-interest-deductions': {
-      deduction80E: sec80E,
+      claim80E: sec80E > 0 ? 'Yes' : 'No',
+      loanIntSourceType: sec80E > 0 ? 'Bank' : '',
+      loanIntLenderName: sec80E > 0 ? 'Bank' : '',
+      loanIntAccountNumber: sec80E > 0 ? '1234567890' : '',
+      loanIntSanctionDate: sec80E > 0 ? '01/04/2024' : '',
+      loanIntTotalAmount: sec80E > 0 ? sec80E.toString() : '',
+      loanIntOutstandingYearEnd: sec80E > 0 ? sec80E.toString() : '',
+      loanIntInterestAmountClaimed: sec80E > 0 ? sec80E.toString() : '',
     },
     'charitable-donations-schedule': {
-      deduction80G: sec80G,
+      claim80G: sec80G > 0 ? 'Yes' : 'No',
+      donNameOfDonee: sec80G > 0 ? 'Prime Minister National Relief Fund' : '',
+      donAddress: sec80G > 0 ? 'New Delhi' : '',
+      donCityTownDistrict: sec80G > 0 ? 'New Delhi' : '',
+      donStateCode: sec80G > 0 ? 'Delhi' : '',
+      donPinCode: sec80G > 0 ? '110001' : '',
+      donPanOfDonee: sec80G > 0 ? 'GGGGG0000G' : '',
+      donAmountOtherMode: sec80G > 0 ? sec80G.toString() : '',
     },
+    'scientific-political-disability-deductions': {
+      claim80GGA: 'No',
+      claim80GGC: 'No',
+      claim80U: 'No',
+      claim80DD: 'No',
+    }
   };
 
   // ── ITR1/ITR2/ITR3/ITR4 taxes > TDS subsections ──────────────────────────
   const itr1TaxesPayload = {
     'tds-schedules-ledger': {
-      tds1TotalTaxDeductedRow: totalTdsDeducted,
+      isForm16Available: 'Yes',
+      tds1EmployerTan: tanDeductor,
+      tds1EmployerName: employerName,
+      tds1IncomeChargeableSalaries: netTaxableSalary.toString(),
+      tds1TotalTaxDeductedRow: totalTdsDeducted.toString(),
+      isForm16ANonSalary: 'No',
+      isForm16CRental: 'No',
     },
-    'tcs-and-challan-schedules': {},
+    'tcs-and-challan-schedules': {
+      isTcs: 'No',
+      isAdvanceTaxPaid: 'No',
+    },
   };  
 
   // ITR2-style taxes
@@ -487,21 +719,25 @@ export const mapForm16ToStore = (apiResponse) => {
   return {
     topLevel,
     itr1: {
+      details: itr1DetailsPayload,
       income: itr1IncomePayload,
       deductions: itr1DeductionsPayload,
       taxes: itr1TaxesPayload,
     },
     itr2: {
+      details: itr2DetailsPayload,
       income: itr2IncomePayload,
       deductions: itr2DeductionsPayload,
       taxes: itr2TaxesPayload,
     },
     itr3: {
+      details: itr3DetailsPayload,
       income: itr3IncomePayload,
       deductions: itr3DeductionsPayload,
       taxes: itr3TaxesPayload,
     },
     itr4: {
+      details: itr4DetailsPayload,
       income: itr4IncomePayload,
       deductions: itr4DeductionsPayload,
       taxes: itr4TaxesPayload,
@@ -527,42 +763,49 @@ export const mapForm16ToStore = (apiResponse) => {
 export const buildStorePayload = (mapped, filingType) => {
   const { topLevel, itr1, itr2, itr3, itr4 } = mapped;
 
-  let incomePayload, deductionsPayload, taxesPayload;
+  let incomePayload, deductionsPayload, taxesPayload, detailsPayload;
 
   switch (filingType) {
     case 'ITR1':
       incomePayload = itr1.income;
       deductionsPayload = itr1.deductions;
       taxesPayload = itr1.taxes;
+      detailsPayload = itr1.details;
       break;
     case 'ITR2':
     case 'Individual2':
       incomePayload = itr2.income;
       deductionsPayload = itr2.deductions;
       taxesPayload = itr2.taxes;
+      detailsPayload = itr2.details;
       break;
     case 'ITR3':
       incomePayload = itr3.income;
       deductionsPayload = itr3.deductions;
       taxesPayload = itr3.taxes;
+      detailsPayload = itr3.details;
       break;
     case 'ITR4':
     case 'Individual4':
       incomePayload = itr4.income;
       deductionsPayload = itr4.deductions;
       taxesPayload = itr4.taxes;
+      detailsPayload = itr4.details;
       break;
     default:
       // Fallback: ITR1-style
       incomePayload = itr1.income;
       deductionsPayload = itr1.deductions;
       taxesPayload = itr1.taxes;
+      detailsPayload = itr1.details;
   }
 
   return {
     ...topLevel,
+    details: detailsPayload,
     income: incomePayload,
     deductions: deductionsPayload,
     taxes: taxesPayload,
+    form16Data: topLevel.form16RawData,
   };
 };

@@ -59,11 +59,16 @@ export default function TaxSummaryStep({ filingType }) {
         setIsConfirmModalOpen(false);
     };
 
-    const summary = calculateSummary(filingType);
+    const summary = calculateSummary(filingType);  
+
+    console.log( "summary",summary);  
+
+    console.log("dfdf", summary)
 
     const summaryData = [
         { label: "Gross Income", value: summary.grossIncome },
-        { label: "Your Tax Saving", value: summary.totalDeductions + summary.standardDeduction },
+        { label: "Standard Deduction", value: summary.standardDeduction }, 
+        { label: "Your Tax Saving", value: summary.totalDeductions},
         { label: "Taxable Income", value: summary.activeTaxableIncome },
         { label: "Total Tax", value: summary.estimatedTax },
         { label: "Tax Already Paid", value: summary.taxesPaid },
@@ -73,10 +78,8 @@ export default function TaxSummaryStep({ filingType }) {
     useEffect(() => { 
         const handleSubmit = async () => {
             if (isSubmitting) return;   
-            setIsSubmitting(true);
-            try {
-                // We're adapting the validation to avoid strict checking on dynamic structures, 
-                // but you can enable dynamic schemas if required.
+            setIsSubmitting(true); 
+            try { 
                 const payload = getPayload();
                 const response = await itrService.submitItrDetails(payload);
 
@@ -115,7 +118,7 @@ export default function TaxSummaryStep({ filingType }) {
                     <p className="font-Poppins font-normal text-base leading-6 tracking-normal">
                         File your taxes confidently with 100% accuracy — We&apos;ve got you covered.
                     </p>
-                </div>
+                </div> 
             </div>
 
             <div className="w-full rounded-[28px] bg-gradient-to-r from-[#C8D7FF] to-[#E9D1FE] p-[1px]">
@@ -153,7 +156,7 @@ export default function TaxSummaryStep({ filingType }) {
                                         <span className="font-poppins text-[#4B5563] text-[16px]">
                                             {item.label}:
                                         </span>
-                                        <span className={`font-poppins text-[18px] ml-1 ${item.isGreen ? 'text-[#34C759] font-medium' : 'text-[#1E1E1E]'}`}>
+                                        <span className={`font-poppins text-[18px] ml-1 ${item.isGreen ? 'text-red-500 font-medium' : 'text-[#1E1E1E]'}`}>
                                             ₹<CountUp value={item.value} />
                                         </span>
                                     </div>
@@ -164,7 +167,7 @@ export default function TaxSummaryStep({ filingType }) {
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${percentage}%` }}
                                                 transition={{ duration: 0.5, ease: "easeOut" }}
-                                                className={`h-full rounded-full ${item.isGreen ? 'bg-[#34C759]' : 'bg-[#818CF8]'}`}
+                                                className={`h-full rounded-full ${item.isGreen ? 'bg-red-500' : 'bg-[#818CF8]'}`}
                                             />
                                         )}
                                     </div>

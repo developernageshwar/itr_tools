@@ -6,14 +6,6 @@ import { useItrStore } from '@/store/itrStore';
 import { filingTypeConfig } from '@/config/filingConfig';
 import Button from '@/components/ui/Button';
 
-// const questions = [
-//   { id: 'salary', category: 'Income Details', text: 'Do you have Salary or Pension income?' },
-//   { id: 'house', category: 'Income Details', text: 'Do you have income from House Property?' },
-//   { id: 'capitalGains', category: 'Income Details', text: 'Did you sell any Assets, Shares, or Mutual Funds?' },
-//   { id: 'business', category: 'Income Details', text: 'Do you have Business or Professional Income?' },
-//   { id: 'special', category: 'Income Details', text: 'Do you have income from F&O, Crypto, or hold Directorship?' },
-//   { id: 'foreign', category: 'Income Details', text: 'Do you have any Foreign Assets or Income?' }
-// ];
 
 const questions = [
   { id: 'q1', text: 'Do you have Salary or Pension income?' },
@@ -60,7 +52,7 @@ export default function EligibilityPage() {
       itrType = 'ITR1';
     }
     setSelectedFilingType(itrType);
-    createNewProfile(itrType);
+    createNewProfile(itrType, answers);
     const route = filingTypeConfig[itrType]?.detailsRoute || '/dashboard/pan-details';
     router.push(route);
   };

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { cn } from '@/utils/helpers';
+import { formatIndianNumber } from './ManualFormComponents';
 
 const FloatingInput = ({
   label,
@@ -19,6 +20,50 @@ const FloatingInput = ({
   children,
   ...props
 }) => {
+  const inputRef = useRef(null);
+  const [selection, setSelection] = useState(null);
+
+  const isAmtOrNum = label?.toLowerCase().includes("amount") || label?.includes("₹") || type === "number";
+
+  useEffect(() => {
+    if (selection && inputRef.current) {
+      inputRef.current.setSelectionRange(selection.start, selection.end);
+      setSelection(null);
+    }
+  }, [selection, value]);
+
+  const handleChange = (e) => {
+    if (isAmtOrNum) {
+      const input = e.target;
+      const originalStart = input.selectionStart;
+      const originalValue = input.value;
+      
+      const rawValue = originalValue.replace(/[^0-9]/g, "");
+      const formattedValue = formatIndianNumber(rawValue);
+      
+      const commasBefore = (originalValue.substring(0, originalStart).match(/,/g) || []).length;
+      const digitsBefore = originalStart - commasBefore;
+      
+      let newStart = 0;
+      let digitsSeen = 0;
+      for (let i = 0; i < formattedValue.length; i++) {
+        if (digitsSeen === digitsBefore) {
+          break;
+        }
+        if (formattedValue[i] !== ",") {
+          digitsSeen++;
+        }
+        newStart++;
+      }
+      
+      e.target.value = rawValue;
+      setSelection({ start: newStart, end: newStart });
+    }
+    if (onChange) onChange(e);
+  };
+
+  const displayValue = isAmtOrNum ? formatIndianNumber(value) : value;
+
   const renderLabel = (labelStr) => {
     if (typeof labelStr === 'string' && labelStr.includes('*')) {
       const parts = labelStr.split('*');
@@ -49,9 +94,10 @@ const FloatingInput = ({
           )}>
             <div className="bg-white rounded-[3px] overflow-hidden">
               <Component
+                ref={inputRef}
                 type={type === 'text' ? undefined : type}
-                value={value}
-                onChange={onChange}
+                value={displayValue}
+                onChange={handleChange}
                 placeholder={placeholder}
                 {...props}
                 className={cn(
@@ -87,9 +133,10 @@ const FloatingInput = ({
           {renderLabel(label)}
         </label>
         <Component
+          ref={inputRef}
           type={type === 'text' ? undefined : type}
-          value={value}
-          onChange={onChange}
+          value={displayValue}
+          onChange={handleChange}
           placeholder={placeholder}
           {...props}
           className={cn(
@@ -115,4 +162,4 @@ const FloatingInput = ({
   );
 };
 
-export default FloatingInput; 
+export default FloatingInput;

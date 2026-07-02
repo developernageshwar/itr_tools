@@ -17,8 +17,8 @@ export const NEW_REGIME_SLABS = [
 ];
 
 export const OLD_REGIME_SLABS = [
-  { min: 0, max: 250000, rate: 0 },
-  { min: 250000, max: 500000, rate: 5 },
+  { min: 0, max: 300000, rate: 0 },
+  { min: 300000, max: 500000, rate: 5 },
   { min: 500000, max: 1000000, rate: 20 },
   { min: 1000000, max: Infinity, rate: 30 },
 ];
@@ -174,7 +174,7 @@ export const calculateTax = (
 
   let rebate = 0;
   if (['Individual', 'ITR1', 'ITR2', 'ITR3', 'ITR4', 'HUF'].includes(filingType)) {
-    if (regime === 'new' && income <= 700_000) rebate = Math.min(totalTax, 25_000);
+    if (regime === 'new' && income <= 1_200_000) rebate = Math.min(totalTax, 60_000);
     if (regime === 'old' && income <= 500_000) rebate = Math.min(totalTax, 12_500);
   }
 

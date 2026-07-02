@@ -44,8 +44,17 @@ export default function MyTaxReturnsPage() {
             const detail = typeof item.detail === 'string' ? JSON.parse(item.detail) : (item.detail || {});
             
             let pan = detail.reviewData?.pan || 'Not Available';
-            if (pan === 'Not Provided' || !pan) {
-              pan = detail.details?.general?.panNumber || detail.details?.permanent?.panNumber || detail.details?.entity_details?.panNumber || detail.panNumber || detail.pan || 'Not Available';
+            if (pan === 'Not Provided' || !pan || pan === 'Not Available') {
+              pan = detail.details?.["personal-identity"]?.pan ||
+                    detail.details?.["part-a-gen"]?.pan ||
+                    detail.details?.["general_info"]?.pan ||
+                    detail.details?.permanent?.pan ||
+                    detail.details?.general?.panNumber ||
+                    detail.details?.permanent?.panNumber ||
+                    detail.details?.entity_details?.panNumber ||
+                    detail.panNumber ||
+                    detail.pan ||
+                    'Not Available';
             }
 
             let name = 'New User';
@@ -63,8 +72,22 @@ export default function MyTaxReturnsPage() {
               name = detail.details.permanent.hufName;
             } else if (detail.details?.entity_details?.entityName) {
               name = detail.details.entity_details.entityName;
-            } else if (detail.firstName) {
-              name = `${detail.firstName} ${detail.lastName || ''}`.trim();
+            } else {
+              const nestedFirstName = detail.details?.["personal-identity"]?.firstName ||
+                                      detail.details?.["part-a-gen"]?.firstName ||
+                                      detail.details?.["general_info"]?.firstName ||
+                                      detail.details?.permanent?.firstName ||
+                                      detail.firstName ||
+                                      '';
+              const nestedLastName = detail.details?.["personal-identity"]?.lastName ||
+                                     detail.details?.["part-a-gen"]?.lastName ||
+                                     detail.details?.["general_info"]?.lastName ||
+                                     detail.details?.permanent?.lastName ||
+                                     detail.lastName ||
+                                     '';
+              if (nestedFirstName) {
+                name = `${nestedFirstName} ${nestedLastName}`.trim();
+              }
             }
 
             const filingType = item.itr_type || detail.filingType || detail.selectedFilingType || 'Individual';
@@ -196,7 +219,8 @@ export default function MyTaxReturnsPage() {
               <p className="text-sm">Get started by filling your first tax return.</p>
             </div>
           ) : (
-            sortedProfiles.map((profile) => {
+            sortedProfiles.map((profile) => {  
+              console.log("dfd",profile )
               const isExpanded = !!expandedProfiles[profile.id];
               const isActive = profile.id === activeProfileId;
 

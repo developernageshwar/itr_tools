@@ -31,7 +31,14 @@ const ReturnDetailsModal = ({ isOpen, onClose, profile }) => {
               title: sub.label || sub.id,
               fieldSections: sub.fieldSections ? Object.values(sub.fieldSections).map(fs => ({
                 title: fs.title || fs.label || fs.id,
-                fields: fs.fields || []
+                fields: (fs.fields || []).map(f => ({
+                  ...f,
+                  name: f.name || f.id,
+                  columns: f.columns ? f.columns.map(col => ({
+                    ...col,
+                    name: col.name || col.id
+                  })) : undefined
+                }))
               })) : []
             })) : []
           };

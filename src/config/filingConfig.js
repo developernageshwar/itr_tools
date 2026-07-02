@@ -22,7 +22,7 @@ export const filingTypeConfig = {
         { id: 'salary-pension-income', label: 'Salary / Pension Income' },
         { id: 'house-property-income', label: 'House Property Income' },
         { id: 'hra-calculation-schedule', label: 'HRA Calculation Schedule' },
-        { id: 'standalone-loan-interest-schedule', label: 'Loan Interest u/s 24(b)' },
+        // { id: 'standalone-loan-interest-schedule', label: 'Loan Interest u/s 24(b)' },
         { id: 'other-sources-income', label: 'Other Sources Income' },
       ],
       deductions: [
@@ -37,13 +37,14 @@ export const filingTypeConfig = {
         { id: 'tcs-and-challan-schedules', label: 'TCS & Advance Tax Challans' },
       ],
       filing: [
+          { id: 'banking-payment-channels', label: 'Bank Account Details' }, 
         { id: 'voluntary-filing-criteria', label: 'Voluntary Filing Criteria (7th Proviso)' },
         { id: 'representative-metadata', label: 'Representative Assessee' },
-        { id: 'statutory-filing-details', label: 'Statutory Filing Details' },
+        // { id: 'statutory-filing-details', label: 'Statutory Filing Details' },
         { id: 'updated-return-schedule-itru', label: 'Updated Return (ITR-U)' },
-        { id: 'taxation-reconciliation-ledger', label: 'Tax Reconciliation Ledger' },
-        { id: 'exempt-income-reporting', label: 'Exempt Income Reporting' },
-        { id: 'banking-payment-channels', label: 'Bank Account Details' },
+        // { id: 'taxation-reconciliation-ledger', label: 'Tax Reconciliation Ledger' },
+        // { id: 'exempt-income-reporting', label: 'Exempt Income Reporting' },
+      
         { id: 'legal-signatures-verification', label: 'Verification & Signature' },
         { id: 'itru-computation-matrix', label: 'ITR-U Computation Matrix' },
         // { id: 'efiling', label: 'E-Filing' } 

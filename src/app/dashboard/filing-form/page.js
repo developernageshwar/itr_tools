@@ -211,7 +211,7 @@ export default function FilingFormPage() {
         } else {
           setActiveTab('aadhaar_rules');
         }
-        
+
         setTimeout(() => {
           const element = document.getElementsByName(firstError)[0];
           if (element) {
@@ -235,7 +235,7 @@ export default function FilingFormPage() {
         } else {
           setActiveTab('aadhaar_rules');
         }
-        
+
         setTimeout(() => {
           const element = document.getElementsByName(firstError)[0];
           if (element) {
@@ -287,7 +287,7 @@ export default function FilingFormPage() {
                 {subTabs.map((tab) => (
                   <div
                     key={tab.id}
-                    onClick={() => setActiveTab(tab.id)} 
+                    onClick={() => setActiveTab(tab.id)}
                     className={`
                       pb-3 cursor-pointer font-poppins font-semibold transition-all whitespace-nowrap border-b-2 text-base outline-none
                       ${activeTab === tab.id
@@ -525,7 +525,7 @@ export default function FilingFormPage() {
                       <MdInfoOutline size={16} className="flex-shrink-0" />
                       <p className="text-[12px]">{"Don't"} remember your Aadhaar number? <span className="text-[#3867D6] cursor-pointer">Search it Here.</span></p>
                     </div>
-                  </MainSection> 
+                  </MainSection>
                 </div>
               )}
 

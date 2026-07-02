@@ -132,9 +132,9 @@ export const itr4FieldConfig = {
               id: "aadhaarInformation",
               label: "1.5 Aadhaar Information",
               fields: [
-                { id: "hasAadhaar", label: "Whether you have Aadhaar Number?", type: "dropdown", required: true, options: [{ value: "Yes", label: "Yes" }, { value: "No", label: "No" }], notes: "Individual filers only" },
-                { id: "aadhaarNumber", label: "Aadhaar Number", type: "text", required: "conditional", validation: "12 digits; required if PAN-linked Aadhaar exists" },
-                { id: "aadhaarEnrolmentId", label: "Aadhaar Enrolment ID", type: "text", required: "conditional", validation: "28 digits; required only if Aadhaar not yet allotted" }
+                { id: "hasAadhaar", label: "Do you have an Aadhaar Number?", type: "dropdown", required: "conditional", condition: 'status === "I"', options: [{ value: "Yes", label: "Yes" }, { value: "No", label: "No" }] },
+                { id: "aadhaarNumber", label: "Aadhaar Number", type: "text", required: "conditional", validation: "12 digits; required if PAN-linked Aadhaar exists", condition: 'status === "I" && hasAadhaar === "Yes"' },
+                { id: "aadhaarEnrolmentId", label: "Aadhaar Enrolment ID", type: "text", required: "conditional", validation: "28 digits; required only if Aadhaar not yet allotted", condition: 'status === "I" && hasAadhaar === "No"' }
               ]
             },
             portugueseCivilCode: {
@@ -1236,7 +1236,8 @@ function mapFieldSection(fieldSection) {
         type: field.type === 'amount' || field.type === 'number' ? 'number' : (field.type === 'dropdown' ? 'select' : field.type === 'date' ? 'text' : 'Text'),
         options: Array.isArray(field.options) ? field.options : undefined,
         placeholder: field.placeholder || '',
-        required: field.required === true,
+        required: field.required,
+        condition: field.condition,
         notes: field.notes
       });
     }

@@ -58,8 +58,9 @@ export const itr3FieldConfig = [
               { name: 'status', label: 'Status', type: 'dropdown', required: true, options: [{ value: 'I', label: 'I – Individual' }, { value: 'H', label: 'H – HUF' }] },
               { name: 'dobOrFormation', label: 'Date of Birth / Formation', type: 'date', required: true, notes: 'DOB for Individual, Formation date for HUF' },
               { name: 'dateOfCommencementBusiness', label: 'Date of Commencement of Business', type: 'date', required: true, notes: 'Specific to ITR-3' },
-              { name: 'aadhaarNumber', label: 'Aadhaar Number', type: 'text', required: 'conditional', validation: { length: 12 }, condition: 'status === "I"' },
-              { name: 'aadhaarEnrolmentId', label: 'Aadhaar Enrolment ID', type: 'text', required: 'conditional', validation: { length: 28 }, condition: 'status === "I" && !aadhaarNumber' },
+              { name: 'hasAadhaar', label: 'Do you have an Aadhaar Number?', type: 'dropdown', required: 'conditional', condition: 'status === "I"', options: [{ value: 'Yes', label: 'Yes' }, { value: 'No', label: 'No' }] },
+              { name: 'aadhaarNumber', label: 'Aadhaar Number', type: 'text', required: 'conditional', validation: { length: 12 }, condition: 'status === "I" && hasAadhaar === "Yes"' },
+              { name: 'aadhaarEnrolmentId', label: 'Aadhaar Enrolment ID', type: 'text', required: 'conditional', validation: { length: 28 }, condition: 'status === "I" && hasAadhaar === "No"' },
               { name: 'passportNumber', label: 'Passport Number', type: 'text', required: false, condition: 'status === "I"' },
               { name: 'isFpi', label: 'Whether FPI?', type: 'dropdown', required: false, options: [{ value: 'Yes', label: 'Yes' }, { value: 'No', label: 'No' }] },
               { name: 'sebiRegistrationNumber', label: 'SEBI Registration Number', type: 'text', required: 'conditional', condition: 'isFpi === "Yes"' }
@@ -983,9 +984,6 @@ itr3FieldConfig.forEach(step => {
                 field: matchEq[1],
                 value: matchEq[2]
               };
-              delete fieldConfig.condition;
-            } else {
-              delete fieldConfig.condition;
             }
           }
 
